@@ -212,7 +212,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-slate-400">You haven't uploaded any resources yet.</p>
+                  <p className="text-slate-400">You haven&apos;t uploaded any resources yet.</p>
                   <Link
                     href="/upload"
                     className="mt-3 inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
