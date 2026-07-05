@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 type University = {
@@ -88,6 +89,32 @@ export default function UploadPage() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
     setFile(selectedFile);
+  };
+
+  const getResourceBadgeClass = (type: string) => {
+    switch (type) {
+      case "past_paper":
+        return "bg-amber-500/15 text-amber-200";
+      case "assignment":
+        return "bg-violet-500/15 text-violet-200";
+      case "summary":
+        return "bg-emerald-500/15 text-emerald-200";
+      default:
+        return "bg-sky-500/15 text-sky-200";
+    }
+  };
+
+  const getResourceLabel = (type: string) => {
+    switch (type) {
+      case "past_paper":
+        return "PAST PAPER";
+      case "assignment":
+        return "ASSIGNMENT";
+      case "summary":
+        return "SUMMARY";
+      default:
+        return "NOTES";
+    }
   };
 
   const handleCourseRequestSubmit = async (event?: FormEvent<HTMLFormElement> | null) => {
@@ -201,18 +228,21 @@ export default function UploadPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
-      <div className="mx-auto max-w-2xl rounded-xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-semibold">Upload a resource</h1>
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+        <div className="mb-8">
+          <div className="inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm font-medium text-sky-200">
+            Contribute a Resource
+          </div>
+          <h1 className="mt-4 text-3xl font-semibold">Upload a resource</h1>
           <p className="mt-2 text-slate-400">
             Share notes, past papers, assignments, or summaries for review.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid gap-5 md:grid-cols-2">
-            <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
               <label htmlFor="university" className="mb-2 block text-sm text-slate-300">
                 University
               </label>
@@ -220,7 +250,7 @@ export default function UploadPage() {
                 id="university"
                 value={selectedUniversityId}
                 onChange={(e) => setSelectedUniversityId(e.target.value)}
-                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
               >
                 <option value="">Select a university</option>
                 {universities.map((university) => (
@@ -231,7 +261,7 @@ export default function UploadPage() {
               </select>
             </div>
 
-            <div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
               <label htmlFor="course" className="mb-2 block text-sm text-slate-300">
                 Course
               </label>
@@ -239,7 +269,7 @@ export default function UploadPage() {
                 id="course"
                 value={selectedCourseId}
                 onChange={(e) => setSelectedCourseId(e.target.value)}
-                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
                 disabled={!selectedUniversityId || courses.length === 0}
               >
                 <option value="">Select a course</option>
@@ -252,7 +282,7 @@ export default function UploadPage() {
               <button
                 type="button"
                 onClick={() => setShowCourseRequest((current) => !current)}
-                className="mt-2 text-sm text-sky-400 hover:text-sky-300"
+                className="mt-3 text-sm text-sky-400 transition hover:text-sky-300"
               >
                 Can&apos;t find your course? Request it
               </button>
@@ -260,8 +290,8 @@ export default function UploadPage() {
           </div>
 
           {showCourseRequest ? (
-            <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
-              <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-300">
                     Course name
@@ -272,7 +302,7 @@ export default function UploadPage() {
                     value={courseRequestName}
                     onChange={(e) => setCourseRequestName(e.target.value)}
                     placeholder="e.g. Introduction to Algorithms"
-                    className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
                     required
                   />
                 </div>
@@ -286,16 +316,16 @@ export default function UploadPage() {
                     value={courseRequestCode}
                     onChange={(e) => setCourseRequestCode(e.target.value)}
                     placeholder="e.g. BAC101"
-                    className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
                     required
                   />
                 </div>
               </div>
-              <div className="mt-3 flex justify-end">
+              <div className="mt-4 flex justify-end">
                 <button
                   type="button"
                   onClick={() => handleCourseRequestSubmit()}
-                  className="rounded-md bg-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-600"
+                  className="rounded-xl bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
                 >
                   Submit request
                 </button>
@@ -303,25 +333,46 @@ export default function UploadPage() {
             </div>
           ) : null}
 
-          <div>
-            <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-300">
-              Resource type
-            </label>
-            <select
-              id="resourceType"
-              value={resourceType}
-              onChange={(e) => setResourceType(e.target.value as (typeof resourceTypes)[number])}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-            >
-              {resourceTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-300">
+                Resource type
+              </label>
+              <div className="flex items-center gap-3">
+                <select
+                  id="resourceType"
+                  value={resourceType}
+                  onChange={(e) => setResourceType(e.target.value as (typeof resourceTypes)[number])}
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                >
+                  {resourceTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${getResourceBadgeClass(resourceType)}`}>
+                  {getResourceLabel(resourceType)}
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <label htmlFor="unitName" className="mb-2 block text-sm text-slate-300">
+                Unit / Topic
+              </label>
+              <input
+                id="unitName"
+                type="text"
+                value={unitName}
+                onChange={(e) => setUnitName(e.target.value)}
+                placeholder="e.g. Financial Accounting I"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+              />
+            </div>
           </div>
 
-          <div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
             <label htmlFor="title" className="mb-2 block text-sm text-slate-300">
               Title
             </label>
@@ -331,47 +382,45 @@ export default function UploadPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Calculus Midterm Notes"
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+              className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
             />
           </div>
 
-          <div>
-            <label htmlFor="unitName" className="mb-2 block text-sm text-slate-300">
-              Unit / Topic
+          <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-5">
+            <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 px-4 py-8 text-center transition hover:border-sky-500 hover:bg-slate-900">
+              <Upload className="mb-3 h-8 w-8 text-sky-400" />
+              <span className="text-sm font-medium text-slate-200">Click to browse or drag a file here</span>
+              <span className="mt-1 text-sm text-slate-400">PDF, DOCX, PPTX, TXT, and more</span>
             </label>
-            <input
-              id="unitName"
-              type="text"
-              value={unitName}
-              onChange={(e) => setUnitName(e.target.value)}
-              placeholder="e.g. Financial Accounting I, Introduction to Programming"
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="file" className="mb-2 block text-sm text-slate-300">
-              File
-            </label>
-            <input
-              id="file"
-              type="file"
-              onChange={handleFileChange}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-            />
+            <input id="file" type="file" onChange={handleFileChange} className="hidden" />
+            {file ? (
+              <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-300">
+                <div>
+                  <p className="font-medium text-white">{file.name}</p>
+                  <p className="text-xs text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFile(null)}
+                  className="text-sm text-sky-400 transition hover:text-sky-300"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
           </div>
 
           {error ? <p className="text-sm text-rose-400">{error}</p> : null}
           {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
 
-          <div className="flex items-center justify-between gap-3">
-            <Link href="/dashboard" className="text-sm text-slate-400 hover:text-white">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4">
+            <Link href="/dashboard" className="text-sm text-slate-400 transition hover:text-white">
               Back to dashboard
             </Link>
             <button
               type="submit"
               disabled={submitting || !selectedCourseId || !unitName.trim()}
-              className="rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-xl bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Uploading..." : "Upload"}
             </button>

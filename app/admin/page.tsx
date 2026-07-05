@@ -248,10 +248,36 @@ export default function AdminPage() {
     );
   }
 
+  const getResourceBadgeClass = (type: string) => {
+    switch (type) {
+      case "past_paper":
+        return "bg-amber-500/15 text-amber-200";
+      case "assignment":
+        return "bg-violet-500/15 text-violet-200";
+      case "summary":
+        return "bg-emerald-500/15 text-emerald-200";
+      default:
+        return "bg-sky-500/15 text-sky-200";
+    }
+  };
+
+  const getResourceLabel = (type: string) => {
+    switch (type) {
+      case "past_paper":
+        return "PAST PAPER";
+      case "assignment":
+        return "ASSIGNMENT";
+      case "summary":
+        return "SUMMARY";
+      default:
+        return "NOTES";
+    }
+  };
+
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl font-semibold">Admin dashboard</h1>
             <p className="mt-2 text-slate-400">Review uploads and course requests.</p>
@@ -261,7 +287,18 @@ export default function AdminPage() {
           </Link>
         </div>
 
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
+            <p className="text-sm text-slate-400">Pending resources</p>
+            <p className="mt-2 text-3xl font-semibold text-white">{resources.length}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
+            <p className="text-sm text-slate-400">Pending course requests</p>
+            <p className="mt-2 text-3xl font-semibold text-white">{courseRequests.length}</p>
+          </div>
+        </div>
+
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
           <h2 className="text-xl font-semibold">Pending resources</h2>
           {previewError ? (
             <p className="mt-3 text-sm text-rose-400">{previewError}</p>
@@ -273,33 +310,38 @@ export default function AdminPage() {
               resources.map((resource) => (
                 <div
                   key={resource.id}
-                  className="flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
-                    <h3 className="font-medium text-white">{resource.title}</h3>
-                    <p className="text-sm text-slate-400">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-medium text-white">{resource.title}</h3>
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${getResourceBadgeClass(resource.resource_type)}`}>
+                        {getResourceLabel(resource.resource_type)}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-400">
                       {resource.unit_name ? `${resource.unit_name} • ` : ""}
-                      {resource.resource_type} • uploader: {profiles[resource.uploader_id] ?? "Unknown"} • course: {courses[resource.course_id] ?? "Unknown"}
+                      uploader: {profiles[resource.uploader_id] ?? "Unknown"} • course: {courses[resource.course_id] ?? "Unknown"}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handlePreviewResource(resource.storage_path)}
-                      className="rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-700"
+                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-700"
                     >
                       Preview
                     </button>
                     <button
                       onClick={() => handleApproveResource(resource.id, resource.uploader_id)}
                       disabled={processingId === resource.id}
-                      className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
+                      className="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleRejectResource(resource.id)}
                       disabled={processingId === resource.id}
-                      className="rounded-md bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-60"
+                      className="rounded-xl bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-60"
                     >
                       Reject
                     </button>
@@ -310,7 +352,9 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+        <div className="border-t border-slate-800" />
+
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
           <h2 className="text-xl font-semibold">Pending course requests</h2>
           <div className="mt-4 space-y-3">
             {courseRequests.length === 0 ? (
@@ -319,7 +363,7 @@ export default function AdminPage() {
               courseRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <h3 className="font-medium text-white">
@@ -340,14 +384,14 @@ export default function AdminPage() {
                         )
                       }
                       disabled={processingId === request.id}
-                      className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
+                      className="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleRejectCourseRequest(request.id)}
                       disabled={processingId === request.id}
-                      className="rounded-md bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-60"
+                      className="rounded-xl bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-60"
                     >
                       Reject
                     </button>
