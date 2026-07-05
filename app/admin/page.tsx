@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 type PendingResource = {
   id: string;
   title: string;
+  unit_name: string | null;
   resource_type: string;
   uploader_id: string;
   course_id: string;
@@ -58,7 +59,7 @@ export default function AdminPage() {
 
       const { data: pendingResources, error: resourcesError } = await supabase
         .from("resources")
-        .select("id, title, resource_type, uploader_id, course_id, storage_path")
+        .select("id, title, unit_name, resource_type, uploader_id, course_id, storage_path")
         .eq("status", "pending")
         .order("created_at", { ascending: false });
 
@@ -277,6 +278,7 @@ export default function AdminPage() {
                   <div>
                     <h3 className="font-medium text-white">{resource.title}</h3>
                     <p className="text-sm text-slate-400">
+                      {resource.unit_name ? `${resource.unit_name} • ` : ""}
                       {resource.resource_type} • uploader: {profiles[resource.uploader_id] ?? "Unknown"} • course: {courses[resource.course_id] ?? "Unknown"}
                     </p>
                   </div>

@@ -17,6 +17,7 @@ type Course = {
 type Resource = {
   id: string;
   title: string;
+  unit_name: string | null;
   resource_type: string;
   download_count: number;
 };
@@ -82,7 +83,7 @@ export default function BrowsePage() {
       setResourceLoading(true);
       const { data, error } = await supabase
         .from("resources")
-        .select("id, title, resource_type, download_count")
+        .select("id, title, unit_name, resource_type, download_count")
         .eq("course_id", selectedCourseId)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
@@ -165,6 +166,7 @@ export default function BrowsePage() {
                     <div>
                       <h2 className="text-lg font-semibold text-white">{resource.title}</h2>
                       <p className="mt-2 text-sm text-slate-400">
+                        {resource.unit_name ? `${resource.unit_name} • ` : ""}
                         {resource.resource_type}
                       </p>
                     </div>

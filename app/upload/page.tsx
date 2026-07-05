@@ -26,6 +26,7 @@ export default function UploadPage() {
   const [selectedCourseId, setSelectedCourseId] = useState("");
   const [resourceType, setResourceType] = useState<(typeof resourceTypes)[number]>("notes");
   const [title, setTitle] = useState("");
+  const [unitName, setUnitName] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [showCourseRequest, setShowCourseRequest] = useState(false);
   const [courseRequestName, setCourseRequestName] = useState("");
@@ -141,7 +142,7 @@ export default function UploadPage() {
       return;
     }
 
-    if (!selectedUniversityId || !selectedCourseId || !file || !title.trim()) {
+    if (!selectedUniversityId || !selectedCourseId || !file || !title.trim() || !unitName.trim()) {
       setError("Please fill in all fields and choose a file.");
       return;
     }
@@ -172,6 +173,7 @@ export default function UploadPage() {
       status: "pending",
       uploader_id: session.user.id,
       course_id: selectedCourseId,
+      unit_name: unitName.trim(),
     });
 
     if (insertError) {
@@ -182,6 +184,7 @@ export default function UploadPage() {
 
     setMessage("Submitted for review");
     setTitle("");
+    setUnitName("");
     setFile(null);
     setSelectedUniversityId("");
     setSelectedCourseId("");
@@ -333,6 +336,20 @@ export default function UploadPage() {
           </div>
 
           <div>
+            <label htmlFor="unitName" className="mb-2 block text-sm text-slate-300">
+              Unit / Topic
+            </label>
+            <input
+              id="unitName"
+              type="text"
+              value={unitName}
+              onChange={(e) => setUnitName(e.target.value)}
+              placeholder="e.g. Financial Accounting I, Introduction to Programming"
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            />
+          </div>
+
+          <div>
             <label htmlFor="file" className="mb-2 block text-sm text-slate-300">
               File
             </label>
@@ -353,7 +370,7 @@ export default function UploadPage() {
             </Link>
             <button
               type="submit"
-              disabled={submitting || !selectedCourseId}
+              disabled={submitting || !selectedCourseId || !unitName.trim()}
               className="rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Uploading..." : "Upload"}
