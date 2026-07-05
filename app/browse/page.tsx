@@ -19,6 +19,7 @@ type Resource = {
   title: string;
   unit_name: string | null;
   resource_type: string;
+  storage_path: string;
   download_count: number;
 };
 
@@ -30,6 +31,62 @@ export default function BrowsePage() {
   const [selectedCourseId, setSelectedCourseId] = useState("");
   const [loading, setLoading] = useState(true);
   const [resourceLoading, setResourceLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [unlockExpiresAt, setUnlockExpiresAt] = useState<string | null>(null);
+  const [unlockNotice, setUnlockNotice] = useState<string | null>(null);
+  const [unlockTargetId, setUnlockTargetId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        setIsAdmin(false);
+        setUnlockExpiresAt(null);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_admin, unlock_expires_at")
+        .eq("id", session.user.id)
+        .single();
+
+      if (!error && data) {
+        setIsAdmin(Boolean(data.is_admin));
+        setUnlockExpiresAt(data.unlock_expires_at);
+      }
+    };
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        setIsAdmin(false);
+        setUnlockExpiresAt(null);
+        return;
+      }
+
+      supabase
+        .from("profiles")
+        .select("is_admin, unlock_expires_at")
+        .eq("id", session.user.id)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            setIsAdmin(Boolean(data.is_admin));
+            setUnlockExpiresAt(data.unlock_expires_at);
+          }
+        });
+    });
+
+    loadProfile();
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const loadUniversities = async () => {
@@ -83,7 +140,7 @@ export default function BrowsePage() {
       setResourceLoading(true);
       const { data, error } = await supabase
         .from("resources")
-        .select("id, title, unit_name, resource_type, download_count")
+        .select("id, title, unit_name, resource_type, storage_path, download_count")
         .eq("course_id", selectedCourseId)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
@@ -99,6 +156,64 @@ export default function BrowsePage() {
 
     loadResources();
   }, [selectedCourseId]);
+
+  const hasUnlockedAccess = () => {
+    if (isAdmin) {
+      return true;
+    }
+
+    if (!unlockExpiresAt) {
+      return false;
+    }
+
+    return new Date(unlockExpiresAt).getTime() > Date.now();
+  };
+
+  const handleDownload = async (resource: Resource) => {
+    if (!hasUnlockedAccess()) {
+      setUnlockTargetId(resource.id);
+      setUnlockNotice(
+        "Upload 4 approved resources or pay KES 30 to unlock 7 hours of downloads"
+      );
+      return;
+    }
+
+    setDownloadingId(resource.id);
+    setUnlockTargetId(null);
+    setUnlockNotice(null);
+
+    const { data, error } = await supabase.storage
+      .from("resources")
+      .createSignedUrl(resource.storage_path, 60);
+
+    if (error || !data?.signedUrl) {
+      setDownloadingId(null);
+      return;
+    }
+
+    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+
+    const { data: resourceData } = await supabase
+      .from("resources")
+      .select("download_count")
+      .eq("id", resource.id)
+      .single();
+
+    await supabase
+      .from("resources")
+      .update({ download_count: (resourceData?.download_count ?? 0) + 1 })
+      .eq("id", resource.id);
+
+    setResources((current) =>
+      current.map((item) =>
+        item.id === resource.id
+          ? { ...item, download_count: item.download_count + 1 }
+          : item
+      )
+    );
+
+    setDownloadingId(null);
+  };
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
@@ -174,9 +289,26 @@ export default function BrowsePage() {
                       {resource.download_count} downloads
                     </span>
                   </div>
-                  <button className="mt-5 w-full rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500">
-                    Download
-                  </button>
+                  {unlockTargetId === resource.id && unlockNotice ? (
+                    <div className="mt-5 space-y-2">
+                      <p className="text-sm text-amber-300">{unlockNotice}</p>
+                      <button
+                        type="button"
+                        className="w-full rounded-md border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                      >
+                        Pay KES 30
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleDownload(resource)}
+                      disabled={downloadingId === resource.id}
+                      className="mt-5 w-full rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-700"
+                    >
+                      {downloadingId === resource.id ? "Preparing..." : "Download"}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
