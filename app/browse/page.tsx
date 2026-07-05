@@ -23,6 +23,8 @@ type Resource = {
   resource_type: string;
   storage_path: string;
   download_count: number;
+  course_name?: string | null;
+  university_name?: string | null;
 };
 
 export default function BrowsePage() {
@@ -46,11 +48,13 @@ function BrowsePageContent() {
   const [universities, setUniversities] = useState<University[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
+  const [searchResults, setSearchResults] = useState<Resource[]>([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState("");
   const [selectedCourseId, setSelectedCourseId] = useState("");
   const [loading, setLoading] = useState(true);
   const [resourceLoading, setResourceLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchMode, setSearchMode] = useState(false);
   const [resourceTypeFilter, setResourceTypeFilter] = useState("all");
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -115,6 +119,84 @@ function BrowsePageContent() {
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  const runSearch = async (term: string) => {
+    const trimmedTerm = term.trim();
+
+    if (!trimmedTerm) {
+      setSearchResults([]);
+      setSearchMode(false);
+      return;
+    }
+
+    setSearchMode(true);
+    setResourceLoading(true);
+
+    const { data, error } = await supabase
+      .from("resources")
+      .select("id, title, unit_name, resource_type, storage_path, download_count, course_id")
+      .eq("status", "approved")
+      .or(`title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`)
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      setSearchResults([]);
+      setResourceLoading(false);
+      return;
+    }
+
+    const courseIds = Array.from(new Set(data.map((resource) => resource.course_id)));
+    const { data: courseData, error: courseError } = await supabase
+      .from("courses")
+      .select("id, name, university_id")
+      .in("id", courseIds);
+
+    const universityIds = Array.from(
+      new Set((courseData ?? []).map((course) => course.university_id))
+    );
+    const { data: universityData, error: universityError } = await supabase
+      .from("universities")
+      .select("id, name")
+      .in("id", universityIds);
+
+    if (!courseError && !universityError) {
+      const courseMap = new Map((courseData ?? []).map((course) => [course.id, course]));
+      const universityMap = new Map((universityData ?? []).map((university) => [university.id, university]));
+
+      const enrichedResults = data.map((resource) => {
+        const course = courseMap.get(resource.course_id);
+        const university = course ? universityMap.get(course.university_id) : undefined;
+
+        return {
+          ...resource,
+          course_name: course?.name ?? null,
+          university_name: university?.name ?? null,
+        };
+      });
+
+      setSearchResults(enrichedResults);
+    } else {
+      setSearchResults([]);
+    }
+
+    setResourceLoading(false);
+  };
+
+  useEffect(() => {
+    const trimmedTerm = searchQuery.trim();
+
+    if (!trimmedTerm) {
+      setSearchResults([]);
+      setSearchMode(false);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      runSearch(trimmedTerm);
+    }, 400);
+
+    return () => window.clearTimeout(timeout);
+  }, [searchQuery]);
 
   useEffect(() => {
     const loadUniversities = async () => {
@@ -205,14 +287,12 @@ function BrowsePageContent() {
     return new Date(unlockExpiresAt).getTime() > Date.now();
   };
 
-  const filteredResources = resources.filter((resource) => {
-    const matchesSearch = `${resource.title} ${resource.unit_name ?? ""}`
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  const activeResources = searchMode ? searchResults : resources;
+  const filteredResources = activeResources.filter((resource) => {
     const matchesType =
       resourceTypeFilter === "all" || resource.resource_type === resourceTypeFilter;
 
-    return matchesSearch && matchesType;
+    return matchesType;
   });
 
   const getResourceBadge = (type: string) => {
@@ -287,6 +367,29 @@ function BrowsePageContent() {
     setDownloadingId(null);
   };
 
+  const featuredUniversities = universities.filter((university) =>
+    [
+      "University of Nairobi",
+      "Kenyatta University",
+      "Moi University",
+      "JKUAT",
+      "Maseno University",
+      "Strathmore University",
+    ].includes(university.name)
+  );
+
+  const handleFeaturedUniversitySelect = (universityId: string) => {
+    setSelectedUniversityId(universityId);
+    setSearchQuery("");
+    setSearchMode(false);
+    setSearchResults([]);
+  };
+
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    runSearch(searchQuery);
+  };
+
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -303,7 +406,7 @@ function BrowsePageContent() {
                 Discover trusted resources curated for your university and course in one streamlined hub.
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+            <form onSubmit={handleSearchSubmit} className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
               <label htmlFor="resource-search" className="mb-2 block text-sm font-medium text-slate-300">
                 Search resources
               </label>
@@ -315,9 +418,24 @@ function BrowsePageContent() {
                 placeholder="Search by title or unit"
                 className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none ring-0 placeholder:text-slate-500"
               />
-            </div>
+            </form>
           </div>
         </section>
+
+        <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
+          <span className="text-sm text-slate-400">Popular universities</span>
+          {featuredUniversities.map((university) => (
+            <button
+              key={university.id}
+              type="button"
+              onClick={() => handleFeaturedUniversitySelect(university.id)}
+              className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1.5 text-sm text-slate-200 transition hover:border-sky-500 hover:text-white"
+            >
+              {university.name}
+            </button>
+          ))}
+          <span className="ml-1 text-sm text-slate-500">🔎 search above if yours isn&apos;t listed</span>
+        </div>
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-4">
@@ -403,11 +521,15 @@ function BrowsePageContent() {
           <section>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-white">Approved resources</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  {searchMode ? `Search results for "${searchQuery.trim()}"` : "Approved resources"}
+                </h2>
                 <p className="text-sm text-slate-400">
-                  {selectedCourseId
-                    ? "Explore the current course collection below."
-                    : "Choose a university and course to start browsing."}
+                  {searchMode
+                    ? "Showing matching approved resources from across Campus Vault."
+                    : selectedCourseId
+                      ? "Explore the current course collection below."
+                      : "Choose a university and course to start browsing."}
                 </p>
               </div>
               {selectedCourseId ? (
@@ -421,7 +543,7 @@ function BrowsePageContent() {
               <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
                 Loading resources...
               </div>
-            ) : selectedCourseId && filteredResources.length > 0 ? (
+            ) : (searchMode || selectedCourseId) && filteredResources.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {filteredResources.map((resource) => (
                   <article
@@ -442,6 +564,13 @@ function BrowsePageContent() {
                     <p className="mt-2 text-sm text-slate-400">
                       {resource.unit_name ?? "No unit listed"}
                     </p>
+                    {resource.course_name || resource.university_name ? (
+                      <p className="mt-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+                        {resource.course_name}
+                        {resource.course_name && resource.university_name ? " • " : ""}
+                        {resource.university_name}
+                      </p>
+                    ) : null}
 
                     {unlockTargetId === resource.id && unlockNotice ? (
                       <div className="mt-5 space-y-2">
@@ -466,13 +595,13 @@ function BrowsePageContent() {
                   </article>
                 ))}
               </div>
-            ) : selectedCourseId ? (
+            ) : (searchMode || selectedCourseId) ? (
               <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
                 No approved resources match your current filters yet.
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
-                Choose a course to view approved resources.
+                Choose a university and course to start browsing.
               </div>
             )}
           </section>
