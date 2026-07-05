@@ -43,12 +43,20 @@ export default function DashboardPage() {
         <p className="mt-3 text-slate-400">
           You are signed in to Campus Vault.
         </p>
-        <Link
-          href="/browse"
-          className="mt-6 inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
-        >
-          Browse resources
-        </Link>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link
+            href="/browse"
+            className="inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
+          >
+            Browse resources
+          </Link>
+          <Link
+            href="/upload"
+            className="inline-flex rounded-md border border-slate-700 px-4 py-2 font-medium text-slate-200 transition hover:bg-slate-800"
+          >
+            Upload resource
+          </Link>
+        </div>
       </div>
     </main>
   );
