@@ -5,10 +5,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
+type University = {
+  id: string;
+  name: string;
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [featuredUniversities, setFeaturedUniversities] = useState<University[]>([]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -22,6 +28,25 @@ export default function DashboardPage() {
       }
 
       setEmail(session.user.email ?? null);
+
+      const featuredNames = [
+        "University of Nairobi",
+        "Kenyatta University",
+        "Moi University",
+        "JKUAT",
+        "Maseno University",
+        "Strathmore University",
+      ];
+
+      const { data, error } = await supabase
+        .from("universities")
+        .select("id, name")
+        .in("name", featuredNames);
+
+      if (!error && data) {
+        setFeaturedUniversities(data);
+      }
+
       setLoading(false);
     };
 
@@ -43,6 +68,30 @@ export default function DashboardPage() {
         <p className="mt-3 text-slate-400">
           You are signed in to Campus Vault.
         </p>
+        <div className="mt-6">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
+            Quick access
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {featuredUniversities.map((university) => (
+              <Link
+                key={university.id}
+                href={`/browse?university=${university.id}`}
+                className="rounded-lg border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-sky-500 hover:bg-slate-800"
+              >
+                {university.name}
+              </Link>
+            ))}
+          </div>
+          <p className="mt-3 text-sm text-slate-400">
+            Don&apos;t see your university? Use the full list on the{' '}
+            <Link href="/browse" className="text-sky-400 hover:text-sky-300">
+              Browse page
+            </Link>
+            .
+          </p>
+        </div>
+
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             href="/browse"

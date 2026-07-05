@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 type University = {
@@ -24,6 +25,23 @@ type Resource = {
 };
 
 export default function BrowsePage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
+          <div className="mx-auto max-w-6xl">
+            <p className="text-slate-400">Loading browse page...</p>
+          </div>
+        </main>
+      }
+    >
+      <BrowsePageContent />
+    </Suspense>
+  );
+}
+
+function BrowsePageContent() {
+  const searchParams = useSearchParams();
   const [universities, setUniversities] = useState<University[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -97,13 +115,21 @@ export default function BrowsePage() {
 
       if (!error && data) {
         setUniversities(data);
+
+        const universityParam = searchParams.get("university");
+        if (universityParam) {
+          const matchingUniversity = data.find((university) => university.id === universityParam);
+          if (matchingUniversity) {
+            setSelectedUniversityId(matchingUniversity.id);
+          }
+        }
       }
 
       setLoading(false);
     };
 
     loadUniversities();
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     const loadCourses = async () => {
