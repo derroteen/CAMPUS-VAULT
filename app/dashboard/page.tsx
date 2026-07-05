@@ -10,13 +10,26 @@ type University = {
   name: string;
 };
 
+type Resource = {
+  id: string;
+  title: string;
+  unit_name: string;
+  resource_type: string;
+  status: "pending" | "approved" | "rejected";
+  download_count: number;
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [featuredUniversities, setFeaturedUniversities] = useState<University[]>([]);
   const [approvedUploadsCount, setApprovedUploadsCount] = useState<number | null>(null);
   const [unlockExpiresAt, setUnlockExpiresAt] = useState<string | null>(null);
+  const [myResources, setMyResources] = useState<Resource[]>([]);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [totalDownloads, setTotalDownloads] = useState(0);
 
   useEffect(() => {
     const getUser = async () => {
@@ -33,13 +46,30 @@ export default function DashboardPage() {
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("approved_uploads_count, unlock_expires_at")
+        .select("full_name, approved_uploads_count, unlock_expires_at")
         .eq("id", session.user.id)
         .single();
 
       if (!profileError && profileData) {
+        setFullName(profileData.full_name ?? null);
         setApprovedUploadsCount(profileData.approved_uploads_count ?? 0);
         setUnlockExpiresAt(profileData.unlock_expires_at ?? null);
+      }
+
+      const { data: resourcesData, error: resourcesError } = await supabase
+        .from("resources")
+        .select("id, title, unit_name, resource_type, status, download_count")
+        .eq("uploader_id", session.user.id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (!resourcesError && resourcesData) {
+        setMyResources(resourcesData);
+        setPendingCount(resourcesData.filter((r: Resource) => r.status === "pending").length);
+        const total = resourcesData
+          .filter((r: Resource) => r.status === "approved")
+          .reduce((sum: number, r: Resource) => sum + (r.download_count || 0), 0);
+        setTotalDownloads(total);
       }
 
       const featuredNames = [
@@ -75,7 +105,7 @@ export default function DashboardPage() {
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
       return (
-        <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-left">
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-left">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
             Unlocked
           </p>
@@ -90,7 +120,7 @@ export default function DashboardPage() {
     }
 
     return (
-      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left">
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
           Unlock status
         </p>
@@ -98,6 +128,19 @@ export default function DashboardPage() {
           {approvedUploadsCount ?? 0}/4 resources approved — upload {remainingUploads} more to unlock 7 hours of downloads
         </p>
       </div>
+    );
+  };
+
+  const getStatusBadge = (status: string) => {
+    const colors = {
+      pending: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+      approved: "bg-green-500/20 text-green-300 border-green-500/30",
+      rejected: "bg-red-500/20 text-red-300 border-red-500/30",
+    };
+    return (
+      <span className={`text-xs px-2 py-1 rounded-full border ${colors[status as keyof typeof colors] || "bg-slate-500/20 text-slate-300 border-slate-500/30"}`}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
     );
   };
 
@@ -110,18 +153,83 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-12 text-white">
-      <div className="w-full max-w-xl rounded-xl border border-slate-800 bg-slate-900 p-8 text-center shadow-xl">
-        <h1 className="text-3xl font-semibold">Welcome, {email}</h1>
+    <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-semibold">
+          Welcome, {fullName || email}
+        </h1>
         <p className="mt-3 text-slate-400">
           You are signed in to Campus Vault.
         </p>
-        {getStatusCard()}
-        <div className="mt-6">
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-1 space-y-4">
+            <div className="grid gap-3">
+              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Approved uploads</p>
+                <p className="mt-1 text-2xl font-semibold text-white">{approvedUploadsCount ?? 0}</p>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Pending review</p>
+                <p className="mt-1 text-2xl font-semibold text-white">{pendingCount}</p>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Total downloads</p>
+                <p className="mt-1 text-2xl font-semibold text-white">{totalDownloads}</p>
+              </div>
+            </div>
+            {getStatusCard()}
+          </div>
+
+          <div className="lg:col-span-2">
+            <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-white">My uploads</h2>
+                <Link
+                  href="/upload"
+                  className="text-sm text-sky-400 hover:text-sky-300"
+                >
+                  Upload new
+                </Link>
+              </div>
+
+              {myResources.length > 0 ? (
+                <div className="space-y-3">
+                  {myResources.map((resource) => (
+                    <div key={resource.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
+                      <div>
+                        <p className="text-sm font-medium text-white">{resource.title}</p>
+                        <p className="text-xs text-slate-400">{resource.unit_name}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
+                          {resource.resource_type}
+                        </span>
+                        {getStatusBadge(resource.status)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-slate-400">You haven't uploaded any resources yet.</p>
+                  <Link
+                    href="/upload"
+                    className="mt-3 inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
+                  >
+                    Upload your first resource
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900 p-6">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
             Quick access
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {featuredUniversities.map((university) => (
               <Link
                 key={university.id}
@@ -141,7 +249,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/browse"
             className="inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
