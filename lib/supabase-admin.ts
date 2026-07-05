@@ -1,0 +1,14 @@
+// WARNING: This client bypasses Row Level Security. ONLY import in server-side code (API routes, Server Components).
+// NEVER use in files with "use client" at the top or in any browser-running code.
+
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});
