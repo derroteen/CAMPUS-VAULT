@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function SignUpPage() {
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +18,11 @@ export default function SignUpPage() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({ 
+      email, 
+      password, 
+      options: { data: { full_name: fullName } } 
+    });
 
     if (error) {
       setError(error.message);
@@ -37,6 +42,20 @@ export default function SignUpPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label className="mb-1 block text-sm text-slate-300" htmlFor="fullName">
+              Full Name
+            </label>
+            <input
+              id="fullName"
+              type="text"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none ring-0"
+            />
+          </div>
+          
           <div>
             <label className="mb-1 block text-sm text-slate-300" htmlFor="email">
               Email
