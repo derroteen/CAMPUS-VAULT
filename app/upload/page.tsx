@@ -27,6 +27,9 @@ export default function UploadPage() {
   const [resourceType, setResourceType] = useState<(typeof resourceTypes)[number]>("notes");
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [showCourseRequest, setShowCourseRequest] = useState(false);
+  const [courseRequestName, setCourseRequestName] = useState("");
+  const [courseRequestCode, setCourseRequestCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -84,6 +87,44 @@ export default function UploadPage() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
     setFile(selectedFile);
+  };
+
+  const handleCourseRequestSubmit = async (event?: FormEvent<HTMLFormElement> | null) => {
+    event?.preventDefault();
+    setError(null);
+    setMessage(null);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setError("You must be logged in to request a course.");
+      return;
+    }
+
+    if (!selectedUniversityId || !courseRequestName.trim() || !courseRequestCode.trim()) {
+      setError("Please choose a university, enter a course name, and provide a course code.");
+      return;
+    }
+
+    const { error: requestError } = await supabase.from("course_requests").insert({
+      university_id: selectedUniversityId,
+      requested_name: courseRequestName.trim(),
+      requested_code: courseRequestCode.trim(),
+      requested_by: session.user.id,
+      status: "pending",
+    });
+
+    if (requestError) {
+      setError(requestError.message);
+      return;
+    }
+
+    setMessage("Thanks! Your course has been submitted for review. You can still upload once it's approved.");
+    setShowCourseRequest(false);
+    setCourseRequestName("");
+    setCourseRequestCode("");
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -205,8 +246,59 @@ export default function UploadPage() {
                   </option>
                 ))}
               </select>
+              <button
+                type="button"
+                onClick={() => setShowCourseRequest((current) => !current)}
+                className="mt-2 text-sm text-sky-400 hover:text-sky-300"
+              >
+                Can&apos;t find your course? Request it
+              </button>
             </div>
           </div>
+
+          {showCourseRequest ? (
+            <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
+              <div className="grid gap-3 md:grid-cols-2">
+                <div>
+                  <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-300">
+                    Course name
+                  </label>
+                  <input
+                    id="courseRequestName"
+                    type="text"
+                    value={courseRequestName}
+                    onChange={(e) => setCourseRequestName(e.target.value)}
+                    placeholder="e.g. Introduction to Algorithms"
+                    className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-300">
+                    Course Code
+                  </label>
+                  <input
+                    id="courseRequestCode"
+                    type="text"
+                    value={courseRequestCode}
+                    onChange={(e) => setCourseRequestCode(e.target.value)}
+                    placeholder="e.g. BAC101"
+                    className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleCourseRequestSubmit()}
+                  className="rounded-md bg-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-600"
+                >
+                  Submit request
+                </button>
+              </div>
+            </div>
+          ) : null}
 
           <div>
             <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-300">
@@ -261,7 +353,7 @@ export default function UploadPage() {
             </Link>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !selectedCourseId}
               className="rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Uploading..." : "Upload"}
