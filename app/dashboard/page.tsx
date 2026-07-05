@@ -15,6 +15,8 @@ export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [featuredUniversities, setFeaturedUniversities] = useState<University[]>([]);
+  const [approvedUploadsCount, setApprovedUploadsCount] = useState<number | null>(null);
+  const [unlockExpiresAt, setUnlockExpiresAt] = useState<string | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -28,6 +30,17 @@ export default function DashboardPage() {
       }
 
       setEmail(session.user.email ?? null);
+
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("approved_uploads_count, unlock_expires_at")
+        .eq("id", session.user.id)
+        .single();
+
+      if (!profileError && profileData) {
+        setApprovedUploadsCount(profileData.approved_uploads_count ?? 0);
+        setUnlockExpiresAt(profileData.unlock_expires_at ?? null);
+      }
 
       const featuredNames = [
         "University of Nairobi",
@@ -53,6 +66,41 @@ export default function DashboardPage() {
     getUser();
   }, [router]);
 
+  const getStatusCard = () => {
+    const remainingUploads = Math.max(0, 4 - (approvedUploadsCount ?? 0));
+
+    if (unlockExpiresAt && new Date(unlockExpiresAt).getTime() > Date.now()) {
+      const diffMs = new Date(unlockExpiresAt).getTime() - Date.now();
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      return (
+        <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-left">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            Unlocked
+          </p>
+          <p className="mt-2 text-lg font-medium text-white">
+            {hours} hours {minutes} minutes remaining
+          </p>
+          <p className="mt-1 text-sm text-emerald-100/80">
+            Your 7-hour download window is active.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+          Unlock status
+        </p>
+        <p className="mt-2 text-lg font-medium text-white">
+          {approvedUploadsCount ?? 0}/4 resources approved — upload {remainingUploads} more to unlock 7 hours of downloads
+        </p>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
@@ -68,6 +116,7 @@ export default function DashboardPage() {
         <p className="mt-3 text-slate-400">
           You are signed in to Campus Vault.
         </p>
+        {getStatusCard()}
         <div className="mt-6">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
             Quick access

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -49,7 +50,10 @@ function BrowsePageContent() {
   const [selectedCourseId, setSelectedCourseId] = useState("");
   const [loading, setLoading] = useState(true);
   const [resourceLoading, setResourceLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [resourceTypeFilter, setResourceTypeFilter] = useState("all");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [unlockExpiresAt, setUnlockExpiresAt] = useState<string | null>(null);
   const [unlockNotice, setUnlockNotice] = useState<string | null>(null);
   const [unlockTargetId, setUnlockTargetId] = useState<string | null>(null);
@@ -64,6 +68,7 @@ function BrowsePageContent() {
       if (!session?.user) {
         setIsAdmin(false);
         setUnlockExpiresAt(null);
+        setProfileLoaded(true);
         return;
       }
 
@@ -77,12 +82,15 @@ function BrowsePageContent() {
         setIsAdmin(Boolean(data.is_admin));
         setUnlockExpiresAt(data.unlock_expires_at);
       }
+
+      setProfileLoaded(true);
     };
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session?.user) {
         setIsAdmin(false);
         setUnlockExpiresAt(null);
+        setProfileLoaded(true);
         return;
       }
 
@@ -96,6 +104,8 @@ function BrowsePageContent() {
             setIsAdmin(Boolean(data.is_admin));
             setUnlockExpiresAt(data.unlock_expires_at);
           }
+
+          setProfileLoaded(true);
         });
     });
 
@@ -195,6 +205,42 @@ function BrowsePageContent() {
     return new Date(unlockExpiresAt).getTime() > Date.now();
   };
 
+  const filteredResources = resources.filter((resource) => {
+    const matchesSearch = `${resource.title} ${resource.unit_name ?? ""}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesType =
+      resourceTypeFilter === "all" || resource.resource_type === resourceTypeFilter;
+
+    return matchesSearch && matchesType;
+  });
+
+  const getResourceBadge = (type: string) => {
+    switch (type) {
+      case "past_paper":
+        return "bg-amber-500/15 text-amber-200";
+      case "assignment":
+        return "bg-violet-500/15 text-violet-200";
+      case "summary":
+        return "bg-emerald-500/15 text-emerald-200";
+      default:
+        return "bg-sky-500/15 text-sky-200";
+    }
+  };
+
+  const getResourceLabel = (type: string) => {
+    switch (type) {
+      case "past_paper":
+        return "PAST PAPER";
+      case "assignment":
+        return "ASSIGNMENT";
+      case "summary":
+        return "SUMMARY";
+      default:
+        return "NOTES";
+    }
+  };
+
   const handleDownload = async (resource: Resource) => {
     if (!hasUnlockedAccess()) {
       setUnlockTargetId(resource.id);
@@ -242,111 +288,194 @@ function BrowsePageContent() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold">Browse resources</h1>
-          <p className="mt-2 text-slate-400">
-            Select a university and course to see approved materials.
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-            <label htmlFor="university" className="mb-2 block text-sm text-slate-300">
-              University
-            </label>
-            <select
-              id="university"
-              value={selectedUniversityId}
-              onChange={(e) => setSelectedUniversityId(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-              disabled={loading}
-            >
-              <option value="">Select a university</option>
-              {universities.map((university) => (
-                <option key={university.id} value={university.id}>
-                  {university.name}
-                </option>
-              ))}
-            </select>
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <section className="overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+          <div className="inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm font-medium text-sky-200">
+            Verified Study Resource Hub
           </div>
-
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-            <label htmlFor="course" className="mb-2 block text-sm text-slate-300">
-              Course
-            </label>
-            <select
-              id="course"
-              value={selectedCourseId}
-              onChange={(e) => setSelectedCourseId(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-              disabled={!selectedUniversityId || courses.length === 0}
-            >
-              <option value="">Select a course</option>
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.code} — {course.name}
-                </option>
-              ))}
-            </select>
+          <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+            <div>
+              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+                Find notes, past papers, and study guides
+              </h1>
+              <p className="mt-4 max-w-2xl text-lg text-slate-400">
+                Discover trusted resources curated for your university and course in one streamlined hub.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+              <label htmlFor="resource-search" className="mb-2 block text-sm font-medium text-slate-300">
+                Search resources
+              </label>
+              <input
+                id="resource-search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by title or unit"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none ring-0 placeholder:text-slate-500"
+              />
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mt-8">
-          {resourceLoading ? (
-            <p className="text-slate-400">Loading resources...</p>
-          ) : selectedCourseId && resources.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {resources.map((resource) => (
-                <div
-                  key={resource.id}
-                  className="rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm"
+        <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
+          <aside className="space-y-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
+              <h2 className="text-lg font-semibold text-white">Filters</h2>
+              <div className="mt-4 space-y-4">
+                <div>
+                  <label htmlFor="university" className="mb-2 block text-sm text-slate-300">
+                    University
+                  </label>
+                  <select
+                    id="university"
+                    value={selectedUniversityId}
+                    onChange={(e) => setSelectedUniversityId(e.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"
+                    disabled={loading}
+                  >
+                    <option value="">Select a university</option>
+                    {universities.map((university) => (
+                      <option key={university.id} value={university.id}>
+                        {university.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="course" className="mb-2 block text-sm text-slate-300">
+                    Course
+                  </label>
+                  <select
+                    id="course"
+                    value={selectedCourseId}
+                    onChange={(e) => setSelectedCourseId(e.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"
+                    disabled={!selectedUniversityId || courses.length === 0}
+                  >
+                    <option value="">Select a course</option>
+                    {courses.map((course) => (
+                      <option key={course.id} value={course.id}>
+                        {course.code} — {course.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-300">
+                    Resource Type
+                  </label>
+                  <select
+                    id="resource-type"
+                    value={resourceTypeFilter}
+                    onChange={(e) => setResourceTypeFilter(e.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="notes">notes</option>
+                    <option value="past_paper">past_paper</option>
+                    <option value="assignment">assignment</option>
+                    <option value="summary">summary</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {profileLoaded && !hasUnlockedAccess() ? (
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5 shadow-lg">
+                <h3 className="text-base font-semibold text-amber-200">Need unlimited access?</h3>
+                <p className="mt-2 text-sm leading-6 text-amber-100/90">
+                  Upload 4 approved resources and unlock 7 hours of downloads with the 4-for-7 model.
+                </p>
+                <Link
+                  href="/upload"
+                  className="mt-4 inline-flex rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-amber-400"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="text-lg font-semibold text-white">{resource.title}</h2>
-                      <p className="mt-2 text-sm text-slate-400">
-                        {resource.unit_name ? `${resource.unit_name} • ` : ""}
-                        {resource.resource_type}
-                      </p>
+                  Upload resource
+                </Link>
+              </div>
+            ) : null}
+          </aside>
+
+          <section>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold text-white">Approved resources</h2>
+                <p className="text-sm text-slate-400">
+                  {selectedCourseId
+                    ? "Explore the current course collection below."
+                    : "Choose a university and course to start browsing."}
+                </p>
+              </div>
+              {selectedCourseId ? (
+                <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-sm text-slate-300">
+                  {filteredResources.length} results
+                </span>
+              ) : null}
+            </div>
+
+            {resourceLoading ? (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+                Loading resources...
+              </div>
+            ) : selectedCourseId && filteredResources.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                {filteredResources.map((resource) => (
+                  <article
+                    key={resource.id}
+                    className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm transition hover:border-sky-500/40 hover:shadow-lg"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${getResourceBadge(resource.resource_type)}`}>
+                        {getResourceLabel(resource.resource_type)}
+                      </span>
+                      <div className="flex items-center gap-1 text-sm text-slate-400">
+                        <span>⬇</span>
+                        <span>{resource.download_count}</span>
+                      </div>
                     </div>
-                    <span className="rounded-full bg-sky-900/60 px-3 py-1 text-xs text-sky-200">
-                      {resource.download_count} downloads
-                    </span>
-                  </div>
-                  {unlockTargetId === resource.id && unlockNotice ? (
-                    <div className="mt-5 space-y-2">
-                      <p className="text-sm text-amber-300">{unlockNotice}</p>
+
+                    <h3 className="mt-4 text-lg font-semibold text-white">{resource.title}</h3>
+                    <p className="mt-2 text-sm text-slate-400">
+                      {resource.unit_name ?? "No unit listed"}
+                    </p>
+
+                    {unlockTargetId === resource.id && unlockNotice ? (
+                      <div className="mt-5 space-y-2">
+                        <p className="text-sm text-amber-300">{unlockNotice}</p>
+                        <button
+                          type="button"
+                          className="w-full rounded-xl border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                        >
+                          Pay KES 30
+                        </button>
+                      </div>
+                    ) : (
                       <button
                         type="button"
-                        className="w-full rounded-md border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                        onClick={() => handleDownload(resource)}
+                        disabled={downloadingId === resource.id}
+                        className="mt-5 w-full rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-700"
                       >
-                        Pay KES 30
+                        {downloadingId === resource.id ? "Preparing..." : "Download"}
                       </button>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleDownload(resource)}
-                      disabled={downloadingId === resource.id}
-                      className="mt-5 w-full rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-700"
-                    >
-                      {downloadingId === resource.id ? "Preparing..." : "Download"}
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : selectedCourseId ? (
-            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/60 p-8 text-center text-slate-400">
-              No approved resources found for this course yet.
-            </div>
-          ) : (
-            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/60 p-8 text-center text-slate-400">
-              Choose a course to view approved resources.
-            </div>
-          )}
+                    )}
+                  </article>
+                ))}
+              </div>
+            ) : selectedCourseId ? (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+                No approved resources match your current filters yet.
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+                Choose a course to view approved resources.
+              </div>
+            )}
+          </section>
         </div>
       </div>
     </main>
