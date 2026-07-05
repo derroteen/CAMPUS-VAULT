@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -62,6 +63,13 @@ export default function Home() {
       <div className="mx-auto max-w-7xl">
         {/* Hero Section */}
         <div className="text-center">
+          <Image
+            src="/logo.svg"
+            alt="Campus Vault Logo"
+            width={64}
+            height={64}
+            className="mx-auto mb-6 h-16 w-16"
+          />
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-sky-400">
             Your campus hub
           </p>
