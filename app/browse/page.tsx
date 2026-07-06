@@ -210,6 +210,7 @@ function BrowsePageContent() {
       const { data, error } = await supabase
         .from("universities")
         .select("id, name")
+        .eq("is_active", true)
         .order("name", { ascending: true });
 
       if (!error && data) {
@@ -221,6 +222,9 @@ function BrowsePageContent() {
           if (matchingUniversity) {
             setSelectedUniversityId(matchingUniversity.id);
           }
+        } else if (data.length === 1) {
+          // Auto-select if only one active university
+          setSelectedUniversityId(data[0].id);
         }
       }
 
@@ -537,20 +541,26 @@ function BrowsePageContent() {
           </div>
         </section>
 
-        <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
-          <span className="text-sm text-slate-400">Popular universities</span>
-          {featuredUniversities.map((university) => (
-            <button
-              key={university.id}
-              type="button"
-              onClick={() => handleFeaturedUniversitySelect(university.id)}
-              className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1.5 text-sm text-slate-200 transition hover:border-sky-500 hover:text-white"
-            >
-              {university.name}
-            </button>
-          ))}
-          <span className="ml-1 text-sm text-slate-500">🔎 search above if yours isn&apos;t listed</span>
-        </div>
+        {universities.length > 1 ? (
+          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
+            <span className="text-sm text-slate-400">Popular universities</span>
+            {featuredUniversities.map((university) => (
+              <button
+                key={university.id}
+                type="button"
+                onClick={() => handleFeaturedUniversitySelect(university.id)}
+                className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1.5 text-sm text-slate-200 transition hover:border-sky-500 hover:text-white"
+              >
+                {university.name}
+              </button>
+            ))}
+            <span className="ml-1 text-sm text-slate-500">🔎 search above if yours isn&apos;t listed</span>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-center">
+            <span className="text-sm text-slate-300">Now live for {universities[0]?.name || 'Maseno University'} students</span>
+          </div>
+        )}
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-4">

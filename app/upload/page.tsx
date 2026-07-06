@@ -51,10 +51,14 @@ export default function UploadPage() {
       const { data, error } = await supabase
         .from("universities")
         .select("id, name")
+        .eq("is_active", true)
         .order("name", { ascending: true });
 
       if (!error && data) {
         setUniversities(data);
+        if (data.length === 1) {
+          setSelectedUniversityId(data[0].id);
+        }
       }
 
       setLoading(false);

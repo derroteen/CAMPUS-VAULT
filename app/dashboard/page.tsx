@@ -84,7 +84,8 @@ export default function DashboardPage() {
       const { data, error } = await supabase
         .from("universities")
         .select("id, name")
-        .in("name", featuredNames);
+        .in("name", featuredNames)
+        .eq("is_active", true);
 
       if (!error && data) {
         setFeaturedUniversities(data);
