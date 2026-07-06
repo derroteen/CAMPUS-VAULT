@@ -2,6 +2,23 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { createClient } from "@supabase/supabase-js";
 
+async function fetchWithRetry(url: string, options: RequestInit, maxAttempts = 3): Promise<Response> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      return response;
+    } catch (error) {
+      lastError = error;
+      console.log(`Fetch attempt ${attempt} failed:`, error);
+      if (attempt < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      }
+    }
+  }
+  throw lastError;
+}
+
 // We use supabaseAdmin here to write the checkout_request_id to the transactions table
 // because the regular supabase client (with RLS) might not allow inserting this sensitive
 // field directly from user-facing requests. Using the service role client bypasses RLS
@@ -65,7 +82,7 @@ export async function POST(request: Request) {
       "base64"
     );
 
-    const tokenResponse = await fetch(
+    const tokenResponse = await fetchWithRetry(
       "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
       {
         headers: {
@@ -96,7 +113,7 @@ export async function POST(request: Request) {
 
     const callbackUrl = process.env.DARAJA_CALLBACK_URL ?? "";
 
-    const stkPushResponse = await fetch(
+    const stkPushResponse = await fetchWithRetry(
       "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
       {
         method: "POST",
@@ -143,8 +160,16 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Error in STK Push route:", error);
+    const isNetworkError = 
+      (error instanceof TypeError && error.message.includes('fetch')) ||
+      (error instanceof Error && (error.message.includes('socket') || error.message.includes('connection')));
+
+    const errorMessage = isNetworkError
+      ? "Safaricom appears to be temporarily unreachable, please try again"
+      : "Internal server error";
+
     return NextResponse.json(
-      { success: false, error: "Internal server error" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
