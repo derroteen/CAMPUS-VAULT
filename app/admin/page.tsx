@@ -150,25 +150,14 @@ export default function AdminPage() {
       }
 
       // Load top contributors
-      const { data: activeUniversity } = await supabase
-        .from("universities")
-        .select("id")
-        .eq("is_active", true)
-        .limit(1)
-        .single();
+      const { data: contributorsData } = await supabase
+        .from("profiles")
+        .select("id, full_name, approved_uploads_count, is_premium_contributor")
+        .order("approved_uploads_count", { ascending: false })
+        .limit(20);
 
-      if (activeUniversity?.id) {
-        // Then, get profiles that belong to this university, and rank by approved_uploads_count
-        const { data: contributorsData } = await supabase
-          .from("profiles")
-          .select("id, full_name, approved_uploads_count, is_premium_contributor")
-          .eq("university_id", activeUniversity.id)
-          .order("approved_uploads_count", { ascending: false })
-          .limit(20);
-        
-        if (contributorsData) {
-          setTopContributors(contributorsData);
-        }
+      if (contributorsData) {
+        setTopContributors(contributorsData);
       }
 
       setLoading(false);
