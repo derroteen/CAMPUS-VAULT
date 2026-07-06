@@ -421,6 +421,12 @@ function BrowsePageContent() {
   }, [paymentReference]);
 
   useEffect(() => {
+    if (showPaymentForm || paymentReference) {
+      document.getElementById('payment-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [showPaymentForm, paymentReference]);
+
+  useEffect(() => {
     if (!paymentReference || pollingCount >= 30) {
       return;
     }
@@ -616,7 +622,12 @@ function BrowsePageContent() {
             </div>
 
             {profileLoaded && !hasUnlockedAccess() ? (
-              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5 shadow-lg">
+              <div
+                id="payment-card"
+                className={`rounded-2xl border bg-amber-500/10 p-5 shadow-lg transition-all ${
+                  paymentReference ? "border-2 border-amber-400/80 shadow-amber-500/30 animate-pulse" : "border border-amber-500/20"
+                }`}
+              >
                 <h3 className="text-base font-semibold text-amber-200">Need unlimited access?</h3>
                 <p className="mt-2 text-sm leading-6 text-amber-100/90">
                   Upload 4 approved resources and unlock 7 hours of downloads with the 4-for-7 model.
