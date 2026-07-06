@@ -23,6 +23,13 @@ type PendingCourseRequest = {
   requested_by: string;
 };
 
+type TopContributor = {
+  id: string;
+  full_name: string | null;
+  approved_uploads_count: number;
+  is_premium_contributor: boolean;
+};
+
 export default function AdminPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -32,8 +39,10 @@ export default function AdminPage() {
   const [courses, setCourses] = useState<Record<string, string>>({});
   const [universities, setUniversities] = useState<Record<string, string>>({});
   const [requesters, setRequesters] = useState<Record<string, string>>({});
+  const [topContributors, setTopContributors] = useState<TopContributor[]>([]);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [currentAdminId, setCurrentAdminId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAdminPage = async () => {
@@ -45,6 +54,8 @@ export default function AdminPage() {
         router.replace("/login");
         return;
       }
+
+      setCurrentAdminId(session.user.id);
 
       const { data: profileData } = await supabase
         .from("profiles")
@@ -136,6 +147,28 @@ export default function AdminPage() {
           (universitiesData ?? []).map((university) => [university.id, university.name])
         );
         setUniversities(universityMap);
+      }
+
+      // Load top contributors
+      const { data: activeUniversity } = await supabase
+        .from("universities")
+        .select("id")
+        .eq("is_active", true)
+        .limit(1)
+        .single();
+
+      if (activeUniversity?.id) {
+        // Then, get profiles that belong to this university, and rank by approved_uploads_count
+        const { data: contributorsData } = await supabase
+          .from("profiles")
+          .select("id, full_name, approved_uploads_count, is_premium_contributor")
+          .eq("university_id", activeUniversity.id)
+          .order("approved_uploads_count", { ascending: false })
+          .limit(20);
+        
+        if (contributorsData) {
+          setTopContributors(contributorsData);
+        }
       }
 
       setLoading(false);
@@ -237,6 +270,56 @@ export default function AdminPage() {
       .eq("id", requestId);
 
     setCourseRequests((current) => current.filter((request) => request.id !== requestId));
+    setProcessingId(null);
+  };
+
+  const handleGrantPremium = async (userId: string) => {
+    if (!currentAdminId) return;
+    setProcessingId(userId);
+    
+    // Calculate 90 days from now
+    const ninetyDaysFromNow = new Date();
+    ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
+
+    await supabase
+      .from("profiles")
+      .update({
+        is_premium_contributor: true,
+        premium_granted_at: new Date().toISOString(),
+        premium_granted_by: currentAdminId,
+        unlock_expires_at: ninetyDaysFromNow.toISOString()
+      })
+      .eq("id", userId);
+
+    // Update local state
+    setTopContributors((current) =>
+      current.map((contributor) =>
+        contributor.id === userId
+          ? { ...contributor, is_premium_contributor: true }
+          : contributor
+      )
+    );
+    
+    setProcessingId(null);
+  };
+
+  const handleRevokePremium = async (userId: string) => {
+    setProcessingId(userId);
+    
+    await supabase
+      .from("profiles")
+      .update({ is_premium_contributor: false })
+      .eq("id", userId);
+
+    // Update local state
+    setTopContributors((current) =>
+      current.map((contributor) =>
+        contributor.id === userId
+          ? { ...contributor, is_premium_contributor: false }
+          : contributor
+      )
+    );
+    
     setProcessingId(null);
   };
 
@@ -345,6 +428,59 @@ export default function AdminPage() {
                     >
                       Reject
                     </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        <div className="border-t border-slate-800" />
+
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+          <h2 className="text-xl font-semibold">Top Contributors</h2>
+          <div className="mt-4 space-y-3">
+            {topContributors.length === 0 ? (
+              <p className="text-slate-400">No contributors yet.</p>
+            ) : (
+              topContributors.map((contributor) => (
+                <div
+                  key={contributor.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <h3 className="font-medium text-white flex items-center gap-2">
+                        {contributor.full_name || 'Anonymous User'}
+                        {contributor.is_premium_contributor && (
+                          <span className="rounded-full bg-amber-500/20 px-3 py-0.5 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 border border-amber-500/30">
+                            Premium
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-sm text-slate-400">
+                        Approved uploads: <span className="font-medium text-white">{contributor.approved_uploads_count}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {!contributor.is_premium_contributor ? (
+                      <button
+                        onClick={() => handleGrantPremium(contributor.id)}
+                        disabled={processingId === contributor.id}
+                        className="rounded-xl bg-amber-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-amber-500 disabled:opacity-60"
+                      >
+                        Grant Premium
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleRevokePremium(contributor.id)}
+                        disabled={processingId === contributor.id}
+                        className="rounded-xl bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-600 disabled:opacity-60"
+                      >
+                        Revoke Premium
+                      </button>
+                    )}
                   </div>
                 </div>
               ))
