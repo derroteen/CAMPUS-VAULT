@@ -742,7 +742,7 @@ function BrowsePageContent() {
       {/* Payment Modal */}
       {showPaymentForm || paymentReference ? (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 p-4"
+          className="fixed inset-0 flex items-center justify-center bg-slate-950/80 z-50 p-4"
           onClick={() => {
             if (!paymentReference) {
               setShowPaymentForm(false);
@@ -753,36 +753,36 @@ function BrowsePageContent() {
           }}
         >
           <div
-            className={`rounded-2xl border bg-amber-500/10 p-6 shadow-2xl max-w-md w-full transition-all ${
-              paymentReference ? "border-2 border-amber-400/80 shadow-amber-500/30 animate-pulse" : "border border-amber-500/20"
+            className={`rounded-2xl border bg-slate-900 p-6 shadow-xl max-w-md w-full transition-all ${
+              paymentReference ? "border-2 border-blue-400/80 shadow-blue-500/30 animate-pulse" : "border border-blue-800/40"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-amber-200">Need unlimited access?</h3>
-            <p className="mt-2 text-sm leading-6 text-amber-100/90">
+            <h3 className="text-lg font-semibold text-blue-400">Need unlimited access?</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
               Pay KES 30 via M-Pesa to unlock 7 hours of downloads!
             </p>
             <div className="mt-5 space-y-3">
               <form onSubmit={handlePaymentSubmit} className="space-y-3">
                 {paymentMessage && (
-                  <p className={`text-sm ${paymentError ? "text-red-300" : "text-amber-300"}`}>
+                  <p className={`text-sm ${paymentError ? "text-red-300" : "text-blue-300"}`}>
                     {paymentMessage}
                   </p>
                 )}
                 {paymentReference && pollingCount < 30 && (
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-amber-200 border-t-transparent"></div>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-200 border-t-transparent"></div>
                   </div>
                 )}
                 {paymentReference && pollingCount >= 30 && (
                   <div className="space-y-2">
-                    <p className="text-sm text-amber-300">
+                    <p className="text-sm text-blue-300">
                       Still waiting for confirmation. If you completed the payment on your phone, please wait a moment and refresh the page.
                     </p>
                     <button
                       type="button"
                       onClick={checkTransactionStatus}
-                      className="w-full rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                      className="w-full rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
                     >
                       Check status
                     </button>
@@ -796,12 +796,12 @@ function BrowsePageContent() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       disabled={paymentInProgress}
-                      className="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-white outline-none placeholder:text-amber-200/50"
+                      className="w-full rounded-xl border border-blue-500/40 bg-slate-800 px-4 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-500"
                     />
                     <button
                       type="submit"
                       disabled={paymentInProgress}
-                      className="w-full rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-amber-500/50"
+                      className="w-full rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-600/50"
                     >
                       {paymentInProgress ? "Processing..." : "Send Payment Request"}
                     </button>
@@ -816,7 +816,7 @@ function BrowsePageContent() {
                       setPaymentMessage(null);
                       setPaymentError(false);
                     }}
-                    className="w-full text-xs text-amber-200/70 underline"
+                    className="w-full text-xs text-slate-400 underline"
                   >
                     Cancel payment
                   </button>
