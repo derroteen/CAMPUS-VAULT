@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 
 type University = {
@@ -62,6 +62,13 @@ function BrowsePageContent() {
   const [unlockNotice, setUnlockNotice] = useState<string | null>(null);
   const [unlockTargetId, setUnlockTargetId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [paymentInProgress, setPaymentInProgress] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+  const [pollingCount, setPollingCount] = useState(0);
+  const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
+  const [paymentError, setPaymentError] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -367,6 +374,112 @@ function BrowsePageContent() {
     setDownloadingId(null);
   };
 
+  const refreshProfile = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      return;
+    }
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("is_admin, unlock_expires_at")
+      .eq("id", session.user.id)
+      .single();
+
+    if (data) {
+      setIsAdmin(Boolean(data.is_admin));
+      setUnlockExpiresAt(data.unlock_expires_at);
+    }
+  };
+
+  const checkTransactionStatus = useCallback(async () => {
+    if (!paymentReference) return;
+
+    const { data } = await supabase
+      .from("transactions")
+      .select("status")
+      .eq("paystack_reference", paymentReference)
+      .single();
+
+    if (!data) return;
+
+    if (data.status === "success") {
+      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads");
+      setPollingCount(0);
+      setPaymentReference(null);
+      setShowPaymentForm(false);
+      await refreshProfile();
+    } else if (data.status === "failed") {
+      setPaymentMessage("Payment was not completed. Please try again.");
+      setPollingCount(0);
+      setPaymentReference(null);
+      setPaymentError(true);
+    }
+  }, [paymentReference]);
+
+  useEffect(() => {
+    if (!paymentReference || pollingCount >= 30) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      await checkTransactionStatus();
+      setPollingCount((prev) => prev + 1);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [paymentReference, pollingCount, checkTransactionStatus]);
+
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPaymentError(false);
+    setPaymentMessage(null);
+
+    const phonePattern = /^(07|01)\d{8}$/;
+    if (!phonePattern.test(phoneNumber)) {
+      setPaymentMessage("Please enter a valid Kenyan phone number (e.g. 0712345678)");
+      setPaymentError(true);
+      return;
+    }
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      return;
+    }
+
+    setPaymentInProgress(true);
+
+    try {
+      const response = await fetch("/api/paystack/charge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ phoneNumber })
+      });
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error("Failed to initiate payment");
+      }
+
+      setPaymentReference(result.data.reference);
+      setPaymentMessage("Check your phone to enter your M-Pesa PIN and complete the payment...");
+    } catch (error) {
+      console.error("Payment error:", error);
+      setPaymentMessage("Something went wrong. Please try again.");
+      setPaymentError(true);
+    } finally {
+      setPaymentInProgress(false);
+    }
+  };
+
   const featuredUniversities = universities.filter((university) =>
     [
       "University of Nairobi",
@@ -508,12 +621,85 @@ function BrowsePageContent() {
                 <p className="mt-2 text-sm leading-6 text-amber-100/90">
                   Upload 4 approved resources and unlock 7 hours of downloads with the 4-for-7 model.
                 </p>
-                <Link
-                  href="/upload"
-                  className="mt-4 inline-flex rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-amber-400"
-                >
-                  Upload resource
-                </Link>
+                <div className="mt-4 space-y-3">
+                  {!showPaymentForm ? (
+                    <div className="flex gap-3">
+                      <Link
+                        href="/upload"
+                        className="flex-1 rounded-full bg-amber-500 px-4 py-2 text-center text-sm font-medium text-slate-950 transition hover:bg-amber-400"
+                      >
+                        Upload resource
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setShowPaymentForm(true)}
+                        className="flex-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                      >
+                        Pay KES 30
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handlePaymentSubmit} className="space-y-3">
+                      {paymentMessage && (
+                        <p className={`text-sm ${paymentError ? "text-red-300" : "text-amber-300"}`}>
+                          {paymentMessage}
+                        </p>
+                      )}
+                      {paymentReference && pollingCount < 30 && (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-amber-200 border-t-transparent"></div>
+                        </div>
+                      )}
+                      {paymentReference && pollingCount >= 30 && (
+                        <div className="space-y-2">
+                          <p className="text-sm text-amber-300">
+                            Still waiting for confirmation. If you completed the payment on your phone, please wait a moment and refresh the page.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={checkTransactionStatus}
+                            className="w-full rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                          >
+                            Check status
+                          </button>
+                        </div>
+                      )}
+                      {!paymentReference && (
+                        <>
+                          <input
+                            type="tel"
+                            placeholder="e.g. 0712345678"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            disabled={paymentInProgress}
+                            className="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-white outline-none placeholder:text-amber-200/50"
+                          />
+                          <button
+                            type="submit"
+                            disabled={paymentInProgress}
+                            className="w-full rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-amber-500/50"
+                          >
+                            {paymentInProgress ? "Processing..." : "Send Payment Request"}
+                          </button>
+                        </>
+                      )}
+                      {showPaymentForm && !paymentReference && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowPaymentForm(false);
+                            setPhoneNumber("");
+                            setPaymentMessage(null);
+                            setPaymentError(false);
+                          }}
+                          className="text-xs text-amber-200/70 underline"
+                        >
+                          Cancel payment
+                        </button>
+                      )}
+                    </form>
+                  )}
+                </div>
               </div>
             ) : null}
           </aside>
@@ -575,12 +761,19 @@ function BrowsePageContent() {
                     {unlockTargetId === resource.id && unlockNotice ? (
                       <div className="mt-5 space-y-2">
                         <p className="text-sm text-amber-300">{unlockNotice}</p>
-                        <button
-                          type="button"
-                          className="w-full rounded-xl border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
-                        >
-                          Pay KES 30
-                        </button>
+                        {!showPaymentForm ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowPaymentForm(true);
+                              setUnlockTargetId(null);
+                              setUnlockNotice(null);
+                            }}
+                            className="w-full rounded-xl border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                          >
+                            Pay KES 30
+                          </button>
+                        ) : null}
                       </div>
                     ) : (
                       <button
