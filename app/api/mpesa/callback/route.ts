@@ -40,7 +40,6 @@ export async function POST(request: Request) {
           status: "success",
           mpesa_receipt: mpesaReceipt,
           unlock_granted: true,
-          updated_at: new Date().toISOString(),
         })
         .eq("id", transaction.id)
         .select();
@@ -64,7 +63,6 @@ export async function POST(request: Request) {
         .from("transactions")
         .update({
           status: "failed",
-          updated_at: new Date().toISOString(),
         })
         .eq("id", transaction.id)
         .select();
