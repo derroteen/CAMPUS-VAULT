@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { createClient } from "@supabase/supabase-js";
 
+export const runtime = 'nodejs';
+export const preferredRegion = 'fra1';
+
 async function fetchWithRetry(url: string, options: RequestInit, maxAttempts = 3): Promise<Response> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
+export const runtime = 'nodejs';
+export const preferredRegion = 'fra1';
+
 // This callback route receives requests directly from Safaricom's servers — there is NO user session here!
 // We MUST use supabaseAdmin (service role client) because:
 // 1. There is no authenticated user making this request
