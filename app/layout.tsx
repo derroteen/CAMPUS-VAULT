@@ -15,8 +15,9 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Campus Vault",
-  description: "A simple campus hub built with Next.js and Supabase",
+  title: "Campus Vault | Maseno University Notes, Past Papers & Study Resources",
+  description:
+    "Download Maseno University notes, past papers, CATs and study guides. Upload notes or unlock unlimited downloads for 7 hours with Campus Vault.",
 };
 
 export default function RootLayout({

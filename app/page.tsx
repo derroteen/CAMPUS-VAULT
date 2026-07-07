@@ -45,8 +45,8 @@ export default function Home() {
       description: "Peer-uploaded and moderated notes, past papers, and study guides",
     },
     {
-      title: "57+ Kenyan universities",
-      description: "Organized by university and course for easy discovery",
+      title: "Maseno University only",
+      description: "Organized by course for faster discovery across Maseno University",
     },
     {
       title: "4-for-7 unlock model",
@@ -73,9 +73,12 @@ export default function Home() {
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-sky-400">
             Your campus hub
           </p>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Campus Vault</h1>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+            Download Maseno University Notes, Past Papers & Study Resources
+          </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl">
-            A secure place to organize campus life, resources, and opportunities.
+            Access verified notes, CATs, past papers and study guides for Maseno University students.
+            Upload your own resources or unlock unlimited downloads for 7 hours.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
@@ -123,7 +126,7 @@ export default function Home() {
             <div className="mx-auto max-w-2xl rounded-3xl border border-slate-800 bg-slate-900 p-10">
               <h2 className="text-3xl font-semibold text-white">Ready to get started?</h2>
               <p className="mt-3 text-slate-400">
-                Join thousands of students sharing and accessing study resources.
+                Join Maseno University students sharing and accessing study resources.
               </p>
               <div className="mt-8">
                 <Link
