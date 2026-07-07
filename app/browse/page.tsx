@@ -251,13 +251,27 @@ function BrowsePageContent() {
 
       if (!error && data) {
         setCourses(data);
+
+        const courseParam = searchParams.get("course");
+        const matchingCourse = courseParam
+          ? data.find((course) => course.id === courseParam)
+          : undefined;
+
+        if (matchingCourse) {
+          setSelectedCourseId(matchingCourse.id);
+        } else {
+          setSelectedCourseId("");
+          setResources([]);
+        }
+        return;
       }
+
       setSelectedCourseId("");
       setResources([]);
     };
 
     loadCourses();
-  }, [selectedUniversityId]);
+  }, [searchParams, selectedUniversityId]);
 
   useEffect(() => {
     const loadResources = async () => {

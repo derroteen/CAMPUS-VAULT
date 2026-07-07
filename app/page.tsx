@@ -5,9 +5,28 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
+type HomepageStats = {
+  resources: number;
+  courses: number;
+  students: number;
+};
+
+type PopularCourse = {
+  id: string;
+  name: string;
+  universityId: string;
+  resourceCount: number;
+};
+
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<HomepageStats>({
+    resources: 0,
+    courses: 0,
+    students: 0,
+  });
+  const [popularCourses, setPopularCourses] = useState<PopularCourse[]>([]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -29,6 +48,80 @@ export default function Home() {
     };
 
     checkSession();
+  }, []);
+
+  useEffect(() => {
+    const loadHomepageData = async () => {
+      const [approvedResourcesResult, profilesResult, masenoUniversityResult] = await Promise.all([
+        supabase
+          .from("resources")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "approved"),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true }),
+        supabase
+          .from("universities")
+          .select("id")
+          .eq("name", "Maseno University")
+          .maybeSingle(),
+      ]);
+
+      let coursesWithApprovedResources = 0;
+      let topCourses: PopularCourse[] = [];
+
+      if (masenoUniversityResult.data?.id) {
+        const universityId = masenoUniversityResult.data.id;
+        const { data: coursesData } = await supabase
+          .from("courses")
+          .select("id, name")
+          .eq("university_id", universityId);
+
+        const courseIds = (coursesData ?? []).map((course) => course.id);
+
+        if (courseIds.length > 0) {
+          const { data: approvedCourseResources } = await supabase
+            .from("resources")
+            .select("course_id")
+            .eq("status", "approved")
+            .in("course_id", courseIds);
+
+          const resourceCountsByCourse = new Map<string, number>();
+
+          (approvedCourseResources ?? []).forEach((resource) => {
+            if (!resource.course_id) {
+              return;
+            }
+
+            resourceCountsByCourse.set(
+              resource.course_id,
+              (resourceCountsByCourse.get(resource.course_id) ?? 0) + 1
+            );
+          });
+
+          coursesWithApprovedResources = resourceCountsByCourse.size;
+          topCourses = (coursesData ?? [])
+            .map((course) => ({
+              id: course.id,
+              name: course.name,
+              universityId,
+              resourceCount: resourceCountsByCourse.get(course.id) ?? 0,
+            }))
+            .filter((course) => course.resourceCount > 0)
+            .sort((a, b) => b.resourceCount - a.resourceCount || a.name.localeCompare(b.name))
+            .slice(0, 8);
+        }
+      }
+
+      setStats({
+        resources: approvedResourcesResult.count ?? 0,
+        courses: coursesWithApprovedResources,
+        students: profilesResult.count ?? 0,
+      });
+      setPopularCourses(topCourses);
+    };
+
+    loadHomepageData();
   }, []);
 
   if (loading) {
@@ -80,6 +173,13 @@ export default function Home() {
             Access verified notes, CATs, past papers and study guides for Maseno University students.
             Upload your own resources or unlock unlimited downloads for 7 hours.
           </p>
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-300">
+            Campus Vault helps Maseno University students download notes, past papers, CATs,
+            assignments and study guides &mdash; organized by course and unit for fast, easy access.
+          </p>
+          <h2 className="mx-auto mt-8 max-w-4xl text-2xl font-semibold leading-tight text-white sm:text-3xl">
+            Upload 4 Notes or Pay KSh 30 to Unlock Unlimited Downloads for 7 Hours
+          </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
               <Link
@@ -106,6 +206,39 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* Live Stats */}
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p className="text-3xl font-bold text-white">{stats.resources}</p>
+            <p className="mt-1 text-sm uppercase tracking-[0.2em] text-slate-400">Notes</p>
+          </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p className="text-3xl font-bold text-white">{stats.courses}</p>
+            <p className="mt-1 text-sm uppercase tracking-[0.2em] text-slate-400">Courses</p>
+          </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p className="text-3xl font-bold text-white">{stats.students}</p>
+            <p className="mt-1 text-sm uppercase tracking-[0.2em] text-slate-400">Students</p>
+          </div>
+        </div>
+
+        {popularCourses.length > 0 && (
+          <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-slate-400">Browse popular subjects</span>
+              {popularCourses.map((course) => (
+                <Link
+                  key={course.id}
+                  href={`/browse?university=${course.universityId}&course=${course.id}`}
+                  className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1.5 text-sm text-slate-200 transition hover:border-sky-500 hover:text-white"
+                >
+                  {course.name}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Feature Highlight Cards */}
         <div className="mt-16 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -139,6 +272,72 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* FAQ */}
+        <section className="mt-16">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-3xl font-semibold text-white">Frequently Asked Questions</h2>
+            <div className="mt-8 space-y-3">
+              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+                <summary className="cursor-pointer font-medium text-white">How do I download notes?</summary>
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Upload 4 approved resources, or pay KSh 30 via M-Pesa to unlock unlimited downloads
+                  for 7 hours.
+                </p>
+              </details>
+              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+                <summary className="cursor-pointer font-medium text-white">Are the notes free?</summary>
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Yes &mdash; upload your own notes to earn access, or pay a small one-time fee for
+                  temporary unlimited access.
+                </p>
+              </details>
+              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+                <summary className="cursor-pointer font-medium text-white">Which university is supported?</summary>
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Campus Vault currently supports Maseno University, with more universities coming soon.
+                </p>
+              </details>
+              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+                <summary className="cursor-pointer font-medium text-white">
+                  How do I request a course that isn&apos;t listed?
+                </summary>
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Use the course request feature after signing up &mdash; our admins review and add it for
+                  everyone once approved.
+                </p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <footer className="mt-16 border-t border-slate-800 py-10">
+          <div className="grid gap-8 text-sm md:grid-cols-3">
+            <div>
+              <h2 className="font-semibold text-white">Resources</h2>
+              <div className="mt-4 space-y-2 text-slate-400">
+                <Link href="/browse" className="block transition hover:text-white">Past Papers</Link>
+                <Link href="/browse" className="block transition hover:text-white">Lecture Notes</Link>
+                <Link href="/browse" className="block transition hover:text-white">Study Guides</Link>
+                <Link href="/browse" className="block transition hover:text-white">CATs</Link>
+              </div>
+            </div>
+            <div>
+              <h2 className="font-semibold text-white">University</h2>
+              <div className="mt-4 space-y-2 text-slate-400">
+                <Link href="/browse" className="block transition hover:text-white">Maseno University</Link>
+              </div>
+            </div>
+            <div>
+              <h2 className="font-semibold text-white">Support</h2>
+              <div className="mt-4 space-y-2 text-slate-400">
+                <a href="#" className="block transition hover:text-white">Contact</a>
+                <a href="#" className="block transition hover:text-white">Privacy Policy</a>
+                <a href="#" className="block transition hover:text-white">Terms</a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </main>
   );
