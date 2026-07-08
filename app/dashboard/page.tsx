@@ -65,10 +65,26 @@ export default function DashboardPage() {
 
       if (!resourcesError && resourcesData) {
         setMyResources(resourcesData);
-        setPendingCount(resourcesData.filter((r: Resource) => r.status === "pending").length);
-        const total = resourcesData
-          .filter((r: Resource) => r.status === "approved")
-          .reduce((sum: number, r: Resource) => sum + (r.download_count || 0), 0);
+      }
+
+      const { count: truePendingCount, error: pendingCountError } = await supabase
+        .from("resources")
+        .select("id", { count: "exact", head: true })
+        .eq("uploader_id", session.user.id)
+        .eq("status", "pending");
+
+      if (!pendingCountError && truePendingCount !== null) {
+        setPendingCount(truePendingCount);
+      }
+
+      const { data: downloadsData, error: downloadsError } = await supabase
+        .from("resources")
+        .select("total_downloads:download_count.sum()")
+        .eq("uploader_id", session.user.id)
+        .eq("status", "approved");
+
+      if (!downloadsError && downloadsData) {
+        const total = downloadsData[0]?.total_downloads ?? 0;
         setTotalDownloads(total);
       }
 
