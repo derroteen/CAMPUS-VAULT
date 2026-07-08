@@ -5,16 +5,11 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
 
 type University = {
   id: string;
   name: string;
-};
-
-type Course = {
-  id: string;
-  name: string;
-  code: string;
 };
 
 const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
@@ -22,8 +17,8 @@ const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
 export default function UploadPage() {
   const router = useRouter();
   const [universities, setUniversities] = useState<University[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState("");
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState("");
   const [resourceType, setResourceType] = useState<(typeof resourceTypes)[number]>("notes");
   const [title, setTitle] = useState("");
@@ -32,6 +27,7 @@ export default function UploadPage() {
   const [showCourseRequest, setShowCourseRequest] = useState(false);
   const [courseRequestName, setCourseRequestName] = useState("");
   const [courseRequestCode, setCourseRequestCode] = useState("");
+  const [courseRequestSchoolId, setCourseRequestSchoolId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -67,32 +63,14 @@ export default function UploadPage() {
     ensureSession();
   }, [router]);
 
-  useEffect(() => {
-    const loadCourses = async () => {
-      if (!selectedUniversityId) {
-        setCourses([]);
-        setSelectedCourseId("");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("courses")
-        .select("id, name, code")
-        .eq("university_id", selectedUniversityId)
-        .order("name", { ascending: true });
-
-      if (!error && data) {
-        setCourses(data);
-      }
-      setSelectedCourseId("");
-    };
-
-    loadCourses();
-  }, [selectedUniversityId]);
-
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
     setFile(selectedFile);
+  };
+
+  const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
+    setSelectedSchoolId(nextValue.schoolId);
+    setSelectedCourseId(nextValue.courseId ?? "");
   };
 
   const getResourceBadgeClass = (type: string) => {
@@ -266,23 +244,11 @@ export default function UploadPage() {
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="course" className="mb-2 block text-sm text-slate-300">
-                Course
-              </label>
-              <select
-                id="course"
-                value={selectedCourseId}
-                onChange={(e) => setSelectedCourseId(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
-                disabled={!selectedUniversityId || courses.length === 0}
-              >
-                <option value="">Select a course</option>
-                {courses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.code} — {course.name}
-                  </option>
-                ))}
-              </select>
+              <SchoolCoursePicker
+                universityId={selectedUniversityId}
+                value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
+                onChange={handleSchoolCourseChange}
+              />
               <button
                 type="button"
                 onClick={() => setShowCourseRequest((current) => !current)}
@@ -324,6 +290,14 @@ export default function UploadPage() {
                     required
                   />
                 </div>
+              </div>
+              <div className="mt-4">
+                <SchoolCoursePicker
+                  universityId={selectedUniversityId}
+                  value={{ schoolId: courseRequestSchoolId, courseId: null }}
+                  onChange={(nextValue) => setCourseRequestSchoolId(nextValue.schoolId)}
+                  showCourseDropdown={false}
+                />
               </div>
               <div className="mt-4 flex justify-end">
                 <button

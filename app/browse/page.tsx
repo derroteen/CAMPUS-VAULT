@@ -4,16 +4,11 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
 
 type University = {
   id: string;
   name: string;
-};
-
-type Course = {
-  id: string;
-  name: string;
-  code: string;
 };
 
 type Resource = {
@@ -46,12 +41,11 @@ export default function BrowsePage() {
 function BrowsePageContent() {
   const searchParams = useSearchParams();
   const [universities, setUniversities] = useState<University[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
   const [searchResults, setSearchResults] = useState<Resource[]>([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState("");
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState("");
-  const [loading, setLoading] = useState(true);
   const [resourceLoading, setResourceLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState(false);
@@ -216,28 +210,28 @@ function BrowsePageContent() {
       if (!error && data) {
         setUniversities(data);
 
-        const universityParam = searchParams.get("university");
-        if (universityParam) {
-          const matchingUniversity = data.find((university) => university.id === universityParam);
-          if (matchingUniversity) {
-            setSelectedUniversityId(matchingUniversity.id);
-          }
-        } else if (data.length === 1) {
-          // Auto-select if only one active university
-          setSelectedUniversityId(data[0].id);
-        }
+        const masenoUniversity = data.find((university) => university.name === "Maseno University");
+        const activeUniversityId = masenoUniversity?.id ?? data[0]?.id ?? "";
+        setSelectedUniversityId(activeUniversityId);
       }
-
-      setLoading(false);
     };
 
     loadUniversities();
   }, [searchParams]);
 
   useEffect(() => {
-    const loadCourses = async () => {
+    const loadCourseSelection = async () => {
       if (!selectedUniversityId) {
-        setCourses([]);
+        setSelectedSchoolId(null);
+        setSelectedCourseId("");
+        setResources([]);
+        return;
+      }
+
+      const courseParam = searchParams.get("course");
+
+      if (!courseParam) {
+        setSelectedSchoolId(null);
         setSelectedCourseId("");
         setResources([]);
         return;
@@ -245,32 +239,23 @@ function BrowsePageContent() {
 
       const { data, error } = await supabase
         .from("courses")
-        .select("id, name, code")
+        .select("id, school_id")
+        .eq("id", courseParam)
         .eq("university_id", selectedUniversityId)
-        .order("name", { ascending: true });
+        .maybeSingle();
 
       if (!error && data) {
-        setCourses(data);
-
-        const courseParam = searchParams.get("course");
-        const matchingCourse = courseParam
-          ? data.find((course) => course.id === courseParam)
-          : undefined;
-
-        if (matchingCourse) {
-          setSelectedCourseId(matchingCourse.id);
-        } else {
-          setSelectedCourseId("");
-          setResources([]);
-        }
+        setSelectedSchoolId(data.school_id ?? null);
+        setSelectedCourseId(data.id);
         return;
       }
 
+      setSelectedSchoolId(null);
       setSelectedCourseId("");
       setResources([]);
     };
 
-    loadCourses();
+    loadCourseSelection();
   }, [searchParams, selectedUniversityId]);
 
   useEffect(() => {
@@ -510,12 +495,23 @@ function BrowsePageContent() {
       "Strathmore University",
     ].includes(university.name)
   );
+  const activeUniversityName =
+    universities.find((university) => university.id === selectedUniversityId)?.name ??
+    "Maseno University";
 
   const handleFeaturedUniversitySelect = (universityId: string) => {
     setSelectedUniversityId(universityId);
+    setSelectedSchoolId(null);
+    setSelectedCourseId("");
+    setResources([]);
     setSearchQuery("");
     setSearchMode(false);
     setSearchResults([]);
+  };
+
+  const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
+    setSelectedSchoolId(nextValue.schoolId);
+    setSelectedCourseId(nextValue.courseId ?? "");
   };
 
   const handleSearchSubmit = (event: React.FormEvent) => {
@@ -585,41 +581,15 @@ function BrowsePageContent() {
                   <label htmlFor="university" className="mb-2 block text-sm text-slate-300">
                     University
                   </label>
-                  <select
-                    id="university"
-                    value={selectedUniversityId}
-                    onChange={(e) => setSelectedUniversityId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"
-                    disabled={loading}
-                  >
-                    <option value="">Select a university</option>
-                    {universities.map((university) => (
-                      <option key={university.id} value={university.id}>
-                        {university.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-slate-200">
+                    {activeUniversityName}
+                  </div>
                 </div>
-
-                <div>
-                  <label htmlFor="course" className="mb-2 block text-sm text-slate-300">
-                    Course
-                  </label>
-                  <select
-                    id="course"
-                    value={selectedCourseId}
-                    onChange={(e) => setSelectedCourseId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"
-                    disabled={!selectedUniversityId || courses.length === 0}
-                  >
-                    <option value="">Select a course</option>
-                    {courses.map((course) => (
-                      <option key={course.id} value={course.id}>
-                        {course.code} — {course.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <SchoolCoursePicker
+                  universityId={selectedUniversityId}
+                  value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
+                  onChange={handleSchoolCourseChange}
+                />
 
                 <div>
                   <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-300">
@@ -853,3 +823,4 @@ function BrowsePageContent() {
     </main>
   );
 }
+

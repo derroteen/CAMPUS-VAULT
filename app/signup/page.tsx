@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
+
+type University = {
+  id: string;
+  name: string;
+};
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -12,22 +18,70 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [selectedUniversityId, setSelectedUniversityId] = useState("");
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUniversity = async () => {
+      const { data, error } = await supabase
+        .from("universities")
+        .select("id, name")
+        .order("name", { ascending: true });
+
+      if (!error && data) {
+        setUniversities(data);
+        const masenoUniversity = data.find((university) => university.name === "Maseno University");
+        setSelectedUniversityId(masenoUniversity?.id ?? data[0]?.id ?? "");
+      }
+    };
+
+    void loadUniversity();
+  }, []);
+
+  const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
+    setSelectedSchoolId(nextValue.schoolId);
+    setSelectedCourseId(nextValue.courseId ?? null);
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({ 
-      email, 
-      password, 
-      options: { data: { full_name: fullName } } 
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          university_id: selectedUniversityId || null,
+          course_id: selectedCourseId || null,
+        },
+      },
     });
 
-    if (error) {
-      setError(error.message);
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
       return;
+    }
+
+    if (signUpData.user) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          university_id: selectedUniversityId || null,
+          course_id: selectedCourseId || null,
+        })
+        .eq("id", signUpData.user.id);
+
+      if (profileError) {
+        setError(profileError.message);
+        setLoading(false);
+        return;
+      }
     }
 
     router.push("/dashboard");
@@ -82,6 +136,18 @@ export default function SignUpPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none ring-0"
             />
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
+            <p className="mb-3 text-sm text-slate-300">Select your course for Maseno University</p>
+            <SchoolCoursePicker
+              universityId={selectedUniversityId}
+              value={{ schoolId: selectedSchoolId, courseId: selectedCourseId }}
+              onChange={handleSchoolCourseChange}
+            />
+            {universities.length === 0 ? (
+              <p className="mt-2 text-xs text-slate-500">Loading course options…</p>
+            ) : null}
           </div>
 
           {error ? <p className="text-sm text-rose-400">{error}</p> : null}
