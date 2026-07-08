@@ -266,10 +266,28 @@ function BrowsePageContent() {
       }
 
       setResourceLoading(true);
+
+      // Step 1: resolve which resource_ids are linked to this course via the
+      // junction table (covers both the primary course_id column and any
+      // additional courses added through resource_courses).
+      const { data: linkedRows, error: linkError } = await supabase
+        .from("resource_courses")
+        .select("resource_id")
+        .eq("course_id", selectedCourseId);
+
+      if (linkError || !linkedRows || linkedRows.length === 0) {
+        setResources([]);
+        setResourceLoading(false);
+        return;
+      }
+
+      const resourceIds = linkedRows.map((row) => row.resource_id);
+
+      // Step 2: fetch the actual resources filtered by those ids.
       const { data, error } = await supabase
         .from("resources")
         .select("id, title, unit_name, resource_type, storage_path, download_count")
-        .eq("course_id", selectedCourseId)
+        .in("id", resourceIds)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
