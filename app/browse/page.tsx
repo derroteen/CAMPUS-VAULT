@@ -123,21 +123,46 @@ function BrowsePageContent() {
 
   const runSearch = async (term: string) => {
     const trimmedTerm = term.trim();
-
     if (!trimmedTerm) {
       setSearchResults([]);
       setSearchMode(false);
       return;
     }
-
     setSearchMode(true);
     setResourceLoading(true);
+
+    // Step 1: find courses whose name matches the search term
+    const { data: matchingCourses } = await supabase
+      .from("courses")
+      .select("id")
+      .ilike("name", `%${trimmedTerm}%`);
+
+    const matchingCourseIds = (matchingCourses ?? []).map((c) => c.id);
+
+    // Step 2: find resource_ids linked to those courses (if any matched)
+    let resourceIdsFromCourseMatch: string[] = [];
+    if (matchingCourseIds.length > 0) {
+      const { data: linkedResources } = await supabase
+        .from("resource_courses")
+        .select("resource_id")
+        .in("course_id", matchingCourseIds);
+      resourceIdsFromCourseMatch = Array.from(
+        new Set((linkedResources ?? []).map((r) => r.resource_id))
+      );
+    }
+
+    // Step 3: build the combined OR filter — title, unit_name, OR resource 
+    // id is in the course-matched list
+    let orFilter = `title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`;
+    if (resourceIdsFromCourseMatch.length > 0) {
+      orFilter += `,id.in.(${resourceIdsFromCourseMatch.join(",")})`;
+    }
 
     const { data, error } = await supabase
       .from("resources")
       .select("id, title, unit_name, resource_type, storage_path, download_count, course_id")
       .eq("status", "approved")
-      .or(`title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`)
+      .or(orFilter)
       .order("created_at", { ascending: false });
 
     if (error || !data) {
@@ -151,7 +176,6 @@ function BrowsePageContent() {
       .from("courses")
       .select("id, name, university_id")
       .in("id", courseIds);
-
     const universityIds = Array.from(
       new Set((courseData ?? []).map((course) => course.university_id))
     );
@@ -159,27 +183,22 @@ function BrowsePageContent() {
       .from("universities")
       .select("id, name")
       .in("id", universityIds);
-
     if (!courseError && !universityError) {
       const courseMap = new Map((courseData ?? []).map((course) => [course.id, course]));
       const universityMap = new Map((universityData ?? []).map((university) => [university.id, university]));
-
       const enrichedResults = data.map((resource) => {
         const course = courseMap.get(resource.course_id);
         const university = course ? universityMap.get(course.university_id) : undefined;
-
         return {
           ...resource,
           course_name: course?.name ?? null,
           university_name: university?.name ?? null,
         };
       });
-
       setSearchResults(enrichedResults);
     } else {
       setSearchResults([]);
     }
-
     setResourceLoading(false);
   };
 
