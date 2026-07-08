@@ -5,12 +5,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-type HomepageStats = {
-  resources: number;
-  courses: number;
-  students: number;
-};
-
 type PopularCourse = {
   id: string;
   name: string;
@@ -21,11 +15,7 @@ type PopularCourse = {
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<HomepageStats>({
-    resources: 0,
-    courses: 0,
-    students: 0,
-  });
+
   const [popularCourses, setPopularCourses] = useState<PopularCourse[]>([]);
 
   useEffect(() => {
@@ -52,22 +42,13 @@ export default function Home() {
 
   useEffect(() => {
     const loadHomepageData = async () => {
-      const [approvedResourcesResult, profilesResult, masenoUniversityResult] = await Promise.all([
-        supabase
-          .from("resources")
-          .select("id", { count: "exact", head: true })
-          .eq("status", "approved"),
-        supabase
-          .from("profiles")
-          .select("id", { count: "exact", head: true }),
-        supabase
-          .from("universities")
-          .select("id")
-          .eq("name", "Maseno University")
-          .maybeSingle(),
-      ]);
+      const masenoUniversityResult = await supabase
+        .from("universities")
+        .select("id")
+        .eq("name", "Maseno University")
+        .maybeSingle();
 
-      let coursesWithApprovedResources = 0;
+
       let topCourses: PopularCourse[] = [];
 
       if (masenoUniversityResult.data?.id) {
@@ -99,7 +80,7 @@ export default function Home() {
             );
           });
 
-          coursesWithApprovedResources = resourceCountsByCourse.size;
+
           topCourses = (coursesData ?? [])
             .map((course) => ({
               id: course.id,
@@ -113,11 +94,7 @@ export default function Home() {
         }
       }
 
-      setStats({
-        resources: approvedResourcesResult.count ?? 0,
-        courses: coursesWithApprovedResources,
-        students: profilesResult.count ?? 0,
-      });
+
       setPopularCourses(topCourses);
     };
 
@@ -207,19 +184,19 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Live Stats */}
+        {/* Stats Row */}
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
-            <p className="text-3xl font-bold text-white">{stats.resources}</p>
-            <p className="mt-1 text-sm uppercase tracking-[0.2em] text-slate-400">Notes</p>
+            <p className="text-xl font-bold text-white">Growing Library</p>
+            <p className="mt-2 text-sm text-slate-400">Verified notes, past papers and study guides added regularly</p>
           </div>
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
-            <p className="text-3xl font-bold text-white">{stats.courses}</p>
-            <p className="mt-1 text-sm uppercase tracking-[0.2em] text-slate-400">Courses</p>
+            <p className="text-xl font-bold text-white">New Resources Weekly</p>
+            <p className="mt-2 text-sm text-slate-400">Fresh uploads from Maseno University students every week</p>
           </div>
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
-            <p className="text-3xl font-bold text-white">{stats.students}</p>
-            <p className="mt-1 text-sm uppercase tracking-[0.2em] text-slate-400">Students</p>
+            <p className="text-xl font-bold text-white">Organized by Course</p>
+            <p className="mt-2 text-sm text-slate-400">Find exactly what you need, filtered by school and course</p>
           </div>
         </div>
 
