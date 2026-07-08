@@ -308,9 +308,9 @@ export default function Home() {
             <div>
               <h2 className="font-semibold text-white">Support</h2>
               <div className="mt-4 space-y-2 text-slate-400">
-                <a href="#" className="block transition hover:text-white">Contact</a>
-                <a href="#" className="block transition hover:text-white">Privacy Policy</a>
-                <a href="#" className="block transition hover:text-white">Terms</a>
+                <Link href="/contact" className="block transition hover:text-white">Contact</Link>
+                <Link href="/privacy" className="block transition hover:text-white">Privacy Policy</Link>
+                <Link href="/terms" className="block transition hover:text-white">Terms</Link>
               </div>
             </div>
           </div>
