@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
+import MultiCoursePicker from "@/app/components/MultiCoursePicker";
+import SchoolCoursePicker from "@/app/components/SchoolCoursePicker";
 
 type University = {
   id: string;
@@ -18,8 +19,7 @@ export default function UploadPage() {
   const router = useRouter();
   const [universities, setUniversities] = useState<University[]>([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState("");
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
-  const [selectedCourseId, setSelectedCourseId] = useState("");
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [resourceType, setResourceType] = useState<(typeof resourceTypes)[number]>("notes");
   const [title, setTitle] = useState("");
   const [unitName, setUnitName] = useState("");
@@ -66,11 +66,6 @@ export default function UploadPage() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
     setFile(selectedFile);
-  };
-
-  const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
-    setSelectedSchoolId(nextValue.schoolId);
-    setSelectedCourseId(nextValue.courseId ?? "");
   };
 
   const getResourceBadgeClass = (type: string) => {
@@ -151,7 +146,12 @@ export default function UploadPage() {
       return;
     }
 
-    if (!selectedUniversityId || !selectedCourseId || !file || !title.trim() || !unitName.trim()) {
+    if (selectedCourseIds.length === 0) {
+      setError("Please select at least 1 course.");
+      return;
+    }
+
+    if (!selectedUniversityId || !file || !title.trim() || !unitName.trim()) {
       setError("Please fill in all fields and choose a file.");
       return;
     }
@@ -175,18 +175,39 @@ export default function UploadPage() {
       return;
     }
 
-    const { error: insertError } = await supabase.from("resources").insert({
-      title: title.trim(),
-      storage_path: storagePath,
-      resource_type: resourceType,
-      status: "pending",
-      uploader_id: session.user.id,
-      course_id: selectedCourseId,
-      unit_name: unitName.trim(),
-    });
+    const { data: insertedRows, error: insertError } = await supabase
+      .from("resources")
+      .insert({
+        title: title.trim(),
+        storage_path: storagePath,
+        resource_type: resourceType,
+        status: "pending",
+        uploader_id: session.user.id,
+        course_id: selectedCourseIds[0],
+        unit_name: unitName.trim(),
+      })
+      .select("id")
+      .single();
 
     if (insertError) {
       setError(insertError.message);
+      setSubmitting(false);
+      return;
+    }
+
+    const { error: linkError } = await supabase
+      .from("resource_courses")
+      .insert(
+        selectedCourseIds.map((courseId) => ({
+          resource_id: insertedRows.id,
+          course_id: courseId,
+        }))
+      );
+
+    if (linkError) {
+      setError(
+        `Resource created, but some course links failed: ${linkError.message}`
+      );
       setSubmitting(false);
       return;
     }
@@ -196,7 +217,7 @@ export default function UploadPage() {
     setUnitName("");
     setFile(null);
     setSelectedUniversityId("");
-    setSelectedCourseId("");
+    setSelectedCourseIds([]);
     setResourceType("notes");
     setSubmitting(false);
   };
@@ -244,10 +265,10 @@ export default function UploadPage() {
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <SchoolCoursePicker
+              <MultiCoursePicker
                 universityId={selectedUniversityId}
-                value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
-                onChange={handleSchoolCourseChange}
+                selectedCourseIds={selectedCourseIds}
+                onChange={setSelectedCourseIds}
               />
               <button
                 type="button"
@@ -397,7 +418,7 @@ export default function UploadPage() {
             </Link>
             <button
               type="submit"
-              disabled={submitting || !selectedCourseId || !unitName.trim()}
+              disabled={submitting || selectedCourseIds.length === 0 || !unitName.trim()}
               className="rounded-xl bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Uploading..." : "Upload"}
