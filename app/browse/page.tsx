@@ -806,17 +806,31 @@ function BrowsePageContent() {
                   </div>
                 )}
                 {paymentReference && pollingCount >= 30 && (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <p className="text-sm text-blue-300">
-                      Still waiting for confirmation. If you completed the payment on your phone, please wait a moment and refresh the page.
+                      We haven&apos;t received confirmation yet. If you didn&apos;t complete the payment on your phone, you can cancel and try again.
                     </p>
-                    <button
-                      type="button"
-                      onClick={checkTransactionStatus}
-                      className="w-full rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
-                    >
-                      Check status
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={checkTransactionStatus}
+                        className="flex-1 rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
+                      >
+                        Check status
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPaymentReference(null);
+                          setPollingCount(0);
+                          setPaymentMessage(null);
+                          setPaymentError(false);
+                        }}
+                        className="flex-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700"
+                      >
+                        Cancel &amp; retry
+                      </button>
+                    </div>
                   </div>
                 )}
                 {!paymentReference && (
