@@ -63,6 +63,7 @@ function BrowsePageContent() {
   const [pollingCount, setPollingCount] = useState(0);
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState(false);
+  const [paymentSucceeded, setPaymentSucceeded] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -447,10 +448,10 @@ function BrowsePageContent() {
     if (!data) return;
 
     if (data.status === "success") {
-      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads");
+      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads.");
       setPollingCount(0);
       setPaymentReference(null);
-      setShowPaymentForm(false);
+      setPaymentSucceeded(true);
       await refreshProfile();
     } else if (data.status === "failed") {
       setPaymentMessage("Payment was not completed. Please try again.");
@@ -460,7 +461,16 @@ function BrowsePageContent() {
     }
   }, [paymentReference]);
 
-
+  useEffect(() => {
+    if (!paymentSucceeded) return;
+    const timeout = setTimeout(() => {
+      setShowPaymentForm(false);
+      setPaymentSucceeded(false);
+      setPhoneNumber("");
+      setPaymentMessage(null);
+    }, 4000);
+    return () => clearTimeout(timeout);
+  }, [paymentSucceeded]);
 
   useEffect(() => {
     if (!paymentReference || pollingCount >= 30) {
@@ -663,7 +673,10 @@ function BrowsePageContent() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => setShowPaymentForm(true)}
+                    onClick={() => {
+                      setShowPaymentForm(true);
+                      setPaymentSucceeded(false);
+                    }}
                     className="flex-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
                   >
                     Pay KES 30
@@ -794,8 +807,32 @@ function BrowsePageContent() {
               Pay KES 30 via M-Pesa to unlock 7 hours of downloads!
             </p>
             <div className="mt-5 space-y-3">
-              <form onSubmit={handlePaymentSubmit} className="space-y-3">
-                {paymentMessage && (
+  {paymentSucceeded ? (
+    <div className="flex flex-col items-center gap-4 py-4 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
+        <svg className="h-9 w-9 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <p className="text-base font-medium text-emerald-300">
+        {paymentMessage}
+      </p>
+      <button
+        type="button"
+        onClick={() => {
+          setShowPaymentForm(false);
+          setPaymentSucceeded(false);
+          setPhoneNumber("");
+          setPaymentMessage(null);
+        }}
+        className="w-full rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
+      >
+        Done
+      </button>
+    </div>
+  ) : (
+    <form onSubmit={handlePaymentSubmit} className="space-y-3">
+      {paymentMessage && (
                   <p className={`text-sm ${paymentError ? "text-red-300" : "text-blue-300"}`}>
                     {paymentMessage}
                   </p>
@@ -867,6 +904,7 @@ function BrowsePageContent() {
                   </button>
                 )}
               </form>
+              )}  
             </div>
           </div>
         </div>
