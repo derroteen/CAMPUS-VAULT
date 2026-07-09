@@ -15,6 +15,19 @@ type University = {
 
 const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
 
+const allowedFileTypes = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
+
+const maxFileSizeBytes = 10 * 1024 * 1024;
+
 export default function UploadPage() {
   const router = useRouter();
   const [universities, setUniversities] = useState<University[]>([]);
@@ -65,6 +78,29 @@ export default function UploadPage() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
+
+    if (!selectedFile) {
+      setFile(null);
+      return;
+    }
+
+    if (!allowedFileTypes.has(selectedFile.type)) {
+      setFile(null);
+      setMessage(null);
+      setError("Only PDF, Word, PowerPoint, and image files are allowed.");
+      event.target.value = "";
+      return;
+    }
+
+    if (selectedFile.size > maxFileSizeBytes) {
+      setFile(null);
+      setMessage(null);
+      setError("File is too large. Maximum size is 10MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setError(null);
     setFile(selectedFile);
   };
 
@@ -389,9 +425,18 @@ export default function UploadPage() {
             <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 px-4 py-8 text-center transition hover:border-sky-500 hover:bg-slate-900">
               <Upload className="mb-3 h-8 w-8 text-sky-400" />
               <span className="text-sm font-medium text-slate-200">Click to browse or drag a file here</span>
-              <span className="mt-1 text-sm text-slate-400">PDF, DOCX, PPTX, TXT, and more</span>
+              <span className="mt-1 text-sm text-slate-400">PDF, Word, PowerPoint, or images — max 10MB</span>
             </label>
-            <input id="file" type="file" onChange={handleFileChange} className="hidden" />
+            <input
+              id="file"
+              type="file"
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <p className="mt-3 text-xs text-slate-400">
+              PDF, Word, PowerPoint, or images — max 10MB
+            </p>
             {file ? (
               <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-300">
                 <div>
