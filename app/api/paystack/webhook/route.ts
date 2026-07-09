@@ -37,14 +37,14 @@ export async function POST(request: Request) {
         .select("*")
         .eq("paystack_reference", reference)
         .single();
-      console.log('Transaction lookup result:', JSON.stringify(transaction), 'Error:', JSON.stringify(transactionError));
+      console.log('Transaction lookup:', transaction ? `found (status: ${transaction.status})` : 'not found', transactionError ? `error: ${transactionError.message}` : '');
 
       if (transactionError || !transaction) {
         console.error('Transaction not found:', transactionError);
         return NextResponse.json({ success: true });
       }
 
-      const { data: updateResult, error: updateError } = await supabaseAdmin
+      const { error: updateError } = await supabaseAdmin
         .from("transactions")
         .update({
           status: "success",
@@ -52,19 +52,19 @@ export async function POST(request: Request) {
         })
         .eq("id", transaction.id)
         .select();
-      console.log('Transaction update result:', JSON.stringify(updateResult), 'Error:', JSON.stringify(updateError));
+      console.log('Transaction update:', updateError ? `error: ${updateError.message}` : 'success');
 
       const unlockExpiresAt = new Date();
       unlockExpiresAt.setHours(unlockExpiresAt.getHours() + 7);
 
-      const { data: profileUpdateResult, error: profileUpdateError } = await supabaseAdmin
+      const { error: profileUpdateError } = await supabaseAdmin
         .from("profiles")
         .update({
           unlock_expires_at: unlockExpiresAt.toISOString(),
         })
         .eq("id", transaction.profile_id)
         .select();
-      console.log('Profile unlock update result:', JSON.stringify(profileUpdateResult), 'Error:', JSON.stringify(profileUpdateError));
+      console.log('Profile unlock update:', profileUpdateError ? `error: ${profileUpdateError.message}` : 'success');
     } else {
       console.log('Ignoring Paystack event:', event.event);
     }
