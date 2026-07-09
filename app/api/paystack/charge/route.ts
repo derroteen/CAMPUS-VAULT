@@ -46,6 +46,23 @@ export async function POST(request: Request) {
       );
     }
 
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
+    const { count } = await supabaseAdmin
+      .from("transactions")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", user.id)
+      .gte("created_at", oneMinuteAgo);
+
+    if ((count ?? 0) >= 3) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many payment attempts. Please wait a minute before trying again.",
+        },
+        { status: 429 }
+      );
+    }
+
     // Normalize phone number to +254XXXXXXXXX for Paystack
     let normalizedPhoneNumber = phoneNumber.trim();
     if (normalizedPhoneNumber.startsWith("0")) {
