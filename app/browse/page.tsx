@@ -378,41 +378,47 @@ function BrowsePageContent() {
       return;
     }
 
-    setDownloadingId(resource.id);
-    setUnlockTargetId(null);
-    setUnlockNotice(null);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    const { data, error } = await supabase.storage
-      .from("resources")
-      .createSignedUrl(resource.storage_path, 60);
-
-    if (error || !data?.signedUrl) {
+    if (!session?.access_token) {
       setDownloadingId(null);
       return;
     }
 
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    setDownloadingId(resource.id);
+    setUnlockTargetId(null);
+    setUnlockNotice(null);
 
-    const { data: resourceData } = await supabase
-      .from("resources")
-      .select("download_count")
-      .eq("id", resource.id)
-      .single();
+    try {
+      const response = await fetch("/api/resources/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ resourceId: resource.id }),
+      });
 
-    await supabase
-      .from("resources")
-      .update({ download_count: (resourceData?.download_count ?? 0) + 1 })
-      .eq("id", resource.id);
+      const result = await response.json();
+      if (!response.ok || !result.success || !result.signedUrl) {
+        setDownloadingId(null);
+        return;
+      }
 
-    setResources((current) =>
-      current.map((item) =>
-        item.id === resource.id
-          ? { ...item, download_count: item.download_count + 1 }
-          : item
-      )
-    );
+      window.open(result.signedUrl, "_blank", "noopener,noreferrer");
 
-    setDownloadingId(null);
+      setResources((current) =>
+        current.map((item) =>
+          item.id === resource.id
+            ? { ...item, download_count: item.download_count + 1 }
+            : item
+        )
+      );
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   const refreshProfile = async () => {
