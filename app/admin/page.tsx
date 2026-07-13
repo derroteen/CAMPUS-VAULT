@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Skeleton } from "@/components/Skeleton";
 
 type PendingResource = {
   id: string;
@@ -314,8 +315,60 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading...</p>
+      <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <Skeleton className="h-10 w-64 mb-2" />
+              <Skeleton className="h-5 w-80" />
+            </div>
+            <Skeleton className="h-5 w-32" />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Skeleton className="h-28 rounded-2xl" />
+            <Skeleton className="h-28 rounded-2xl" />
+          </div>
+
+          <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+            <Skeleton className="h-8 w-48 mb-4" />
+            <div className="mt-4 space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex-1">
+                    <Skeleton className="h-6 w-64 mb-2" />
+                    <Skeleton className="h-5 w-96" />
+                  </div>
+                  <div className="flex gap-2 mt-3 md:mt-0">
+                    <Skeleton className="h-10 w-20 rounded-xl" />
+                    <Skeleton className="h-10 w-20 rounded-xl" />
+                    <Skeleton className="h-10 w-20 rounded-xl" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="border-t border-slate-800" />
+
+          <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+            <Skeleton className="h-8 w-48 mb-4" />
+            <div className="mt-4 space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex-1">
+                    <Skeleton className="h-6 w-64 mb-2" />
+                    <Skeleton className="h-5 w-96" />
+                  </div>
+                  <div className="flex gap-2 mt-3 md:mt-0">
+                    <Skeleton className="h-10 w-20 rounded-xl" />
+                    <Skeleton className="h-10 w-20 rounded-xl" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
       </main>
     );
   }

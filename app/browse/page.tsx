@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
+import { Skeleton } from "@/components/Skeleton";
 
 type University = {
   id: string;
@@ -26,9 +27,62 @@ export default function BrowsePage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
-          <div className="mx-auto max-w-6xl">
-            <p className="text-slate-400">Loading browse page...</p>
+        <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <section className="overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+              <Skeleton className="h-7 w-48 mb-6" />
+              <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+                <div>
+                  <Skeleton className="h-12 w-96 mb-4" />
+                  <Skeleton className="h-6 w-80" />
+                </div>
+                <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+                  <Skeleton className="h-5 w-24 mb-2" />
+                  <Skeleton className="h-12 w-full rounded-xl" />
+                </div>
+              </div>
+            </section>
+
+            <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
+              <aside className="space-y-4">
+                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
+                  <Skeleton className="h-7 w-20 mb-4" />
+                  <div className="mt-4 space-y-4">
+                    <Skeleton className="h-5 w-16 mb-2" />
+                    <Skeleton className="h-10 w-full rounded-xl" />
+                    <Skeleton className="h-5 w-20 mb-2" />
+                    <Skeleton className="h-10 w-full rounded-xl" />
+                    <Skeleton className="h-5 w-24 mb-2" />
+                    <Skeleton className="h-10 w-full rounded-xl" />
+                  </div>
+                </div>
+              </aside>
+
+              <section>
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <Skeleton className="h-8 w-48 mb-2" />
+                    <Skeleton className="h-5 w-64" />
+                  </div>
+                  <Skeleton className="h-8 w-20 rounded-full" />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                        <Skeleton className="h-5 w-12" />
+                      </div>
+                      <Skeleton className="h-7 w-full mt-4" />
+                      <Skeleton className="h-5 w-3/4 mt-2" />
+                      <Skeleton className="h-5 w-1/2 mt-2" />
+                      <Skeleton className="h-10 w-full mt-5 rounded-xl" />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
           </div>
         </main>
       }
@@ -378,47 +432,41 @@ function BrowsePageContent() {
       return;
     }
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session?.access_token) {
-      setDownloadingId(null);
-      return;
-    }
-
     setDownloadingId(resource.id);
     setUnlockTargetId(null);
     setUnlockNotice(null);
 
-    try {
-      const response = await fetch("/api/resources/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ resourceId: resource.id }),
-      });
+    const { data, error } = await supabase.storage
+      .from("resources")
+      .createSignedUrl(resource.storage_path, 60);
 
-      const result = await response.json();
-      if (!response.ok || !result.success || !result.signedUrl) {
-        setDownloadingId(null);
-        return;
-      }
-
-      window.open(result.signedUrl, "_blank", "noopener,noreferrer");
-
-      setResources((current) =>
-        current.map((item) =>
-          item.id === resource.id
-            ? { ...item, download_count: item.download_count + 1 }
-            : item
-        )
-      );
-    } finally {
+    if (error || !data?.signedUrl) {
       setDownloadingId(null);
+      return;
     }
+
+    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+
+    const { data: resourceData } = await supabase
+      .from("resources")
+      .select("download_count")
+      .eq("id", resource.id)
+      .single();
+
+    await supabase
+      .from("resources")
+      .update({ download_count: (resourceData?.download_count ?? 0) + 1 })
+      .eq("id", resource.id);
+
+    setResources((current) =>
+      current.map((item) =>
+        item.id === resource.id
+          ? { ...item, download_count: item.download_count + 1 }
+          : item
+      )
+    );
+
+    setDownloadingId(null);
   };
 
   const refreshProfile = async () => {

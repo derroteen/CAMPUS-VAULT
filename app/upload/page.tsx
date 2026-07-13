@@ -7,6 +7,7 @@ import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import MultiCoursePicker from "@/app/components/MultiCoursePicker";
 import SchoolCoursePicker from "@/app/components/SchoolCoursePicker";
+import { Skeleton } from "@/components/Skeleton";
 
 type University = {
   id: string;
@@ -260,8 +261,35 @@ export default function UploadPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading...</p>
+      <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+          <div className="mb-8">
+            <Skeleton className="h-7 w-48 mb-4" />
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-6 w-80" />
+          </div>
+
+          <div className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Skeleton className="h-24 rounded-2xl" />
+              <Skeleton className="h-24 rounded-2xl" />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <Skeleton className="h-24 rounded-2xl" />
+              <Skeleton className="h-24 rounded-2xl" />
+            </div>
+
+            <Skeleton className="h-20 rounded-2xl" />
+
+            <Skeleton className="h-32 rounded-2xl" />
+
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-10 w-24 rounded-xl" />
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
