@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Skeleton } from "@/components/Skeleton";
 
 type PopularCourse = {
   id: string;
@@ -103,8 +104,41 @@ export default function Home() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading...</p>
+      <main className="min-h-screen bg-slate-950 px-6 py-16 text-white">
+        <div className="mx-auto max-w-7xl">
+          {/* Hero Section */}
+          <div className="text-center">
+            <Image
+              src="/logo.svg"
+              alt="Campus Vault Logo"
+              width={64}
+              height={64}
+              className="mx-auto mb-6 h-16 w-16"
+            />
+            <Skeleton className="h-6 w-40 mx-auto mb-4 rounded-full" />
+            <Skeleton className="h-12 w-full max-w-3xl mx-auto mb-4" />
+            <Skeleton className="h-7 w-full max-w-2xl mx-auto mb-6" />
+            <Skeleton className="h-8 w-full max-w-4xl mx-auto mb-8" />
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Skeleton className="h-12 w-32 rounded-md" />
+              <Skeleton className="h-12 w-32 rounded-md" />
+            </div>
+          </div>
+
+          {/* Stats Row */}
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl" />
+          </div>
+
+          {/* Feature Highlight Cards */}
+          <div className="mt-16 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-32 rounded-2xl" />
+            ))}
+          </div>
+        </div>
       </main>
     );
   }
