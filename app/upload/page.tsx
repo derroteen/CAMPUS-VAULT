@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import MultiCoursePicker from "@/app/components/MultiCoursePicker";
-import SchoolCoursePicker from "@/app/components/SchoolCoursePicker";
-import { Skeleton } from "@/components/Skeleton";
+import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
 
 type University = {
   id: string;
@@ -16,24 +14,12 @@ type University = {
 
 const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
 
-const allowedFileTypes = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-powerpoint",
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-
-const maxFileSizeBytes = 10 * 1024 * 1024;
-
 export default function UploadPage() {
   const router = useRouter();
   const [universities, setUniversities] = useState<University[]>([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState("");
-  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState("");
   const [resourceType, setResourceType] = useState<(typeof resourceTypes)[number]>("notes");
   const [title, setTitle] = useState("");
   const [unitName, setUnitName] = useState("");
@@ -79,30 +65,12 @@ export default function UploadPage() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
-
-    if (!selectedFile) {
-      setFile(null);
-      return;
-    }
-
-    if (!allowedFileTypes.has(selectedFile.type)) {
-      setFile(null);
-      setMessage(null);
-      setError("Only PDF, Word, PowerPoint, and image files are allowed.");
-      event.target.value = "";
-      return;
-    }
-
-    if (selectedFile.size > maxFileSizeBytes) {
-      setFile(null);
-      setMessage(null);
-      setError("File is too large. Maximum size is 10MB.");
-      event.target.value = "";
-      return;
-    }
-
-    setError(null);
     setFile(selectedFile);
+  };
+
+  const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
+    setSelectedSchoolId(nextValue.schoolId);
+    setSelectedCourseId(nextValue.courseId ?? "");
   };
 
   const getResourceBadgeClass = (type: string) => {
@@ -183,12 +151,7 @@ export default function UploadPage() {
       return;
     }
 
-    if (selectedCourseIds.length === 0) {
-      setError("Please select at least 1 course.");
-      return;
-    }
-
-    if (!selectedUniversityId || !file || !title.trim() || !unitName.trim()) {
+    if (!selectedUniversityId || !selectedCourseId || !file || !title.trim() || !unitName.trim()) {
       setError("Please fill in all fields and choose a file.");
       return;
     }
@@ -212,39 +175,18 @@ export default function UploadPage() {
       return;
     }
 
-    const { data: insertedRows, error: insertError } = await supabase
-      .from("resources")
-      .insert({
-        title: title.trim(),
-        storage_path: storagePath,
-        resource_type: resourceType,
-        status: "pending",
-        uploader_id: session.user.id,
-        course_id: selectedCourseIds[0],
-        unit_name: unitName.trim(),
-      })
-      .select("id")
-      .single();
+    const { error: insertError } = await supabase.from("resources").insert({
+      title: title.trim(),
+      storage_path: storagePath,
+      resource_type: resourceType,
+      status: "pending",
+      uploader_id: session.user.id,
+      course_id: selectedCourseId,
+      unit_name: unitName.trim(),
+    });
 
     if (insertError) {
       setError(insertError.message);
-      setSubmitting(false);
-      return;
-    }
-
-    const { error: linkError } = await supabase
-      .from("resource_courses")
-      .insert(
-        selectedCourseIds.map((courseId) => ({
-          resource_id: insertedRows.id,
-          course_id: courseId,
-        }))
-      );
-
-    if (linkError) {
-      setError(
-        `Resource created, but some course links failed: ${linkError.message}`
-      );
       setSubmitting(false);
       return;
     }
@@ -254,42 +196,15 @@ export default function UploadPage() {
     setUnitName("");
     setFile(null);
     setSelectedUniversityId("");
-    setSelectedCourseIds([]);
+    setSelectedCourseId("");
     setResourceType("notes");
     setSubmitting(false);
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
-          <div className="mb-8">
-            <Skeleton className="h-7 w-48 mb-4" />
-            <Skeleton className="h-10 w-64 mb-2" />
-            <Skeleton className="h-6 w-80" />
-          </div>
-
-          <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Skeleton className="h-24 rounded-2xl" />
-              <Skeleton className="h-24 rounded-2xl" />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <Skeleton className="h-24 rounded-2xl" />
-              <Skeleton className="h-24 rounded-2xl" />
-            </div>
-
-            <Skeleton className="h-20 rounded-2xl" />
-
-            <Skeleton className="h-32 rounded-2xl" />
-
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4">
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-10 w-24 rounded-xl" />
-            </div>
-          </div>
-        </div>
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
+        <p className="text-slate-300">Loading...</p>
       </main>
     );
   }
@@ -329,10 +244,10 @@ export default function UploadPage() {
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <MultiCoursePicker
+              <SchoolCoursePicker
                 universityId={selectedUniversityId}
-                selectedCourseIds={selectedCourseIds}
-                onChange={setSelectedCourseIds}
+                value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
+                onChange={handleSchoolCourseChange}
               />
               <button
                 type="button"
@@ -453,18 +368,9 @@ export default function UploadPage() {
             <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 px-4 py-8 text-center transition hover:border-sky-500 hover:bg-slate-900">
               <Upload className="mb-3 h-8 w-8 text-sky-400" />
               <span className="text-sm font-medium text-slate-200">Click to browse or drag a file here</span>
-              <span className="mt-1 text-sm text-slate-400">PDF, Word, PowerPoint, or images — max 10MB</span>
+              <span className="mt-1 text-sm text-slate-400">PDF, DOCX, PPTX, TXT, and more</span>
             </label>
-            <input
-              id="file"
-              type="file"
-              accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <p className="mt-3 text-xs text-slate-400">
-              PDF, Word, PowerPoint, or images — max 10MB
-            </p>
+            <input id="file" type="file" onChange={handleFileChange} className="hidden" />
             {file ? (
               <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-300">
                 <div>
@@ -491,7 +397,7 @@ export default function UploadPage() {
             </Link>
             <button
               type="submit"
-              disabled={submitting || selectedCourseIds.length === 0 || !unitName.trim()}
+              disabled={submitting || !selectedCourseId || !unitName.trim()}
               className="rounded-xl bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Uploading..." : "Upload"}

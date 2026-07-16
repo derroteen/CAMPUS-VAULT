@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
-import { Skeleton } from "@/components/Skeleton";
 
 type University = {
   id: string;
@@ -27,62 +26,9 @@ export default function BrowsePage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <section className="overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
-              <Skeleton className="h-7 w-48 mb-6" />
-              <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-                <div>
-                  <Skeleton className="h-12 w-96 mb-4" />
-                  <Skeleton className="h-6 w-80" />
-                </div>
-                <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
-                  <Skeleton className="h-5 w-24 mb-2" />
-                  <Skeleton className="h-12 w-full rounded-xl" />
-                </div>
-              </div>
-            </section>
-
-            <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
-              <aside className="space-y-4">
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
-                  <Skeleton className="h-7 w-20 mb-4" />
-                  <div className="mt-4 space-y-4">
-                    <Skeleton className="h-5 w-16 mb-2" />
-                    <Skeleton className="h-10 w-full rounded-xl" />
-                    <Skeleton className="h-5 w-20 mb-2" />
-                    <Skeleton className="h-10 w-full rounded-xl" />
-                    <Skeleton className="h-5 w-24 mb-2" />
-                    <Skeleton className="h-10 w-full rounded-xl" />
-                  </div>
-                </div>
-              </aside>
-
-              <section>
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <Skeleton className="h-8 w-48 mb-2" />
-                    <Skeleton className="h-5 w-64" />
-                  </div>
-                  <Skeleton className="h-8 w-20 rounded-full" />
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
-                      <div className="flex items-start justify-between gap-3">
-                        <Skeleton className="h-6 w-20 rounded-full" />
-                        <Skeleton className="h-5 w-12" />
-                      </div>
-                      <Skeleton className="h-7 w-full mt-4" />
-                      <Skeleton className="h-5 w-3/4 mt-2" />
-                      <Skeleton className="h-5 w-1/2 mt-2" />
-                      <Skeleton className="h-10 w-full mt-5 rounded-xl" />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </div>
+        <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
+          <div className="mx-auto max-w-6xl">
+            <p className="text-slate-400">Loading browse page...</p>
           </div>
         </main>
       }
@@ -117,7 +63,6 @@ function BrowsePageContent() {
   const [pollingCount, setPollingCount] = useState(0);
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState(false);
-  const [paymentSucceeded, setPaymentSucceeded] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -178,46 +123,21 @@ function BrowsePageContent() {
 
   const runSearch = async (term: string) => {
     const trimmedTerm = term.trim();
+
     if (!trimmedTerm) {
       setSearchResults([]);
       setSearchMode(false);
       return;
     }
+
     setSearchMode(true);
     setResourceLoading(true);
-
-    // Step 1: find courses whose name matches the search term
-    const { data: matchingCourses } = await supabase
-      .from("courses")
-      .select("id")
-      .ilike("name", `%${trimmedTerm}%`);
-
-    const matchingCourseIds = (matchingCourses ?? []).map((c) => c.id);
-
-    // Step 2: find resource_ids linked to those courses (if any matched)
-    let resourceIdsFromCourseMatch: string[] = [];
-    if (matchingCourseIds.length > 0) {
-      const { data: linkedResources } = await supabase
-        .from("resource_courses")
-        .select("resource_id")
-        .in("course_id", matchingCourseIds);
-      resourceIdsFromCourseMatch = Array.from(
-        new Set((linkedResources ?? []).map((r) => r.resource_id))
-      );
-    }
-
-    // Step 3: build the combined OR filter — title, unit_name, OR resource 
-    // id is in the course-matched list
-    let orFilter = `title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`;
-    if (resourceIdsFromCourseMatch.length > 0) {
-      orFilter += `,id.in.(${resourceIdsFromCourseMatch.join(",")})`;
-    }
 
     const { data, error } = await supabase
       .from("resources")
       .select("id, title, unit_name, resource_type, storage_path, download_count, course_id")
       .eq("status", "approved")
-      .or(orFilter)
+      .or(`title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`)
       .order("created_at", { ascending: false });
 
     if (error || !data) {
@@ -231,6 +151,7 @@ function BrowsePageContent() {
       .from("courses")
       .select("id, name, university_id")
       .in("id", courseIds);
+
     const universityIds = Array.from(
       new Set((courseData ?? []).map((course) => course.university_id))
     );
@@ -238,22 +159,27 @@ function BrowsePageContent() {
       .from("universities")
       .select("id, name")
       .in("id", universityIds);
+
     if (!courseError && !universityError) {
       const courseMap = new Map((courseData ?? []).map((course) => [course.id, course]));
       const universityMap = new Map((universityData ?? []).map((university) => [university.id, university]));
+
       const enrichedResults = data.map((resource) => {
         const course = courseMap.get(resource.course_id);
         const university = course ? universityMap.get(course.university_id) : undefined;
+
         return {
           ...resource,
           course_name: course?.name ?? null,
           university_name: university?.name ?? null,
         };
       });
+
       setSearchResults(enrichedResults);
     } else {
       setSearchResults([]);
     }
+
     setResourceLoading(false);
   };
 
@@ -278,7 +204,6 @@ function BrowsePageContent() {
       const { data, error } = await supabase
         .from("universities")
         .select("id, name")
-        .eq("is_active", true)
         .order("name", { ascending: true });
 
       if (!error && data) {
@@ -340,28 +265,10 @@ function BrowsePageContent() {
       }
 
       setResourceLoading(true);
-
-      // Step 1: resolve which resource_ids are linked to this course via the
-      // junction table (covers both the primary course_id column and any
-      // additional courses added through resource_courses).
-      const { data: linkedRows, error: linkError } = await supabase
-        .from("resource_courses")
-        .select("resource_id")
-        .eq("course_id", selectedCourseId);
-
-      if (linkError || !linkedRows || linkedRows.length === 0) {
-        setResources([]);
-        setResourceLoading(false);
-        return;
-      }
-
-      const resourceIds = linkedRows.map((row) => row.resource_id);
-
-      // Step 2: fetch the actual resources filtered by those ids.
       const { data, error } = await supabase
         .from("resources")
         .select("id, title, unit_name, resource_type, storage_path, download_count")
-        .in("id", resourceIds)
+        .eq("course_id", selectedCourseId)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
@@ -502,10 +409,10 @@ function BrowsePageContent() {
     if (!data) return;
 
     if (data.status === "success") {
-      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads.");
+      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads");
       setPollingCount(0);
       setPaymentReference(null);
-      setPaymentSucceeded(true);
+      setShowPaymentForm(false);
       await refreshProfile();
     } else if (data.status === "failed") {
       setPaymentMessage("Payment was not completed. Please try again.");
@@ -515,16 +422,7 @@ function BrowsePageContent() {
     }
   }, [paymentReference]);
 
-  useEffect(() => {
-    if (!paymentSucceeded) return;
-    const timeout = setTimeout(() => {
-      setShowPaymentForm(false);
-      setPaymentSucceeded(false);
-      setPhoneNumber("");
-      setPaymentMessage(null);
-    }, 4000);
-    return () => clearTimeout(timeout);
-  }, [paymentSucceeded]);
+
 
   useEffect(() => {
     if (!paymentReference || pollingCount >= 30) {
@@ -727,10 +625,7 @@ function BrowsePageContent() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowPaymentForm(true);
-                      setPaymentSucceeded(false);
-                    }}
+                    onClick={() => setShowPaymentForm(true)}
                     className="flex-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
                   >
                     Pay KES 30
@@ -861,32 +756,8 @@ function BrowsePageContent() {
               Pay KES 30 via M-Pesa to unlock 7 hours of downloads!
             </p>
             <div className="mt-5 space-y-3">
-  {paymentSucceeded ? (
-    <div className="flex flex-col items-center gap-4 py-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
-        <svg className="h-9 w-9 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-      <p className="text-base font-medium text-emerald-300">
-        {paymentMessage}
-      </p>
-      <button
-        type="button"
-        onClick={() => {
-          setShowPaymentForm(false);
-          setPaymentSucceeded(false);
-          setPhoneNumber("");
-          setPaymentMessage(null);
-        }}
-        className="w-full rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
-      >
-        Done
-      </button>
-    </div>
-  ) : (
-    <form onSubmit={handlePaymentSubmit} className="space-y-3">
-      {paymentMessage && (
+              <form onSubmit={handlePaymentSubmit} className="space-y-3">
+                {paymentMessage && (
                   <p className={`text-sm ${paymentError ? "text-red-300" : "text-blue-300"}`}>
                     {paymentMessage}
                   </p>
@@ -897,31 +768,17 @@ function BrowsePageContent() {
                   </div>
                 )}
                 {paymentReference && pollingCount >= 30 && (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <p className="text-sm text-blue-300">
-                      We haven&apos;t received confirmation yet. If you didn&apos;t complete the payment on your phone, you can cancel and try again.
+                      Still waiting for confirmation. If you completed the payment on your phone, please wait a moment and refresh the page.
                     </p>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={checkTransactionStatus}
-                        className="flex-1 rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
-                      >
-                        Check status
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPaymentReference(null);
-                          setPollingCount(0);
-                          setPaymentMessage(null);
-                          setPaymentError(false);
-                        }}
-                        className="flex-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700"
-                      >
-                        Cancel &amp; retry
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={checkTransactionStatus}
+                      className="w-full rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
+                    >
+                      Check status
+                    </button>
                   </div>
                 )}
                 {!paymentReference && (
@@ -958,7 +815,6 @@ function BrowsePageContent() {
                   </button>
                 )}
               </form>
-              )}  
             </div>
           </div>
         </div>
