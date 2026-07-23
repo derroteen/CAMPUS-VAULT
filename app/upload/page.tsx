@@ -131,6 +131,28 @@ export default function UploadPage() {
       return;
     }
 
+    // Send admin notification (non-blocking)
+    fetch("/api/notify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        type: "course_request",
+        title: `${courseRequestCode.trim()} - ${courseRequestName.trim()}`,
+        userEmail: session.user.email ?? "",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          console.error("Admin notification API returned error status:", res.status);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to send course request admin email notification:", err);
+      });
+
     setMessage("Thanks! Your course has been submitted for review. You can still upload once it's approved.");
     setShowCourseRequest(false);
     setCourseRequestName("");
@@ -190,6 +212,28 @@ export default function UploadPage() {
       setSubmitting(false);
       return;
     }
+
+    // Send admin notification (non-blocking)
+    fetch("/api/notify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        type: "upload",
+        title: title.trim(),
+        userEmail: session.user.email ?? "",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          console.error("Admin notification API returned error status:", res.status);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to send upload admin email notification:", err);
+      });
 
     setMessage("Submitted for review");
     setTitle("");
