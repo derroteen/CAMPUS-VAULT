@@ -236,11 +236,24 @@ export default function AdminPage() {
   ) => {
     setProcessingId(requestId);
 
-    await supabase.from("courses").insert({
-      university_id: universityId,
-      code: requestedCode.trim(),
-      name: requestedName.trim(),
-    });
+    const trimmedName = requestedName.trim();
+    const trimmedCode = requestedCode.trim();
+
+    // Check if a course with the same university, code, or name already exists
+    const { data: existingCourse } = await supabase
+      .from("courses")
+      .select("id")
+      .eq("university_id", universityId)
+      .or(`code=eq.${trimmedCode},name=eq.${trimmedName}`)
+      .maybeSingle();
+
+    if (!existingCourse) {
+      await supabase.from("courses").insert({
+        university_id: universityId,
+        code: trimmedCode,
+        name: trimmedName,
+      });
+    }
 
     await supabase
       .from("course_requests")
