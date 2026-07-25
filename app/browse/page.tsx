@@ -63,6 +63,7 @@ function BrowsePageContent() {
   const [pollingCount, setPollingCount] = useState(0);
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState(false);
+  const [paymentSucceeded, setPaymentSucceeded] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -123,21 +124,46 @@ function BrowsePageContent() {
 
   const runSearch = async (term: string) => {
     const trimmedTerm = term.trim();
-
     if (!trimmedTerm) {
       setSearchResults([]);
       setSearchMode(false);
       return;
     }
-
     setSearchMode(true);
     setResourceLoading(true);
+
+    // Step 1: find courses whose name matches the search term
+    const { data: matchingCourses } = await supabase
+      .from("courses")
+      .select("id")
+      .ilike("name", `%${trimmedTerm}%`);
+
+    const matchingCourseIds = (matchingCourses ?? []).map((c) => c.id);
+
+    // Step 2: find resource_ids linked to those courses (if any matched)
+    let resourceIdsFromCourseMatch: string[] = [];
+    if (matchingCourseIds.length > 0) {
+      const { data: linkedResources } = await supabase
+        .from("resource_courses")
+        .select("resource_id")
+        .in("course_id", matchingCourseIds);
+      resourceIdsFromCourseMatch = Array.from(
+        new Set((linkedResources ?? []).map((r) => r.resource_id))
+      );
+    }
+
+    // Step 3: build the combined OR filter — title, unit_name, OR resource 
+    // id is in the course-matched list
+    let orFilter = `title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`;
+    if (resourceIdsFromCourseMatch.length > 0) {
+      orFilter += `,id.in.(${resourceIdsFromCourseMatch.join(",")})`;
+    }
 
     const { data, error } = await supabase
       .from("resources")
       .select("id, title, unit_name, resource_type, storage_path, download_count, course_id")
       .eq("status", "approved")
-      .or(`title.ilike.%${trimmedTerm}%,unit_name.ilike.%${trimmedTerm}%`)
+      .or(orFilter)
       .order("created_at", { ascending: false });
 
     if (error || !data) {
@@ -151,7 +177,6 @@ function BrowsePageContent() {
       .from("courses")
       .select("id, name, university_id")
       .in("id", courseIds);
-
     const universityIds = Array.from(
       new Set((courseData ?? []).map((course) => course.university_id))
     );
@@ -159,27 +184,22 @@ function BrowsePageContent() {
       .from("universities")
       .select("id, name")
       .in("id", universityIds);
-
     if (!courseError && !universityError) {
       const courseMap = new Map((courseData ?? []).map((course) => [course.id, course]));
       const universityMap = new Map((universityData ?? []).map((university) => [university.id, university]));
-
       const enrichedResults = data.map((resource) => {
         const course = courseMap.get(resource.course_id);
         const university = course ? universityMap.get(course.university_id) : undefined;
-
         return {
           ...resource,
           course_name: course?.name ?? null,
           university_name: university?.name ?? null,
         };
       });
-
       setSearchResults(enrichedResults);
     } else {
       setSearchResults([]);
     }
-
     setResourceLoading(false);
   };
 
@@ -204,6 +224,7 @@ function BrowsePageContent() {
       const { data, error } = await supabase
         .from("universities")
         .select("id, name")
+        .eq("is_active", true)
         .order("name", { ascending: true });
 
       if (!error && data) {
@@ -265,10 +286,28 @@ function BrowsePageContent() {
       }
 
       setResourceLoading(true);
+
+      // Step 1: resolve which resource_ids are linked to this course via the
+      // junction table (covers both the primary course_id column and any
+      // additional courses added through resource_courses).
+      const { data: linkedRows, error: linkError } = await supabase
+        .from("resource_courses")
+        .select("resource_id")
+        .eq("course_id", selectedCourseId);
+
+      if (linkError || !linkedRows || linkedRows.length === 0) {
+        setResources([]);
+        setResourceLoading(false);
+        return;
+      }
+
+      const resourceIds = linkedRows.map((row) => row.resource_id);
+
+      // Step 2: fetch the actual resources filtered by those ids.
       const { data, error } = await supabase
         .from("resources")
         .select("id, title, unit_name, resource_type, storage_path, download_count")
-        .eq("course_id", selectedCourseId)
+        .in("id", resourceIds)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
@@ -339,41 +378,47 @@ function BrowsePageContent() {
       return;
     }
 
-    setDownloadingId(resource.id);
-    setUnlockTargetId(null);
-    setUnlockNotice(null);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    const { data, error } = await supabase.storage
-      .from("resources")
-      .createSignedUrl(resource.storage_path, 60);
-
-    if (error || !data?.signedUrl) {
+    if (!session?.access_token) {
       setDownloadingId(null);
       return;
     }
 
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    setDownloadingId(resource.id);
+    setUnlockTargetId(null);
+    setUnlockNotice(null);
 
-    const { data: resourceData } = await supabase
-      .from("resources")
-      .select("download_count")
-      .eq("id", resource.id)
-      .single();
+    try {
+      const response = await fetch("/api/resources/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ resourceId: resource.id }),
+      });
 
-    await supabase
-      .from("resources")
-      .update({ download_count: (resourceData?.download_count ?? 0) + 1 })
-      .eq("id", resource.id);
+      const result = await response.json();
+      if (!response.ok || !result.success || !result.signedUrl) {
+        setDownloadingId(null);
+        return;
+      }
 
-    setResources((current) =>
-      current.map((item) =>
-        item.id === resource.id
-          ? { ...item, download_count: item.download_count + 1 }
-          : item
-      )
-    );
+      window.open(result.signedUrl, "_blank", "noopener,noreferrer");
 
-    setDownloadingId(null);
+      setResources((current) =>
+        current.map((item) =>
+          item.id === resource.id
+            ? { ...item, download_count: item.download_count + 1 }
+            : item
+        )
+      );
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   const refreshProfile = async () => {
@@ -409,10 +454,10 @@ function BrowsePageContent() {
     if (!data) return;
 
     if (data.status === "success") {
-      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads");
+      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads.");
       setPollingCount(0);
       setPaymentReference(null);
-      setShowPaymentForm(false);
+      setPaymentSucceeded(true);
       await refreshProfile();
     } else if (data.status === "failed") {
       setPaymentMessage("Payment was not completed. Please try again.");
@@ -422,7 +467,16 @@ function BrowsePageContent() {
     }
   }, [paymentReference]);
 
-
+  useEffect(() => {
+    if (!paymentSucceeded) return;
+    const timeout = setTimeout(() => {
+      setShowPaymentForm(false);
+      setPaymentSucceeded(false);
+      setPhoneNumber("");
+      setPaymentMessage(null);
+    }, 4000);
+    return () => clearTimeout(timeout);
+  }, [paymentSucceeded]);
 
   useEffect(() => {
     if (!paymentReference || pollingCount >= 30) {
@@ -625,7 +679,10 @@ function BrowsePageContent() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => setShowPaymentForm(true)}
+                    onClick={() => {
+                      setShowPaymentForm(true);
+                      setPaymentSucceeded(false);
+                    }}
                     className="flex-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
                   >
                     Pay KES 30
@@ -756,8 +813,32 @@ function BrowsePageContent() {
               Pay KES 30 via M-Pesa to unlock 7 hours of downloads!
             </p>
             <div className="mt-5 space-y-3">
-              <form onSubmit={handlePaymentSubmit} className="space-y-3">
-                {paymentMessage && (
+  {paymentSucceeded ? (
+    <div className="flex flex-col items-center gap-4 py-4 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
+        <svg className="h-9 w-9 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <p className="text-base font-medium text-emerald-300">
+        {paymentMessage}
+      </p>
+      <button
+        type="button"
+        onClick={() => {
+          setShowPaymentForm(false);
+          setPaymentSucceeded(false);
+          setPhoneNumber("");
+          setPaymentMessage(null);
+        }}
+        className="w-full rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
+      >
+        Done
+      </button>
+    </div>
+  ) : (
+    <form onSubmit={handlePaymentSubmit} className="space-y-3">
+      {paymentMessage && (
                   <p className={`text-sm ${paymentError ? "text-red-300" : "text-blue-300"}`}>
                     {paymentMessage}
                   </p>
@@ -768,17 +849,31 @@ function BrowsePageContent() {
                   </div>
                 )}
                 {paymentReference && pollingCount >= 30 && (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <p className="text-sm text-blue-300">
-                      Still waiting for confirmation. If you completed the payment on your phone, please wait a moment and refresh the page.
+                      We haven&apos;t received confirmation yet. If you didn&apos;t complete the payment on your phone, you can cancel and try again.
                     </p>
-                    <button
-                      type="button"
-                      onClick={checkTransactionStatus}
-                      className="w-full rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
-                    >
-                      Check status
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={checkTransactionStatus}
+                        className="flex-1 rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
+                      >
+                        Check status
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPaymentReference(null);
+                          setPollingCount(0);
+                          setPaymentMessage(null);
+                          setPaymentError(false);
+                        }}
+                        className="flex-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700"
+                      >
+                        Cancel &amp; retry
+                      </button>
+                    </div>
                   </div>
                 )}
                 {!paymentReference && (
@@ -815,6 +910,7 @@ function BrowsePageContent() {
                   </button>
                 )}
               </form>
+              )}  
             </div>
           </div>
         </div>
