@@ -12,8 +12,8 @@ export async function sendEmail({
     throw new Error("BREVO_API_KEY is not defined in environment variables");
   }
 
-  const senderEmail = process.env.BREVO_SENDER_EMAIL || "no-reply@campus-vault.com";
-  const senderName = process.env.BREVO_SENDER_NAME || "Campus Vault";
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "no-reply@mvcorner.com";
+  const senderName = process.env.BREVO_SENDER_NAME || "MVCorner";
 
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const contentType = "image/png";
 export const size = { width: 1200, height: 630 };
-export const alt = "Campus Vault - Maseno University Study Resources";
+export const alt = "MVCorner - Maseno University Study Resources";
 
 // Skip static generation — ImageResponse has a known Windows incompatibility
 // with fileURLToPath. The image will still be generated at request time on Vercel.
@@ -68,7 +68,7 @@ export default async function Image() {
             textAlign: "center",
           }}
         >
-          Campus Vault
+          MVCorner
         </h1>
         <p
           style={{

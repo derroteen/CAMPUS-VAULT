@@ -18,7 +18,7 @@ export default function TermsPage() {
         <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-300">
           <section>
             <p>
-              These terms govern your use of Campus Vault, an independently operated resource-sharing platform for Maseno University students.
+              These terms govern your use of MVCorner, an independently operated resource-sharing platform for Maseno University students.
             </p>
           </section>
 
@@ -32,7 +32,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-white">Uploaded Content</h2>
             <p className="mt-4">
-              Users retain ownership of content they upload, but grant Campus Vault a license to host, display, and distribute it to other users on the platform. Users must only upload content they have the right to share (their own notes, or resources they&apos;re permitted to redistribute). Uploading copyrighted material without permission is strictly prohibited. All uploads are subject to admin review before becoming publicly visible.
+              Users retain ownership of content they upload, but grant MVCorner a license to host, display, and distribute it to other users on the platform. Users must only upload content they have the right to share (their own notes, or resources they&apos;re permitted to redistribute). Uploading copyrighted material without permission is strictly prohibited. All uploads are subject to admin review before becoming publicly visible.
             </p>
           </section>
 
@@ -53,14 +53,14 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-white">Content Removal</h2>
             <p className="mt-4">
-              Campus Vault reserves the right to remove any content or suspend any account that violates these terms.
+              MVCorner reserves the right to remove any content or suspend any account that violates these terms.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-white">No Warranty</h2>
             <p className="mt-4">
-              The platform is provided &quot;as is&quot; without guarantees of uninterrupted availability; Campus Vault is not liable for the accuracy of user-submitted academic content.
+              The platform is provided &quot;as is&quot; without guarantees of uninterrupted availability; MVCorner is not liable for the accuracy of user-submitted academic content.
             </p>
           </section>
 

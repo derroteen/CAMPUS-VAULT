@@ -97,7 +97,7 @@ export async function POST(request: Request) {
           </tbody>
         </table>
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
-        <p style="font-size: 12px; color: #a0aec0; text-align: center; margin: 0;">This is an automated notification from Campus Vault.</p>
+        <p style="font-size: 12px; color: #a0aec0; text-align: center; margin: 0;">This is an automated notification from MVCorner.</p>
       </div>
     `;
 

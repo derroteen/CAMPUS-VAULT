@@ -214,7 +214,7 @@ export default function DashboardPage() {
           Welcome, {fullName || email}
         </h1>
         <p className="mt-3 text-slate-400">
-          You are signed in to Campus Vault.
+          You are signed in to MVCorner.
         </p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-3">

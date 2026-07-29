@@ -110,7 +110,7 @@ export default function Home() {
           <div className="text-center">
             <Image
               src="/logo.svg"
-              alt="Campus Vault Logo"
+              alt="MVCorner Logo"
               width={64}
               height={64}
               className="mx-auto mb-6 h-16 w-16"
@@ -169,7 +169,7 @@ export default function Home() {
         <div className="text-center">
           <Image
             src="/logo.svg"
-            alt="Campus Vault Logo"
+            alt="MVCorner Logo"
             width={64}
             height={64}
             className="mx-auto mb-6 h-16 w-16"
@@ -185,7 +185,7 @@ export default function Home() {
             Upload your own resources or unlock unlimited downloads for 7 hours.
           </p>
           <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-300">
-            Campus Vault helps Maseno University students download notes, past papers, CATs,
+            MVCorner helps Maseno University students download notes, past papers, CATs,
             assignments and study guides &mdash; organized by course and unit for fast, easy access.
           </p>
           <h2 className="mx-auto mt-8 max-w-4xl text-2xl font-semibold leading-tight text-white sm:text-3xl">
@@ -306,7 +306,7 @@ export default function Home() {
               <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
                 <summary className="cursor-pointer font-medium text-white">Which university is supported?</summary>
                 <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Campus Vault currently supports Maseno University, with more universities coming soon.
+                  MVCorner currently supports Maseno University, with more universities coming soon.
                 </p>
               </details>
               <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">

@@ -700,7 +700,7 @@ function BrowsePageContent() {
                 </h2>
                 <p className="text-sm text-slate-400">
                   {searchMode
-                    ? "Showing matching approved resources from across Campus Vault."
+                    ? "Showing matching approved resources from across MVCorner."
                     : selectedCourseId
                       ? "Explore the current course collection below."
                       : "Choose a university and course to start browsing."}

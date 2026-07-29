@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
         <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-300">
           <section>
             <p>
-              Campus Vault is an independently operated platform (not a registered company) built to help Maseno University students share and access academic resources. This policy explains what data we collect and how it&apos;s used.
+              MVCorner is an independently operated platform (not a registered company) built to help Maseno University students share and access academic resources. This policy explains what data we collect and how it&apos;s used.
             </p>
           </section>
 
@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
               <li>Payment transaction records (via Paystack) for unlock payments</li>
             </ul>
             <p className="mt-4">
-              <strong>Note:</strong> Campus Vault does not store raw M-Pesa or card details. All payment processing is securely handled by Paystack.
+              <strong>Note:</strong> MVCorner does not store raw M-Pesa or card details. All payment processing is securely handled by Paystack.
             </p>
           </section>
 
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-xl font-semibold text-white">Changes to This Policy</h2>
             <p className="mt-4">
-              This policy may be updated as the platform grows. Continued use of Campus Vault after changes means you accept the updated policy.
+              This policy may be updated as the platform grows. Continued use of MVCorner after changes means you accept the updated policy.
             </p>
           </section>
 

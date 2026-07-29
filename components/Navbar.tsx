@@ -42,12 +42,12 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-3 text-lg font-semibold text-white whitespace-nowrap flex-shrink-0">
           <Image
             src="/logo.svg"
-            alt="Campus Vault Logo"
+            alt="MVCorner Logo"
             width={32}
             height={32}
             className="h-8 w-8"
           />
-          Campus Vault
+          MVCorner
         </Link>
 
         <div className="flex items-center gap-3 text-sm">

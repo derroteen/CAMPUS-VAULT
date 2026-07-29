@@ -32,7 +32,7 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-12 text-white">
       <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
-        <h1 className="text-2xl font-semibold">Log in to Campus Vault</h1>
+        <h1 className="text-2xl font-semibold">Log in to MVCorner</h1>
         <p className="mt-2 text-sm text-slate-400">
           Welcome back. Enter your details to continue.
         </p>
