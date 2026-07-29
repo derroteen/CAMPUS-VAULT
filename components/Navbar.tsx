@@ -5,10 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const loadSession = async () => {
@@ -37,7 +39,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="border-b border-slate-800 bg-slate-950/90">
+    <nav className="relative border-b border-slate-800 bg-slate-950/90 z-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3 text-lg font-semibold text-white whitespace-nowrap flex-shrink-0">
           <Image
@@ -50,7 +52,14 @@ export default function Navbar() {
           MVCorner
         </Link>
 
-        <div className="flex items-center gap-3 text-sm">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-3 text-sm">
+          <Link
+            href="/marketplace"
+            className="rounded-md px-3 py-2 text-slate-300 transition hover:text-white whitespace-nowrap"
+          >
+            Marketplace
+          </Link>
           {email ? (
             <>
               <span className="hidden text-slate-300 sm:inline-block max-w-32 truncate">
@@ -80,7 +89,64 @@ export default function Navbar() {
             </>
           )}
         </div>
+
+        {/* Mobile Menu Button */}
+        <div className="flex md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-slate-300 hover:text-white focus:outline-none p-1"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Navigation Panel */}
+      {isOpen && (
+        <div className="md:hidden border-t border-slate-800 bg-slate-950 px-6 py-4 space-y-3 text-sm">
+          <Link
+            href="/marketplace"
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 text-slate-300 transition hover:text-white"
+          >
+            Marketplace
+          </Link>
+          {email ? (
+            <>
+              <div className="px-3 py-1 text-xs text-slate-400 truncate">
+                Signed in as: <span className="text-slate-200">{email}</span>
+              </div>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+                className="w-full text-left rounded-md border border-slate-700 px-3 py-2 text-slate-100 transition hover:bg-slate-800"
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <div className="space-y-2 pt-2 border-t border-slate-800">
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="block text-center rounded-md border border-slate-700 px-3 py-2 text-slate-300 transition hover:text-white"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                onClick={() => setIsOpen(false)}
+                className="block text-center rounded-md bg-sky-600 px-3 py-2 text-white transition hover:bg-sky-500"
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

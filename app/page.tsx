@@ -218,6 +218,27 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Marketplace Promo Section */}
+        <section className="mt-16 rounded-3xl border border-emerald-500/20 bg-emerald-950/10 p-8 text-center sm:p-12">
+          <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-emerald-300">
+            Marketplace
+          </span>
+          <h2 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            Now you can buy & sell on campus too
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base text-slate-300">
+            List items you&apos;re selling, connect with buyers via call or WhatsApp &mdash; free to get started.
+          </p>
+          <div className="mt-8 flex justify-center">
+            <Link
+              href="/marketplace"
+              className="rounded-md bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-500"
+            >
+              Explore Marketplace
+            </Link>
+          </div>
+        </section>
+
         {/* Stats Row */}
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
