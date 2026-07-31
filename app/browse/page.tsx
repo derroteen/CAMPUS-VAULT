@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
 
@@ -56,14 +56,6 @@ function BrowsePageContent() {
   const [unlockNotice, setUnlockNotice] = useState<string | null>(null);
   const [unlockTargetId, setUnlockTargetId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [paymentInProgress, setPaymentInProgress] = useState(false);
-  const [paymentReference, setPaymentReference] = useState<string | null>(null);
-  const [pollingCount, setPollingCount] = useState(0);
-  const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
-  const [paymentError, setPaymentError] = useState(false);
-  const [paymentSucceeded, setPaymentSucceeded] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -373,7 +365,7 @@ function BrowsePageContent() {
     if (!hasUnlockedAccess()) {
       setUnlockTargetId(resource.id);
       setUnlockNotice(
-        "Upload 4 approved resources or pay KES 30 to unlock 7 hours of downloads"
+        "Upload 4 approved resources to unlock 7 hours of downloads."
       );
       return;
     }
@@ -418,123 +410,6 @@ function BrowsePageContent() {
       );
     } finally {
       setDownloadingId(null);
-    }
-  };
-
-  const refreshProfile = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session?.user) {
-      return;
-    }
-
-    const { data } = await supabase
-      .from("profiles")
-      .select("is_admin, unlock_expires_at")
-      .eq("id", session.user.id)
-      .single();
-
-    if (data) {
-      setIsAdmin(Boolean(data.is_admin));
-      setUnlockExpiresAt(data.unlock_expires_at);
-    }
-  };
-
-  const checkTransactionStatus = useCallback(async () => {
-    if (!paymentReference) return;
-
-    const { data } = await supabase
-      .from("transactions")
-      .select("status")
-      .eq("paystack_reference", paymentReference)
-      .single();
-
-    if (!data) return;
-
-    if (data.status === "success") {
-      setPaymentMessage("Payment confirmed! You now have 7 hours of unlimited downloads.");
-      setPollingCount(0);
-      setPaymentReference(null);
-      setPaymentSucceeded(true);
-      await refreshProfile();
-    } else if (data.status === "failed") {
-      setPaymentMessage("Payment was not completed. Please try again.");
-      setPollingCount(0);
-      setPaymentReference(null);
-      setPaymentError(true);
-    }
-  }, [paymentReference]);
-
-  useEffect(() => {
-    if (!paymentSucceeded) return;
-    const timeout = setTimeout(() => {
-      setShowPaymentForm(false);
-      setPaymentSucceeded(false);
-      setPhoneNumber("");
-      setPaymentMessage(null);
-    }, 4000);
-    return () => clearTimeout(timeout);
-  }, [paymentSucceeded]);
-
-  useEffect(() => {
-    if (!paymentReference || pollingCount >= 30) {
-      return;
-    }
-
-    const interval = setInterval(async () => {
-      await checkTransactionStatus();
-      setPollingCount((prev) => prev + 1);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [paymentReference, pollingCount, checkTransactionStatus]);
-
-  const handlePaymentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPaymentError(false);
-    setPaymentMessage(null);
-
-    const phonePattern = /^(07|01)\d{8}$/;
-    if (!phonePattern.test(phoneNumber)) {
-      setPaymentMessage("Please enter a valid Kenyan phone number (e.g. 0712345678)");
-      setPaymentError(true);
-      return;
-    }
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session?.access_token) {
-      return;
-    }
-
-    setPaymentInProgress(true);
-
-    try {
-      const response = await fetch("/api/paystack/charge", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ phoneNumber })
-      });
-
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error("Failed to initiate payment");
-      }
-
-      setPaymentReference(result.data.reference);
-      setPaymentMessage("Check your phone to enter your M-Pesa PIN and complete the payment...");
-    } catch (error) {
-      console.error("Payment error:", error);
-      setPaymentMessage("Something went wrong. Please try again.");
-      setPaymentError(true);
-    } finally {
-      setPaymentInProgress(false);
     }
   };
 
@@ -670,24 +545,12 @@ function BrowsePageContent() {
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   Upload 4 approved resources and unlock 7 hours of downloads with the 4-for-7 model.
                 </p>
-                <div className="mt-4 flex gap-3">
-                  <Link
-                    href="/upload"
-                    className="flex-1 rounded-xl border border-forest bg-forest/10 px-4 py-2 text-center text-sm font-medium text-forest transition hover:bg-forest/20"
-                  >
-                    Upload resource
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowPaymentForm(true);
-                      setPaymentSucceeded(false);
-                    }}
-                    className="flex-1 rounded-xl border border-forest/60 bg-forest/10 px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/20"
-                  >
-                    Pay KES 30
-                  </button>
-                </div>
+                <Link
+                  href="/upload"
+                  className="mt-4 block w-full rounded-xl border border-forest bg-forest/10 px-4 py-2 text-center text-sm font-medium text-forest transition hover:bg-forest/20"
+                >
+                  Upload resource
+                </Link>
               </div>
             ) : null}
           </aside>
@@ -749,19 +612,12 @@ function BrowsePageContent() {
                     {unlockTargetId === resource.id && unlockNotice ? (
                       <div className="mt-5 space-y-2">
                         <p className="text-sm text-coral">{unlockNotice}</p>
-                        {!showPaymentForm ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowPaymentForm(true);
-                              setUnlockTargetId(null);
-                              setUnlockNotice(null);
-                            }}
-                            className="w-full rounded-xl border border-forest/60 bg-forest/10 px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/20"
-                          >
-                            Pay KES 30
-                          </button>
-                        ) : null}
+                        <Link
+                          href="/upload"
+                          className="mt-2 inline-flex text-sm font-medium text-forest hover:text-leaf underline"
+                        >
+                          Upload a resource to unlock →
+                        </Link>
                       </div>
                     ) : (
                       <button
@@ -788,133 +644,6 @@ function BrowsePageContent() {
           </section>
         </div>
       </div>
-
-      {/* Payment Modal */}
-      {showPaymentForm || paymentReference ? (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-charcoal/80 z-50 p-4"
-          onClick={() => {
-            if (!paymentReference) {
-              setShowPaymentForm(false);
-              setPhoneNumber("");
-              setPaymentMessage(null);
-              setPaymentError(false);
-            }
-          }}
-        >
-          <div
-            className={`rounded-2xl border bg-white/80 p-6 shadow-xl max-w-md w-full transition-all ${
-              paymentReference ? "border-2 border-forest/80 shadow-forest/30 animate-pulse" : "border border-forest/40"
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold text-forest">Need unlimited access?</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Pay KES 30 via M-Pesa to unlock 7 hours of downloads!
-            </p>
-            <div className="mt-5 space-y-3">
-              {paymentSucceeded ? (
-                <div className="flex flex-col items-center gap-4 py-4 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-charcoal/20">
-                    <svg className="h-9 w-9 text-charcoal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <p className="text-base font-medium text-charcoal">
-                    {paymentMessage}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowPaymentForm(false);
-                      setPaymentSucceeded(false);
-                      setPhoneNumber("");
-                      setPaymentMessage(null);
-                    }}
-                    className="w-full rounded-full bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf"
-                  >
-                    Done
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handlePaymentSubmit} className="space-y-3">
-                  {paymentMessage && (
-                    <p className={`text-sm ${paymentError ? "text-coral" : "text-forest"}`}>
-                      {paymentMessage}
-                    </p>
-                  )}
-                  {paymentReference && pollingCount < 30 && (
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-forest/40 border-t-transparent"></div>
-                    </div>
-                  )}
-                  {paymentReference && pollingCount >= 30 && (
-                    <div className="space-y-3">
-                      <p className="text-sm text-forest">
-                        We haven&apos;t received confirmation yet. If you didn&apos;t complete the payment on your phone, you can cancel and try again.
-                      </p>
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={checkTransactionStatus}
-                          className="flex-1 rounded-full border border-forest/60 bg-forest/10 px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/20"
-                        >
-                          Check status
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPaymentReference(null);
-                            setPollingCount(0);
-                            setPaymentMessage(null);
-                            setPaymentError(false);
-                          }}
-                          className="flex-1 rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white/80"
-                        >
-                          Cancel & retry
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  {!paymentReference && (
-                    <>
-                      <input
-                        type="tel"
-                        placeholder="e.g. 0712345678"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        disabled={paymentInProgress}
-                        className="w-full rounded-xl border border-forest/40 bg-white/90 px-4 py-2 text-sm text-charcoal outline-none focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400"
-                      />
-                      <button
-                        type="submit"
-                        disabled={paymentInProgress}
-                        className="w-full rounded-full bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:bg-forest/50"
-                      >
-                        {paymentInProgress ? "Processing..." : "Send Payment Request"}
-                      </button>
-                    </>
-                  )}
-                  {!paymentReference && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowPaymentForm(false);
-                        setPhoneNumber("");
-                        setPaymentMessage(null);
-                        setPaymentError(false);
-                      }}
-                      className="w-full text-xs text-slate-600 underline"
-                    >
-                      Cancel payment
-                    </button>
-                  )}
-                </form>
-              )}  
-            </div>
-          </div>
-        </div>
-      ) : null}
     </main>
   );
 }
