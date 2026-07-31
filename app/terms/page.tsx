@@ -46,7 +46,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-coral">Access Model</h2>
             <p className="mt-4">
-              Free access requires uploading 4 approved resources; alternatively, a KES 30 payment via M-Pesa unlocks unlimited downloads for 7 hours. Payments are processed by Paystack and are generally non-refundable once the unlock period has started, except where required by law or at our discretion for a genuine service failure.
+              Access requires uploading 4 approved resources, which unlocks unlimited downloads for 7 hours. There is no paid option to unlock downloads.
             </p>
           </section>
 

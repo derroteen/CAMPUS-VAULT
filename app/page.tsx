@@ -150,7 +150,7 @@ export default function Home() {
             resources and buy or sell with fellow students in the campus marketplace.
           </p>
           <h2 className="mx-auto mt-8 max-w-4xl text-2xl font-semibold leading-tight sm:text-3xl">
-            Upload 4 Notes or Pay KSh 30 to Unlock Unlimited Downloads for 7 Hours
+            Upload 4 Notes to Unlock Unlimited Downloads for 7 Hours
           </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
@@ -304,15 +304,13 @@ export default function Home() {
                 How do I download notes?
               </summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
-                Upload 4 approved resources, or pay KSh 30 via M-Pesa to unlock unlimited downloads
-                for 7 hours.
+                Upload 4 approved resources to unlock unlimited downloads for 7 hours.
               </p>
             </details>
             <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">Are the notes free?</summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
-                Yes - upload your own notes to earn access, or pay a small one-time fee for temporary
-                unlimited access.
+                Yes - upload your own notes to earn access. Once 4 of your uploads are approved, you unlock 7 hours of unlimited downloads.
               </p>
             </details>
             <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">

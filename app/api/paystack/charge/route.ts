@@ -9,11 +9,19 @@ export const preferredRegion = 'fra1';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { phoneNumber } = body;
+    const { phoneNumber, amountKes } = body;
 
     if (!phoneNumber) {
       return NextResponse.json(
         { success: false, error: "Phone number is required" },
+        { status: 400 }
+      );
+    }
+
+    const tipAmount = Number(amountKes);
+    if (!Number.isFinite(tipAmount) || tipAmount < 10 || tipAmount > 10000) {
+      return NextResponse.json(
+        { success: false, error: "Please enter a tip amount between KES 10 and KES 10,000" },
         { status: 400 }
       );
     }
@@ -99,7 +107,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         email: userEmail,
-        amount: 3000,
+        amount: Math.round(tipAmount * 100),
         currency: "KES",
         reference: generatedReference,
         mobile_money: {
@@ -119,7 +127,7 @@ export async function POST(request: Request) {
         provider: "paystack",
         paystack_reference: generatedReference,
         status: "pending",
-        amount_kes: 30
+        amount_kes: tipAmount
       });
     if (insertError) {
       throw insertError;

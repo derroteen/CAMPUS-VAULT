@@ -17,7 +17,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false }, { status: 500 });
     }
 
-    // Verify signature
     const hash = crypto.createHmac('sha512', secret).update(rawBody).digest('hex');
     if (hash !== signature) {
       console.log('Paystack webhook signature verification failed');
@@ -44,27 +43,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true });
       }
 
+      // Tips do not grant unlock access — just record the successful payment.
       const { error: updateError } = await supabaseAdmin
         .from("transactions")
         .update({
           status: "success",
-          unlock_granted: true,
         })
         .eq("id", transaction.id)
         .select();
       console.log('Transaction update:', updateError ? `error: ${updateError.message}` : 'success');
-
-      const unlockExpiresAt = new Date();
-      unlockExpiresAt.setHours(unlockExpiresAt.getHours() + 7);
-
-      const { error: profileUpdateError } = await supabaseAdmin
-        .from("profiles")
-        .update({
-          unlock_expires_at: unlockExpiresAt.toISOString(),
-        })
-        .eq("id", transaction.profile_id)
-        .select();
-      console.log('Profile unlock update:', profileUpdateError ? `error: ${profileUpdateError.message}` : 'success');
     } else {
       console.log('Ignoring Paystack event:', event.event);
     }
