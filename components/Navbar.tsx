@@ -17,6 +17,7 @@ export default function Navbar() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+
       setEmail(session?.user?.email ?? null);
     };
 
@@ -54,6 +55,12 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-3 text-sm">
+          <Link
+            href={email ? "/dashboard" : "/browse"}
+            className="whitespace-nowrap rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
+          >
+            Study Resources
+          </Link>
           <Link
             href="/marketplace"
             className="whitespace-nowrap rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
@@ -105,6 +112,13 @@ export default function Navbar() {
       {/* Mobile Navigation Panel */}
       {isOpen && (
         <div className="space-y-3 border-t border-forest/15 bg-warm-bg px-6 py-4 text-sm md:hidden">
+          <Link
+            href={email ? "/dashboard" : "/browse"}
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
+          >
+            Study Resources
+          </Link>
           <Link
             href="/marketplace"
             onClick={() => setIsOpen(false)}
