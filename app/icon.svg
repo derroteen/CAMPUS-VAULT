@@ -1,10 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
-  <rect x="0" y="0" width="256" height="256" rx="48" fill="#0284c7" />
-  <g transform="translate(32 32)" fill="white">
-    <polygon points="96,24 16,64 96,104 176,64" />
-    <rect x="92" y="104" width="8" height="40" />
-    <polygon points="96,144 88,160 104,160" />
-    <circle cx="100" cy="56" r="4" />
-    <path d="M100,56 L100,88" stroke="white" stroke-width="4" fill="none" />
-  </g>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="7" fill="#1B4332" />
+  <path d="M32 0 L32 9 L23 0 Z" fill="#FFD23F" />
+  <path d="M8 23V9L16 17L24 9V23" stroke="#FFFBF5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
 </svg>
