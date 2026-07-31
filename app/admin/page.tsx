@@ -279,7 +279,7 @@ export default function AdminPage() {
   const handleGrantPremium = async (userId: string) => {
     if (!currentAdminId) return;
     setProcessingId(userId);
-    
+
     // Calculate 90 days from now
     const ninetyDaysFromNow = new Date();
     ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
@@ -302,13 +302,13 @@ export default function AdminPage() {
           : contributor
       )
     );
-    
+
     setProcessingId(null);
   };
 
   const handleRevokePremium = async (userId: string) => {
     setProcessingId(userId);
-    
+
     await supabase
       .from("profiles")
       .update({ is_premium_contributor: false })
@@ -322,13 +322,13 @@ export default function AdminPage() {
           : contributor
       )
     );
-    
+
     setProcessingId(null);
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-6 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl space-y-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -343,11 +343,11 @@ export default function AdminPage() {
             <Skeleton className="h-28 rounded-2xl" />
           </div>
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+          <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
             <Skeleton className="h-8 w-48 mb-4" />
             <div className="mt-4 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between">
+                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between">
                   <div className="flex-1">
                     <Skeleton className="h-6 w-64 mb-2" />
                     <Skeleton className="h-5 w-96" />
@@ -362,18 +362,19 @@ export default function AdminPage() {
             </div>
           </section>
 
-          <div className="border-t border-slate-800" />
+          <div className="border-t border-slate-200" />
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
+          <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
             <Skeleton className="h-8 w-48 mb-4" />
             <div className="mt-4 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between">
+                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between">
                   <div className="flex-1">
                     <Skeleton className="h-6 w-64 mb-2" />
                     <Skeleton className="h-5 w-96" />
                   </div>
                   <div className="flex gap-2 mt-3 md:mt-0">
+                    <Skeleton className="h-10 w-20 rounded-xl" />
                     <Skeleton className="h-10 w-20 rounded-xl" />
                     <Skeleton className="h-10 w-20 rounded-xl" />
                   </div>
@@ -413,51 +414,51 @@ export default function AdminPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-6 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-semibold">Admin dashboard</h1>
-            <p className="mt-2 text-slate-400">Review uploads and course requests.</p>
+            <h1 className="text-3xl font-semibold font-space-grotesk">Admin dashboard</h1>
+            <p className="mt-2 text-slate-600">Review uploads and course requests.</p>
           </div>
-          <Link href="/dashboard" className="text-sm text-sky-400 hover:text-sky-300">
+          <Link href="/dashboard" className="text-sm text-forest hover:text-leaf underline">
             Back to dashboard
           </Link>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
-            <p className="text-sm text-slate-400">Pending resources</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{resources.length}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+            <p className="text-sm text-slate-600">Pending resources</p>
+            <p className="mt-2 text-3xl font-semibold text-charcoal">{resources.length}</p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
-            <p className="text-sm text-slate-400">Pending course requests</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{courseRequests.length}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+            <p className="text-sm text-slate-600">Pending course requests</p>
+            <p className="mt-2 text-3xl font-semibold text-charcoal">{courseRequests.length}</p>
           </div>
         </div>
 
-        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-          <h2 className="text-xl font-semibold">Pending resources</h2>
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <h2 className="text-xl font-semibold font-space-grotesk">Pending resources</h2>
           {previewError ? (
-            <p className="mt-3 text-sm text-rose-400">{previewError}</p>
+            <p className="mt-3 text-sm text-coral">{previewError}</p>
           ) : null}
           <div className="mt-4 space-y-3">
             {resources.length === 0 ? (
-              <p className="text-slate-400">No pending resources.</p>
+              <p className="text-slate-600">No pending resources.</p>
             ) : (
               resources.map((resource) => (
                 <div
                   key={resource.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-medium text-white">{resource.title}</h3>
+                      <h3 className="font-medium text-charcoal">{resource.title}</h3>
                       <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${getResourceBadgeClass(resource.resource_type)}`}>
                         {getResourceLabel(resource.resource_type)}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <p className="mt-2 text-sm text-slate-600">
                       {resource.unit_name ? `${resource.unit_name} • ` : ""}
                       uploader: {profiles[resource.uploader_id] ?? "Unknown"} • course: {courses[resource.course_id] ?? "Unknown"}
                     </p>
@@ -465,21 +466,21 @@ export default function AdminPage() {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handlePreviewResource(resource.storage_path)}
-                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-700"
+                      className="rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-sm font-medium text-charcoal transition hover:bg-slate-200/90"
                     >
                       Preview
                     </button>
                     <button
                       onClick={() => handleApproveResource(resource.id, resource.uploader_id)}
                       disabled={processingId === resource.id}
-                      className="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
+                      className="rounded-xl bg-forest px-3 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:opacity-60"
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleRejectResource(resource.id)}
                       disabled={processingId === resource.id}
-                      className="rounded-xl bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-60"
+                      className="rounded-xl bg-coral px-3 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-60"
                     >
                       Reject
                     </button>
@@ -490,22 +491,22 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <div className="border-t border-slate-800" />
+        <div className="border-t border-slate-200" />
 
-        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-          <h2 className="text-xl font-semibold">Top Contributors</h2>
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <h2 className="text-xl font-semibold font-space-grotesk">Top Contributors</h2>
           <div className="mt-4 space-y-3">
             {topContributors.length === 0 ? (
-              <p className="text-slate-400">No contributors yet.</p>
+              <p className="text-slate-600">No contributors yet.</p>
             ) : (
               topContributors.map((contributor) => (
                 <div
                   key={contributor.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div className="flex items-center gap-3">
                     <div>
-                      <h3 className="font-medium text-white flex items-center gap-2">
+                      <h3 className="font-medium text-charcoal flex items-center gap-2">
                         {contributor.full_name || 'Anonymous User'}
                         {contributor.is_premium_contributor && (
                           <span className="rounded-full bg-amber-500/20 px-3 py-0.5 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 border border-amber-500/30">
@@ -513,8 +514,8 @@ export default function AdminPage() {
                           </span>
                         )}
                       </h3>
-                      <p className="text-sm text-slate-400">
-                        Approved uploads: <span className="font-medium text-white">{contributor.approved_uploads_count}</span>
+                      <p className="text-sm text-slate-600">
+                        Approved uploads: <span className="font-medium text-charcoal">{contributor.approved_uploads_count}</span>
                       </p>
                     </div>
                   </div>
@@ -543,24 +544,24 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <div className="border-t border-slate-800" />
+        <div className="border-t border-slate-200" />
 
-        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-          <h2 className="text-xl font-semibold">Pending course requests</h2>
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <h2 className="text-xl font-semibold font-space-grotesk">Pending course requests</h2>
           <div className="mt-4 space-y-3">
             {courseRequests.length === 0 ? (
-              <p className="text-slate-400">No pending course requests.</p>
+              <p className="text-slate-600">No pending course requests.</p>
             ) : (
               courseRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
-                    <h3 className="font-medium text-white">
+                    <h3 className="font-medium text-charcoal">
                       {request.requested_code} — {request.requested_name}
                     </h3>
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-slate-600">
                       University: {universities[request.university_id] ?? "Unknown"} • requester: {requesters[request.requested_by] ?? "Unknown"}
                     </p>
                   </div>
@@ -575,14 +576,14 @@ export default function AdminPage() {
                         )
                       }
                       disabled={processingId === request.id}
-                      className="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
+                      className="rounded-xl bg-forest px-3 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:opacity-60"
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleRejectCourseRequest(request.id)}
                       disabled={processingId === request.id}
-                      className="rounded-xl bg-rose-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-60"
+                      className="rounded-xl bg-coral px-3 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-60"
                     >
                       Reject
                     </button>

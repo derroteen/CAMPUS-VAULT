@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { Skeleton } from "@/components/Skeleton";
 
 type PopularCourse = {
   id: string;
@@ -15,40 +14,46 @@ type PopularCourse = {
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-
   const [popularCourses, setPopularCourses] = useState<PopularCourse[]>([]);
 
   useEffect(() => {
-    const checkSession = async () => {
+    let isMounted = true;
+
+    const syncSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      setIsLoggedIn(!!session?.user);
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) {
         setIsLoggedIn(!!session?.user);
-      });
-
-      setLoading(false);
-
-      return () => subscription.unsubscribe();
+      }
     };
 
-    checkSession();
+    syncSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) {
+        setIsLoggedIn(!!session?.user);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadHomepageData = async () => {
       const masenoUniversityResult = await supabase
         .from("universities")
         .select("id")
         .eq("name", "Maseno University")
         .maybeSingle();
-
 
       let topCourses: PopularCourse[] = [];
 
@@ -81,7 +86,6 @@ export default function Home() {
             );
           });
 
-
           topCourses = (coursesData ?? [])
             .map((course) => ({
               id: course.id,
@@ -90,112 +94,69 @@ export default function Home() {
               resourceCount: resourceCountsByCourse.get(course.id) ?? 0,
             }))
             .filter((course) => course.resourceCount > 0)
-            .sort((a, b) => b.resourceCount - a.resourceCount || a.name.localeCompare(b.name))
+            .sort(
+              (a, b) => b.resourceCount - a.resourceCount || a.name.localeCompare(b.name)
+            )
             .slice(0, 8);
         }
       }
 
-
-      setPopularCourses(topCourses);
+      if (isMounted) {
+        setPopularCourses(topCourses);
+      }
     };
 
     loadHomepageData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-slate-950 px-6 py-16 text-white">
-        <div className="mx-auto max-w-7xl">
-          {/* Hero Section */}
-          <div className="text-center">
-            <Image
-              src="/logo.svg"
-              alt="MVCorner Logo"
-              width={64}
-              height={64}
-              className="mx-auto mb-6 h-16 w-16"
-            />
-            <Skeleton className="h-6 w-40 mx-auto mb-4 rounded-full" />
-            <Skeleton className="h-12 w-full max-w-3xl mx-auto mb-4" />
-            <Skeleton className="h-7 w-full max-w-2xl mx-auto mb-6" />
-            <Skeleton className="h-8 w-full max-w-4xl mx-auto mb-8" />
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Skeleton className="h-12 w-32 rounded-md" />
-              <Skeleton className="h-12 w-32 rounded-md" />
-            </div>
-          </div>
-
-          {/* Stats Row */}
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
-          </div>
-
-          {/* Feature Highlight Cards */}
-          <div className="mt-16 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-32 rounded-2xl" />
-            ))}
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   const features = [
     {
       title: "Verified resources",
-      description: "Peer-uploaded and moderated notes, past papers, and study guides",
+      description: "Peer-uploaded and moderated notes, past papers, and study guides.",
     },
     {
       title: "Maseno University only",
-      description: "Organized by course for faster discovery across Maseno University",
+      description: "Organized by course for faster discovery across Maseno University.",
     },
     {
       title: "4-for-7 unlock model",
-      description: "Upload 4 approved resources or pay a small fee for 7 hours of unlimited downloads",
+      description:
+        "Upload 4 approved resources or pay a small fee for 7 hours of unlimited downloads.",
     },
     {
       title: "Course requests",
-      description: "Can't find your course? Request it and it's added for everyone",
+      description: "Can't find your course? Request it and it is added for everyone.",
+    },
+    {
+      title: "Campus marketplace",
+      description: "Buy and sell with fellow students - post a listing in minutes.",
     },
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-16 text-white">
-      <div className="mx-auto max-w-7xl">
-        {/* Hero Section */}
-        <div className="text-center">
-          <Image
-            src="/logo.svg"
-            alt="MVCorner Logo"
-            width={64}
-            height={64}
-            className="mx-auto mb-6 h-16 w-16"
-          />
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-sky-400">
-            Your campus hub
-          </p>
+    <main className="min-h-screen bg-warm-bg text-charcoal">
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-forest to-leaf px-6 py-16 text-white">
+        <div className="mx-auto max-w-6xl text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            Download Maseno University Notes, Past Papers & Study Resources
+            Everything you need on campus
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl">
-            Access verified notes, CATs, past papers and study guides for Maseno University students.
-            Upload your own resources or unlock unlimited downloads for 7 hours.
+          <p className="mx-auto mt-6 max-w-3xl text-lg text-white/90 sm:text-xl">
+            MVCorner brings both sides of student life into one platform: download verified study
+            resources and buy or sell with fellow students in the campus marketplace.
           </p>
-          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-300">
-            MVCorner helps Maseno University students download notes, past papers, CATs,
-            assignments and study guides &mdash; organized by course and unit for fast, easy access.
-          </p>
-          <h2 className="mx-auto mt-8 max-w-4xl text-2xl font-semibold leading-tight text-white sm:text-3xl">
+          <h2 className="mx-auto mt-8 max-w-4xl text-2xl font-semibold leading-tight sm:text-3xl">
             Upload 4 Notes or Pay KSh 30 to Unlock Unlimited Downloads for 7 Hours
           </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                className="rounded-md bg-sky-600 px-6 py-3 font-medium text-white transition hover:bg-sky-500"
+                className="inline-flex rounded-md bg-sunflower px-6 py-3 font-medium text-charcoal transition hover:bg-coral hover:text-white"
               >
                 Go to Dashboard
               </Link>
@@ -203,13 +164,13 @@ export default function Home() {
               <>
                 <Link
                   href="/signup"
-                  className="rounded-md bg-sky-600 px-6 py-3 font-medium text-white transition hover:bg-sky-500"
+                  className="inline-flex rounded-md bg-sunflower px-6 py-3 font-medium text-charcoal transition hover:bg-coral hover:text-white"
                 >
                   Sign up
                 </Link>
                 <Link
                   href="/login"
-                  className="rounded-md border border-slate-700 px-6 py-3 font-medium text-slate-200 transition hover:bg-slate-800"
+                  className="inline-flex rounded-md border border-white/70 px-6 py-3 font-medium text-white transition hover:bg-white/20"
                 >
                   Log in
                 </Link>
@@ -217,160 +178,247 @@ export default function Home() {
             )}
           </div>
         </div>
+      </section>
 
-        {/* Marketplace Promo Section */}
-        <section className="mt-16 rounded-3xl border border-emerald-500/20 bg-emerald-950/10 p-8 text-center sm:p-12">
-          <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-emerald-300">
-            Marketplace
-          </span>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Now you can buy & sell on campus too
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-slate-300">
-            List items you&apos;re selling, connect with buyers via call or WhatsApp &mdash; free to get started.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <Link
-              href="/marketplace"
-              className="rounded-md bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-500"
-            >
-              Explore Marketplace
-            </Link>
+      {/* TWO‑PANEL SECTION */}
+      <section className="relative mx-auto mt-10 max-w-7xl overflow-hidden rounded-3xl border border-forest/15 shadow-xl shadow-forest/10">
+        <div
+          className="pointer-events-none absolute inset-y-0 left-1/2 z-20 hidden w-24 -translate-x-1/2 md:block"
+          style={{ clipPath: "polygon(22% 0, 100% 0, 78% 100%, 0 100%)" }}
+        >
+          <div className="h-full w-full bg-gradient-to-b from-sunflower/80 via-warm-bg/70 to-forest/80" />
+        </div>
+        <div className="relative flex flex-col md:flex-row overflow-hidden">
+        {/* STUDY RESOURCES PANEL */}
+          <div className="relative md:w-1/2 md:[clip-path:polygon(0_0,96%_0,84%_100%,0_100%)]">
+            <Image
+              src="/images/resources-hero.jpg"
+              alt="Students studying"
+              width={1200}
+              height={900}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-forest/75" />
+            <div className="absolute inset-0 flex flex-col items-center justify-end p-8 text-center text-white">
+              <h2 className="text-3xl font-semibold">Study Resources</h2>
+              <p className="mt-3 max-w-md text-sm text-white/90">
+                Download notes, past papers, CATs and study guides organized by school and course.
+              </p>
+              <Link
+                href="/dashboard"
+                className="mt-5 inline-flex rounded-md bg-leaf px-5 py-2.5 font-medium text-white transition hover:bg-coral"
+              >
+                Explore Resources
+              </Link>
+            </div>
           </div>
-        </section>
 
-        {/* Stats Row */}
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
-            <p className="text-xl font-bold text-white">Growing Library</p>
-            <p className="mt-2 text-sm text-slate-400">Verified notes, past papers and study guides added regularly</p>
-          </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
-            <p className="text-xl font-bold text-white">New Resources Weekly</p>
-            <p className="mt-2 text-sm text-slate-400">Fresh uploads from Maseno University students every week</p>
-          </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center">
-            <p className="text-xl font-bold text-white">Organized by Course</p>
-            <p className="mt-2 text-sm text-slate-400">Find exactly what you need, filtered by school and course</p>
+        {/* MARKETPLACE PANEL */}
+          <div className="relative md:w-1/2 md:[clip-path:polygon(16%_0,100%_0,100%_100%,4%_100%)]">
+            <Image
+              src="/images/marketplace-hero.jpg"
+              alt="Outdoor market"
+              width={1200}
+              height={900}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-sunflower/75" />
+            <div className="absolute inset-0 flex flex-col items-center justify-end p-8 text-center text-charcoal">
+              <h2 className="text-3xl font-semibold">Marketplace</h2>
+              <p className="mt-3 max-w-md text-sm text-charcoal/90">
+                Buy and sell electronics, books, hostel essentials and more with fellow students.
+              </p>
+              <Link
+                href="/marketplace"
+                className="mt-5 inline-flex rounded-md bg-coral px-5 py-2.5 font-medium text-white transition hover:bg-forest"
+              >
+                Explore Marketplace
+              </Link>
+            </div>
           </div>
         </div>
+      </section>
 
-        {popularCourses.length > 0 && (
-          <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-slate-400">Browse popular subjects</span>
-              {popularCourses.map((course) => (
-                <Link
-                  key={course.id}
-                  href={`/browse?university=${course.universityId}&course=${course.id}`}
-                  className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1.5 text-sm text-slate-200 transition hover:border-sky-500 hover:text-white"
-                >
-                  {course.name}
-                </Link>
-              ))}
+      {/* STATS STYLE SECTION */}
+      <section className="py-12">
+        <div className="container mx-auto px-4 grid gap-4 md:grid-cols-3">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Growing Library</h2>
+            <p className="mt-2 text-base">Verified notes, past papers and study guides added regularly</p>
+          </div>
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">New Resources Weekly</h2>
+            <p className="mt-2 text-base">Fresh uploads from Maseno University students every week</p>
+          </div>
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Organized by Course</h2>
+            <p className="mt-2 text-base">Find exactly what you need, filtered by school and course</p>
+          </div>
+        </div>
+      </section>
+
+      {popularCourses.length > 0 && (
+        <section className="bg-forest/5 pb-8 pt-8">
+          <div className="container mx-auto px-4">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/80 px-4 py-4 shadow-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-medium text-charcoal/75">Browse popular subjects</span>
+                {popularCourses.map((course) => (
+                  <Link
+                    key={course.id}
+                    href={`/browse?university=${course.universityId}&course=${course.id}`}
+                    className="rounded-full border border-forest/30 bg-warm-bg px-3 py-1.5 text-sm text-forest transition hover:border-coral hover:text-coral"
+                  >
+                    {course.name}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
+      )}
 
-        {/* Feature Highlight Cards */}
-        <div className="mt-16 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {features.map((feature, index) => (
+      {/* FEATURE HIGHLIGHT CARDS */}
+      <section className="bg-forest/5 pb-12">
+        <div className="container mx-auto grid gap-4 px-4 md:grid-cols-2 xl:grid-cols-5">
+          {features.map((feature) => (
             <div
-              key={index}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-6"
+              key={feature.title}
+              className="relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/85 p-6 shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">{feature.title}</h3>
-              <p className="mt-2 text-sm text-slate-400">{feature.description}</p>
+              <div className="absolute right-0 top-0 h-6 w-6 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
+              <h3 className="text-lg font-semibold text-forest">{feature.title}</h3>
+              <p className="mt-2 text-sm text-charcoal/80">{feature.description}</p>
             </div>
           ))}
         </div>
+      </section>
 
-        {/* Closing CTA Section */}
-        {!isLoggedIn && (
-          <div className="mt-16 text-center">
-            <div className="mx-auto max-w-2xl rounded-3xl border border-slate-800 bg-slate-900 p-10">
-              <h2 className="text-3xl font-semibold text-white">Ready to get started?</h2>
-              <p className="mt-3 text-slate-400">
-                Join Maseno University students sharing and accessing study resources.
+      {/* FAQ */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-semibold text-center text-forest">Frequently Asked Questions</h2>
+          <div className="mx-auto mt-8 max-w-3xl space-y-3">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+              <summary className="cursor-pointer font-medium text-charcoal">
+                How do I download notes?
+              </summary>
+              <p className="mt-3 text-sm leading-6 text-charcoal/80">
+                Upload 4 approved resources, or pay KSh 30 via M-Pesa to unlock unlimited downloads
+                for 7 hours.
               </p>
-              <div className="mt-8">
-                <Link
-                  href="/signup"
-                  className="inline-flex rounded-md bg-sky-600 px-8 py-3 font-medium text-white transition hover:bg-sky-500"
-                >
-                  Sign up for free
-                </Link>
-              </div>
-            </div>
+            </details>
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+              <summary className="cursor-pointer font-medium text-charcoal">Are the notes free?</summary>
+              <p className="mt-3 text-sm leading-6 text-charcoal/80">
+                Yes - upload your own notes to earn access, or pay a small one-time fee for temporary
+                unlimited access.
+              </p>
+            </details>
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+              <summary className="cursor-pointer font-medium text-charcoal">
+                Which university is supported?
+              </summary>
+              <p className="mt-3 text-sm leading-6 text-charcoal/80">
+                MVCorner currently supports Maseno University, with more universities coming soon.
+              </p>
+            </details>
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+              <summary className="cursor-pointer font-medium text-charcoal">
+                How do I request a course that isn&apos;t listed?
+              </summary>
+              <p className="mt-3 text-sm leading-6 text-charcoal/80">
+                Use the course request feature after signing up - our admins review and add it for
+                everyone once approved.
+              </p>
+            </details>
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+              <summary className="cursor-pointer font-medium text-charcoal">
+                How do I sell something on the marketplace?
+              </summary>
+              <p className="mt-3 text-sm leading-6 text-charcoal/80">
+                Create a free listing, add photos and a price, and interested buyers can reach you
+                directly by call or WhatsApp.
+              </p>
+            </details>
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+              <summary className="cursor-pointer font-medium text-charcoal">
+                Is there a cost to sell?
+              </summary>
+              <p className="mt-3 text-sm leading-6 text-charcoal/80">
+                The free tier allows up to 3 active listings. A Pro tier is available if you want
+                more listing capacity.
+              </p>
+            </details>
           </div>
+        </div>
+      </section>
+
+      {/* NATURAL SIGN‑UP FLOW */}
+      <section className="bg-sunflower/10 py-12 text-center">
+        {isLoggedIn ? (
+          <Link
+            href="/dashboard"
+            className="inline-flex rounded-md bg-forest px-6 py-3 font-medium text-white transition hover:bg-leaf"
+          >
+            Go to Dashboard
+          </Link>
+        ) : (
+          <>
+            <Link
+              href="/dashboard"
+              className="inline-flex rounded-md bg-forest px-6 py-3 font-medium text-white transition hover:bg-leaf"
+            >
+              Explore Resources
+            </Link>
+            <br />
+            <Link
+              href="/login"
+              className="mt-4 inline-flex rounded-md border border-forest/30 bg-white/70 px-6 py-3 font-medium text-forest transition hover:bg-white"
+            >
+              Log in
+            </Link>
+          </>
         )}
+      </section>
 
-        {/* FAQ */}
-        <section className="mt-16">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="text-center text-3xl font-semibold text-white">Frequently Asked Questions</h2>
-            <div className="mt-8 space-y-3">
-              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-                <summary className="cursor-pointer font-medium text-white">How do I download notes?</summary>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Upload 4 approved resources, or pay KSh 30 via M-Pesa to unlock unlimited downloads
-                  for 7 hours.
-                </p>
-              </details>
-              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-                <summary className="cursor-pointer font-medium text-white">Are the notes free?</summary>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Yes &mdash; upload your own notes to earn access, or pay a small one-time fee for
-                  temporary unlimited access.
-                </p>
-              </details>
-              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-                <summary className="cursor-pointer font-medium text-white">Which university is supported?</summary>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  MVCorner currently supports Maseno University, with more universities coming soon.
-                </p>
-              </details>
-              <details className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-                <summary className="cursor-pointer font-medium text-white">
-                  How do I request a course that isn&apos;t listed?
-                </summary>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Use the course request feature after signing up &mdash; our admins review and add it for
-                  everyone once approved.
-                </p>
-              </details>
-            </div>
-          </div>
-        </section>
-
-        <footer className="mt-16 border-t border-slate-800 py-10">
-          <div className="grid gap-8 text-sm md:grid-cols-3">
+      <footer className="border-t border-forest/20 bg-white/60 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-8 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
-              <h2 className="font-semibold text-white">Resources</h2>
-              <div className="mt-4 space-y-2 text-slate-400">
-                <Link href="/browse" className="block transition hover:text-white">Past Papers</Link>
-                <Link href="/browse" className="block transition hover:text-white">Lecture Notes</Link>
-                <Link href="/browse" className="block transition hover:text-white">Study Guides</Link>
-                <Link href="/browse" className="block transition hover:text-white">CATs</Link>
+              <h2 className="font-semibold text-forest">Resources</h2>
+              <div className="mt-4 space-y-2 text-charcoal/80">
+                <Link href="/browse" className="block transition hover:text-coral">Past Papers</Link>
+                <Link href="/browse" className="block transition hover:text-coral">Lecture Notes</Link>
+                <Link href="/browse" className="block transition hover:text-coral">Study Guides</Link>
+                <Link href="/browse" className="block transition hover:text-coral">CATs</Link>
               </div>
             </div>
             <div>
-              <h2 className="font-semibold text-white">University</h2>
-              <div className="mt-4 space-y-2 text-slate-400">
-                <Link href="/browse" className="block transition hover:text-white">Maseno University</Link>
+              <h2 className="font-semibold text-forest">Marketplace</h2>
+              <div className="mt-4 space-y-2 text-charcoal/80">
+                <Link href="/marketplace" className="block transition hover:text-coral">Browse listings</Link>
+                <Link href="/marketplace/new" className="block transition hover:text-coral">Sell an item</Link>
+                <Link href="/marketplace/pro" className="block transition hover:text-coral">Pro plan</Link>
               </div>
             </div>
             <div>
-              <h2 className="font-semibold text-white">Support</h2>
-              <div className="mt-4 space-y-2 text-slate-400">
-                <Link href="/contact" className="block transition hover:text-white">Contact</Link>
-                <Link href="/privacy" className="block transition hover:text-white">Privacy Policy</Link>
-                <Link href="/terms" className="block transition hover:text-white">Terms</Link>
+              <h2 className="font-semibold text-forest">University</h2>
+              <div className="mt-4 space-y-2 text-charcoal/80">
+                <Link href="/browse" className="block transition hover:text-coral">Maseno University</Link>
+              </div>
+            </div>
+            <div>
+              <h2 className="font-semibold text-forest">Support</h2>
+              <div className="mt-4 space-y-2 text-charcoal/80">
+                <Link href="/contact" className="block transition hover:text-coral">Contact</Link>
+                <Link href="/privacy" className="block transition hover:text-coral">Privacy Policy</Link>
+                <Link href="/terms" className="block transition hover:text-coral">Terms</Link>
               </div>
             </div>
           </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </main>
   );
 }

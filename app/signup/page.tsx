@@ -89,83 +89,85 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-12 text-white">
-      <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
-        <h1 className="text-2xl font-semibold">Create your account</h1>
-        <p className="mt-2 text-sm text-slate-400">
-          Sign up with your email and password.
-        </p>
+    <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+        <div className="relative z-10">
+          <h1 className="text-2xl font-semibold font-space-grotesk">Create your account</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Sign up with your email and password.
+          </p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <div>
-            <label className="mb-1 block text-sm text-slate-300" htmlFor="fullName">
-              Full Name
-            </label>
-            <input
-              id="fullName"
-              type="text"
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none ring-0"
-            />
-          </div>
-          
-          <div>
-            <label className="mb-1 block text-sm text-slate-300" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none ring-0"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <div>
+              <label className="mb-1 block text-sm text-slate-700" htmlFor="fullName">
+                Full Name
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+              />
+            </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-slate-300" htmlFor="password">
-              Password
-            </label>
-            <PasswordInput
-              id="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+            <div>
+              <label className="mb-1 block text-sm text-slate-700" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+              />
+            </div>
 
-          <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
-            <p className="mb-3 text-sm text-slate-300">Select your course for Maseno University</p>
-            <SchoolCoursePicker
-              universityId={selectedUniversityId}
-              value={{ schoolId: selectedSchoolId, courseId: selectedCourseId }}
-              onChange={handleSchoolCourseChange}
-            />
-            {universities.length === 0 ? (
-              <p className="mt-2 text-xs text-slate-500">Loading course options…</p>
-            ) : null}
-          </div>
+            <div>
+              <label className="mb-1 block text-sm text-slate-700" htmlFor="password">
+                Password
+              </label>
+              <PasswordInput
+                id="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
-          {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+              <p className="mb-3 text-sm text-slate-700">Select your course for Maseno University</p>
+              <SchoolCoursePicker
+                universityId={selectedUniversityId}
+                value={{ schoolId: selectedSchoolId, courseId: selectedCourseId }}
+                onChange={handleSchoolCourseChange}
+              />
+              {universities.length === 0 ? (
+                <p className="mt-2 text-xs text-slate-500">Loading course options…</p>
+              ) : null}
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {loading ? "Creating account..." : "Sign up"}
-          </button>
-        </form>
+            {error ? <p className="text-sm text-coral">{error}</p> : null}
 
-        <p className="mt-4 text-center text-sm text-slate-400">
-          Already have an account?{" "}
-          <Link href="/login" className="text-sky-400 hover:text-sky-300">
-            Log in
-          </Link>
-        </p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-forest px-4 py-3 font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {loading ? "Creating account..." : "Sign up"}
+            </button>
+          </form>
+
+          <p className="mt-4 text-center text-sm text-slate-600">
+            Already have an account?{" "}
+            <Link href="/login" className="text-forest hover:text-leaf underline">
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   );

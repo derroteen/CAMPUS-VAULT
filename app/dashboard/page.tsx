@@ -123,14 +123,14 @@ export default function DashboardPage() {
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
       return (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-left">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+        <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-leaf/20 border-y-leaf/20 border-l-4 border-l-leaf bg-white/90 p-4 text-left shadow-sm">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-leaf">
             Unlocked
           </p>
-          <p className="mt-2 text-lg font-medium text-white">
+          <p className="mt-2 text-lg font-medium text-charcoal">
             {hours} hours {minutes} minutes remaining
           </p>
-          <p className="mt-1 text-sm text-emerald-100/80">
+          <p className="mt-1 text-sm text-charcoal/70">
             Your 7-hour download window is active.
           </p>
         </div>
@@ -138,11 +138,11 @@ export default function DashboardPage() {
     }
 
     return (
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+      <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 p-4 text-left shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-charcoal/70">
           Unlock status
         </p>
-        <p className="mt-2 text-lg font-medium text-white">
+        <p className="mt-2 text-lg font-medium text-charcoal">
           {approvedUploadsCount ?? 0}/4 resources approved — upload {remainingUploads} more to unlock 7 hours of downloads
         </p>
       </div>
@@ -151,12 +151,12 @@ export default function DashboardPage() {
 
   const getStatusBadge = (status: string) => {
     const colors = {
-      pending: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
-      approved: "bg-green-500/20 text-green-300 border-green-500/30",
-      rejected: "bg-red-500/20 text-red-300 border-red-500/30",
+      pending: "bg-sunflower/20 text-charcoal border-sunflower/40",
+      approved: "bg-leaf/15 text-forest border-leaf/30",
+      rejected: "bg-coral/15 text-coral border-coral/30",
     };
     return (
-      <span className={`text-xs px-2 py-1 rounded-full border ${colors[status as keyof typeof colors] || "bg-slate-500/20 text-slate-300 border-slate-500/30"}`}>
+      <span className={`text-xs px-2 py-1 rounded-full border ${colors[status as keyof typeof colors] || "bg-white/80 text-charcoal/70 border-forest/15"}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
@@ -164,9 +164,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
-        <div className="max-w-6xl mx-auto">
-          <Skeleton className="h-10 w-64 mb-3" />
+      <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
+        <div className="mx-auto max-w-6xl">
+          <Skeleton className="mb-3 h-10 w-64" />
           <Skeleton className="h-5 w-96" />
 
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -180,7 +180,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="lg:col-span-2">
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <Skeleton className="h-6 w-32" />
                   <Skeleton className="h-5 w-24" />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900 p-6">
+          <div className="mt-6 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm">
             <Skeleton className="h-5 w-32 mb-3" />
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -208,41 +208,42 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
-      <div className="max-w-6xl mx-auto">
+    <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
+      <div className="mx-auto max-w-6xl">
         <h1 className="text-3xl font-semibold">
           Welcome, {fullName || email}
         </h1>
-        <p className="mt-3 text-slate-400">
+        <p className="mt-3 text-charcoal/70">
           You are signed in to MVCorner.
         </p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-1 space-y-4">
             <div className="grid gap-3">
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Approved uploads</p>
-                <p className="mt-1 text-2xl font-semibold text-white">{approvedUploadsCount ?? 0}</p>
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm">
+                <p className="text-xs uppercase tracking-[0.2em] text-charcoal/60">Approved uploads</p>
+                <p className="mt-1 text-2xl font-semibold text-charcoal">{approvedUploadsCount ?? 0}</p>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Pending review</p>
-                <p className="mt-1 text-2xl font-semibold text-white">{pendingCount}</p>
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+                <p className="text-xs uppercase tracking-[0.2em] text-charcoal/60">Pending review</p>
+                <p className="mt-1 text-2xl font-semibold text-charcoal">{pendingCount}</p>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Total downloads</p>
-                <p className="mt-1 text-2xl font-semibold text-white">{totalDownloads}</p>
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm">
+                <p className="text-xs uppercase tracking-[0.2em] text-charcoal/60">Total downloads</p>
+                <p className="mt-1 text-2xl font-semibold text-charcoal">{totalDownloads}</p>
               </div>
             </div>
             {getStatusCard()}
           </div>
 
           <div className="lg:col-span-2">
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <div className="relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm">
+              <div className="absolute right-0 top-0 h-6 w-6 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-white">My uploads</h2>
+                <h2 className="text-lg font-semibold text-charcoal">My uploads</h2>
                 <Link
                   href="/upload"
-                  className="text-sm text-sky-400 hover:text-sky-300"
+                  className="text-sm text-forest hover:text-coral"
                 >
                   Upload new
                 </Link>
@@ -251,13 +252,13 @@ export default function DashboardPage() {
               {myResources.length > 0 ? (
                 <div className="space-y-3">
                   {myResources.map((resource) => (
-                    <div key={resource.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
+                    <div key={resource.id} className="flex items-center justify-between rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-3 shadow-sm">
                       <div>
-                        <p className="text-sm font-medium text-white">{resource.title}</p>
-                        <p className="text-xs text-slate-400">{resource.unit_name}</p>
+                        <p className="text-sm font-medium text-charcoal">{resource.title}</p>
+                        <p className="text-xs text-charcoal/60">{resource.unit_name}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
+                        <span className="rounded-full border border-forest/15 bg-white/80 px-2 py-1 text-xs text-charcoal">
                           {resource.resource_type}
                         </span>
                         {getStatusBadge(resource.status)}
@@ -267,10 +268,10 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-slate-400">You haven&apos;t uploaded any resources yet.</p>
+                  <p className="text-charcoal/60">You haven&apos;t uploaded any resources yet.</p>
                   <Link
                     href="/upload"
-                    className="mt-3 inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
+                    className="mt-3 inline-flex rounded-md bg-coral px-4 py-2 font-medium text-white transition hover:bg-forest"
                   >
                     Upload your first resource
                   </Link>
@@ -280,8 +281,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900 p-6">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
+        <div className="mt-6 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-charcoal/60">
             Quick access
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -289,15 +290,15 @@ export default function DashboardPage() {
               <Link
                 key={university.id}
                 href={`/browse?university=${university.id}`}
-                className="rounded-lg border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-sky-500 hover:bg-slate-800"
+                className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg px-4 py-3 text-sm font-medium text-charcoal shadow-sm transition hover:border-coral hover:text-coral"
               >
                 {university.name}
               </Link>
             ))}
           </div>
-          <p className="mt-3 text-sm text-slate-400">
+          <p className="mt-3 text-sm text-charcoal/60">
             Don&apos;t see your university? Use the full list on the{' '}
-            <Link href="/browse" className="text-sky-400 hover:text-sky-300">
+            <Link href="/browse" className="text-forest hover:text-coral">
               Browse page
             </Link>
             .
@@ -307,13 +308,13 @@ export default function DashboardPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/browse"
-            className="inline-flex rounded-md bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500"
+            className="inline-flex rounded-md bg-forest px-4 py-2 font-medium text-white transition hover:bg-leaf"
           >
             Browse resources
           </Link>
           <Link
             href="/upload"
-            className="inline-flex rounded-md border border-slate-700 px-4 py-2 font-medium text-slate-200 transition hover:bg-slate-800"
+            className="inline-flex rounded-md border border-forest/25 px-4 py-2 font-medium text-forest transition hover:bg-sunflower/20"
           >
             Upload resource
           </Link>

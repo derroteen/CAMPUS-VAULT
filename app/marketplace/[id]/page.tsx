@@ -189,8 +189,8 @@ export default function ListingDetailPage() {
   // ── Loading state ──────────────────────────────────────────────────────
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading listing...</p>
+      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
+        <p className="text-charcoal/60">Loading listing...</p>
       </main>
     );
   }
@@ -198,13 +198,13 @@ export default function ListingDetailPage() {
   // ── Not found state ────────────────────────────────────────────────────
   if (notFound || !listing) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 px-6 text-white">
-        <p className="text-lg text-slate-300">
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-warm-bg px-6 text-charcoal">
+        <p className="text-lg text-charcoal/60">
           Listing not found or no longer available.
         </p>
         <Link
           href="/marketplace"
-          className="text-sm text-emerald-400 transition hover:text-emerald-300"
+          className="text-sm text-forest transition hover:text-coral"
         >
           ← Back to marketplace
         </Link>
@@ -214,12 +214,12 @@ export default function ListingDetailPage() {
 
   // ── Detail view ────────────────────────────────────────────────────────
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         {/* Back link */}
         <Link
           href="/marketplace"
-          className="mb-6 inline-flex items-center gap-1 text-sm text-slate-400 transition hover:text-white"
+          className="mb-6 inline-flex items-center gap-1 text-sm text-charcoal/60 transition hover:text-forest"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to marketplace
@@ -227,8 +227,8 @@ export default function ListingDetailPage() {
 
         {/* Non-active status banner for owners */}
         {listing.status !== "active" && isOwner && (
-          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
-            <p className="text-sm text-amber-200">
+          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
+            <p className="text-sm text-charcoal">
               This listing is <span className="font-semibold">{listing.status}</span> and is only visible to you.
             </p>
           </div>
@@ -237,7 +237,7 @@ export default function ListingDetailPage() {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Image gallery */}
           <div className="space-y-3">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm">
               {images.length > 0 ? (
                 <>
                   <Image
@@ -254,25 +254,25 @@ export default function ListingDetailPage() {
                       <button
                         type="button"
                         onClick={prevImage}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-slate-900/70 p-2 text-white transition hover:bg-slate-900"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-charcoal shadow-sm transition hover:bg-warm-bg"
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
                       <button
                         type="button"
                         onClick={nextImage}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-slate-900/70 p-2 text-white transition hover:bg-slate-900"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-charcoal shadow-sm transition hover:bg-warm-bg"
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/70 px-3 py-1 text-xs text-slate-300">
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-xs text-charcoal shadow-sm">
                         {currentImage + 1} / {images.length}
                       </div>
                     </>
                   )}
                 </>
               ) : (
-                <div className="flex h-full items-center justify-center text-slate-600">
+                <div className="flex h-full items-center justify-center text-charcoal/30">
                   No images
                 </div>
               )}
@@ -288,8 +288,8 @@ export default function ListingDetailPage() {
                     onClick={() => setCurrentImage(idx)}
                     className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border-2 transition ${
                       idx === currentImage
-                        ? "border-emerald-500"
-                        : "border-slate-700 hover:border-slate-500"
+                        ? "border-leaf"
+                        : "border-forest/15 hover:border-coral"
                     }`}
                   >
                     <Image
@@ -306,31 +306,32 @@ export default function ListingDetailPage() {
           </div>
 
           {/* Details panel */}
-          <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-slate-950/40 sm:p-8">
+          <div className="relative overflow-hidden rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm sm:p-8">
+            <div className="absolute right-0 top-0 h-7 w-7 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
             {listing.category_name && (
-              <span className="mb-3 inline-block rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-200">
+              <span className="mb-3 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
                 {listing.category_name}
               </span>
             )}
 
-            <h1 className="text-2xl font-semibold text-white sm:text-3xl">
+            <h1 className="text-2xl font-semibold text-charcoal sm:text-3xl">
               {listing.title}
             </h1>
 
-            <p className="mt-3 text-3xl font-bold text-emerald-400">
+            <p className="mt-3 text-3xl font-bold text-forest">
               {formatPrice(listing.price)}
             </p>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-charcoal/60">
               Posted {formatDate(listing.created_at)}
             </p>
 
             {listing.description && (
-              <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-                <h2 className="mb-2 text-sm font-medium text-slate-300">
+              <div className="mt-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+                <h2 className="mb-2 text-sm font-medium text-charcoal/75">
                   Description
                 </h2>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-400">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-charcoal/70">
                   {listing.description}
                 </p>
               </div>
@@ -342,15 +343,15 @@ export default function ListingDetailPage() {
                 <>
                   <Link
                     href={`/marketplace/${listing.id}/edit`}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-sky-500"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-forest px-4 py-3 text-sm font-medium text-white transition hover:bg-leaf"
                   >
                     <Pencil className="h-4 w-4" />
                     Edit listing
                   </Link>
 
                   {showDeleteConfirm ? (
-                    <div className="space-y-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4">
-                      <p className="text-sm text-rose-200">
+                    <div className="space-y-2 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+                      <p className="text-sm text-charcoal">
                         Are you sure? This will permanently delete this listing
                         and its images.
                       </p>
@@ -359,14 +360,14 @@ export default function ListingDetailPage() {
                           type="button"
                           onClick={handleDelete}
                           disabled={deleting}
-                          className="flex-1 rounded-xl bg-rose-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-rose-500 disabled:opacity-70"
+                          className="flex-1 rounded-xl bg-coral px-4 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-70"
                         >
                           {deleting ? "Deleting..." : "Yes, delete"}
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowDeleteConfirm(false)}
-                          className="flex-1 rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
+                          className="flex-1 rounded-xl border border-forest/25 px-4 py-2 text-sm font-medium text-forest transition hover:bg-sunflower/15"
                         >
                           Cancel
                         </button>
@@ -376,7 +377,7 @@ export default function ListingDetailPage() {
                     <button
                       type="button"
                       onClick={() => setShowDeleteConfirm(true)}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-200 transition hover:bg-rose-500/20"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 px-4 py-3 text-sm font-medium text-coral shadow-sm transition hover:bg-sunflower/15"
                     >
                       <Trash2 className="h-4 w-4" />
                       Delete listing
@@ -387,7 +388,7 @@ export default function ListingDetailPage() {
                 <>
                   <a
                     href={`tel:${listing.phone_number}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-500"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-sm font-medium text-white transition hover:bg-forest"
                   >
                     <Phone className="h-4 w-4" />
                     Call / SMS
@@ -401,7 +402,7 @@ export default function ListingDetailPage() {
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-200 transition hover:bg-emerald-500/20"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-leaf/25 bg-leaf/10 px-4 py-3 text-sm font-medium text-forest transition hover:bg-sunflower/15"
                     >
                       <MessageCircle className="h-4 w-4" />
                       WhatsApp

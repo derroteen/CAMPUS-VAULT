@@ -317,29 +317,29 @@ export default function EditListingPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading listing details...</p>
+      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
+        <p className="text-charcoal/60">Loading listing details...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+    <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 shadow-sm sm:p-10">
         <div className="mb-8">
-          <div className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-200">
+          <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
             Marketplace
           </div>
           <h1 className="mt-4 text-3xl font-semibold">Edit listing</h1>
-          <p className="mt-2 text-slate-400">
+          <p className="mt-2 text-charcoal/60">
             Update your item details or manage images.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-            <label htmlFor="listing-title" className="mb-2 block text-sm text-slate-300">
+          <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+            <label htmlFor="listing-title" className="mb-2 block text-sm text-charcoal/75">
               Title
             </label>
             <input
@@ -348,13 +348,13 @@ export default function EditListingPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. HP Laptop 15-inch, barely used"
-              className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+              className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
             />
           </div>
 
           {/* Description */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-            <label htmlFor="listing-description" className="mb-2 block text-sm text-slate-300">
+          <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+            <label htmlFor="listing-description" className="mb-2 block text-sm text-charcoal/75">
               Description
             </label>
             <textarea
@@ -363,14 +363,14 @@ export default function EditListingPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the item — condition, age, why you're selling, etc."
               rows={4}
-              className="w-full resize-none rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+              className="w-full resize-none rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
             />
           </div>
 
           {/* Price & Category */}
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="listing-price" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+              <label htmlFor="listing-price" className="mb-2 block text-sm text-charcoal/75">
                 Price (KES)
               </label>
               <input
@@ -381,19 +381,19 @@ export default function EditListingPage() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="e.g. 3500"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="listing-category" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+              <label htmlFor="listing-category" className="mb-2 block text-sm text-charcoal/75">
                 Category
               </label>
               <select
                 id="listing-category"
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -407,8 +407,8 @@ export default function EditListingPage() {
 
           {/* Phone & WhatsApp */}
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="listing-phone" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+              <label htmlFor="listing-phone" className="mb-2 block text-sm text-charcoal/75">
                 Phone number
               </label>
               <input
@@ -417,14 +417,14 @@ export default function EditListingPage() {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="e.g. 0712345678"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="listing-whatsapp" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+              <label htmlFor="listing-whatsapp" className="mb-2 block text-sm text-charcoal/75">
                 WhatsApp number{" "}
-                <span className="text-slate-500">(optional)</span>
+                <span className="text-charcoal/45">(optional)</span>
               </label>
               <input
                 id="listing-whatsapp"
@@ -432,26 +432,26 @@ export default function EditListingPage() {
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 placeholder="e.g. 0712345678"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
           </div>
 
           {/* Images Management */}
-          <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-5">
+          <div className="rounded-2xl border border-dashed border-forest/15 bg-white/90 p-5 shadow-sm">
             <label
               htmlFor="listing-images"
-              className={`mb-3 flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 px-4 py-8 text-center transition ${
+              className={`mb-3 flex flex-col items-center justify-center rounded-2xl border border-dashed border-forest/15 bg-warm-bg px-4 py-8 text-center transition ${
                 currentTotalImages >= maxImages
                   ? "cursor-not-allowed opacity-50"
-                  : "cursor-pointer hover:border-emerald-500 hover:bg-slate-900"
+                  : "cursor-pointer hover:border-coral hover:bg-white"
               }`}
             >
-              <ImagePlus className="mb-3 h-8 w-8 text-emerald-400" />
-              <span className="text-sm font-medium text-slate-200">
+              <ImagePlus className="mb-3 h-8 w-8 text-forest" />
+              <span className="text-sm font-medium text-charcoal">
                 Click to add images
               </span>
-              <span className="mt-1 text-sm text-slate-400">
+              <span className="mt-1 text-sm text-charcoal/60">
                 {currentTotalImages}/{maxImages} images
                 {!isPro && " (upgrade to Pro for up to 6)"}
               </span>
@@ -473,7 +473,7 @@ export default function EditListingPage() {
                 {existingImages.map((img) => (
                   <div
                     key={img.id}
-                    className="group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/80"
+                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -484,7 +484,7 @@ export default function EditListingPage() {
                     <button
                       type="button"
                       onClick={() => removeExistingImage(img.id)}
-                      className="absolute right-1.5 top-1.5 rounded-full bg-slate-900/80 p-1 text-slate-300 opacity-0 transition group-hover:opacity-100 hover:text-white"
+                      className="absolute right-1.5 top-1.5 rounded-full bg-white/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -495,7 +495,7 @@ export default function EditListingPage() {
                 {newImages.map((img, idx) => (
                   <div
                     key={idx}
-                    className="group relative overflow-hidden rounded-xl border border-emerald-500/50 bg-slate-900/80"
+                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 shadow-sm"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -506,7 +506,7 @@ export default function EditListingPage() {
                     <button
                       type="button"
                       onClick={() => removeNewImage(idx)}
-                      className="absolute right-1.5 top-1.5 rounded-full bg-slate-900/80 p-1 text-slate-300 opacity-0 transition group-hover:opacity-100 hover:text-white"
+                      className="absolute right-1.5 top-1.5 rounded-full bg-white/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -516,20 +516,20 @@ export default function EditListingPage() {
             )}
           </div>
 
-          {error ? <p className="text-sm text-rose-400">{error}</p> : null}
-          {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
+          {error ? <p className="text-sm text-coral">{error}</p> : null}
+          {message ? <p className="text-sm text-leaf">{message}</p> : null}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-forest/15 pt-4">
             <Link
               href={`/marketplace/${listingId}`}
-              className="text-sm text-slate-400 transition hover:text-white"
+              className="text-sm text-charcoal/60 transition hover:text-forest"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-emerald-600 px-4 py-2 font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-xl bg-forest px-4 py-2 font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Saving..." : "Save changes"}
             </button>

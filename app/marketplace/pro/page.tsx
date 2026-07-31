@@ -48,19 +48,19 @@ export default function ProUpgradePage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading plan options...</p>
+      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
+        <p className="text-charcoal/60">Loading plan options...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         {/* Navigation */}
         <Link
           href="/marketplace/my-listings"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-charcoal/60 transition hover:text-forest"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to my listings
@@ -68,24 +68,24 @@ export default function ProUpgradePage() {
 
         {/* Header */}
         <div className="mb-10 text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-sm font-medium text-amber-200">
-            <Sparkles className="h-4 w-4 text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-sunflower/30 bg-sunflower/15 px-3.5 py-1 text-sm font-medium text-charcoal">
+            <Sparkles className="h-4 w-4 text-sunflower" />
             Marketplace Pro
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
             Upgrade your selling power
           </h1>
-          <p className="mt-2 text-slate-400">
+          <p className="mt-2 text-charcoal/60">
             Reach more buyers and manage more items on MVCorner Marketplace.
           </p>
         </div>
 
         {/* Current status banner */}
-        <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-4 text-center">
-          <span className="text-sm text-slate-400">Your current plan: </span>
+        <div className="mb-8 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 text-center shadow-sm">
+          <span className="text-sm text-charcoal/60">Your current plan: </span>
           <span
             className={`font-semibold ${
-              isPro ? "text-emerald-400" : "text-slate-200"
+              isPro ? "text-leaf" : "text-charcoal"
             }`}
           >
             {isPro ? "Pro Tier (Active)" : "Free Tier"}
@@ -95,27 +95,27 @@ export default function ProUpgradePage() {
         {/* Pricing Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Free Tier Card */}
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 flex flex-col justify-between">
+          <div className="rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm sm:p-8 flex flex-col justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-white">Free Plan</h2>
-              <p className="mt-1 text-sm text-slate-400">
+              <h2 className="text-xl font-semibold text-charcoal">Free Plan</h2>
+              <p className="mt-1 text-sm text-charcoal/60">
                 Standard features for occasional sellers.
               </p>
-              <div className="mt-6 text-3xl font-bold text-white">
-                KES 0 <span className="text-sm font-normal text-slate-400">/ forever</span>
+              <div className="mt-6 text-3xl font-bold text-charcoal">
+                KES 0 <span className="text-sm font-normal text-charcoal/60">/ forever</span>
               </div>
 
-              <ul className="mt-6 space-y-3 text-sm text-slate-300">
+              <ul className="mt-6 space-y-3 text-sm text-charcoal/70">
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
+                  <Check className="h-4 w-4 text-leaf" />
                   Up to 3 active listings
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
+                  <Check className="h-4 w-4 text-leaf" />
                   Up to 2 images per listing
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
+                  <Check className="h-4 w-4 text-leaf" />
                   14 days listing duration
                 </li>
               </ul>
@@ -125,7 +125,7 @@ export default function ProUpgradePage() {
               <button
                 type="button"
                 disabled
-                className="w-full rounded-xl border border-slate-800 bg-slate-950/60 py-3 text-sm font-medium text-slate-500 cursor-not-allowed"
+                className="w-full rounded-xl border border-forest/15 bg-warm-bg py-3 text-sm font-medium text-charcoal/45 cursor-not-allowed"
               >
                 {isPro ? "Default Plan" : "Current Plan"}
               </button>
@@ -133,38 +133,38 @@ export default function ProUpgradePage() {
           </div>
 
           {/* Pro Tier Card */}
-          <div className="relative rounded-3xl border border-emerald-500/40 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 p-6 sm:p-8 flex flex-col justify-between shadow-2xl shadow-emerald-950/30">
-            <div className="absolute -top-3 right-6 rounded-full bg-emerald-500 px-3 py-0.5 text-xs font-semibold text-slate-950">
+          <div className="relative rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm sm:p-8 flex flex-col justify-between">
+            <div className="absolute -top-3 right-6 rounded-full bg-sunflower px-3 py-0.5 text-xs font-semibold text-charcoal">
               RECOMMENDED
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-charcoal flex items-center gap-2">
                 Pro Plan
-                <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                <ShieldCheck className="h-5 w-5 text-coral" />
               </h2>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-charcoal/60">
                 Maximum visibility &amp; unlimited listing capacity.
               </p>
-              <div className="mt-6 text-3xl font-bold text-emerald-400">
+              <div className="mt-6 text-3xl font-bold text-forest">
                 Pro Upgrade
               </div>
 
-              <ul className="mt-6 space-y-3 text-sm text-slate-200">
+              <ul className="mt-6 space-y-3 text-sm text-charcoal/70">
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
-                  <strong className="text-white">Unlimited active listings</strong>
+                  <Check className="h-4 w-4 text-leaf" />
+                  <strong className="text-charcoal">Unlimited active listings</strong>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
-                  <strong className="text-white">Up to 6 images per listing</strong>
+                  <Check className="h-4 w-4 text-leaf" />
+                  <strong className="text-charcoal">Up to 6 images per listing</strong>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
+                  <Check className="h-4 w-4 text-leaf" />
                   Priority / Boosted listing support
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <Check className="h-4 w-4 text-emerald-400" />
+                  <Check className="h-4 w-4 text-leaf" />
                   14 days listing duration
                 </li>
               </ul>
@@ -172,21 +172,21 @@ export default function ProUpgradePage() {
 
             <div className="mt-8 space-y-3">
               {isPro ? (
-                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 py-3 text-center text-sm font-medium text-emerald-200">
+                <div className="rounded-xl border border-leaf/25 bg-leaf/10 py-3 text-center text-sm font-medium text-forest">
                   Pro Plan Active
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={handleUpgradeClick}
-                  className="w-full rounded-xl bg-emerald-600 py-3 text-sm font-medium text-white transition hover:bg-emerald-500"
+                  className="w-full rounded-xl bg-coral py-3 text-sm font-medium text-white transition hover:bg-forest"
                 >
                   Upgrade to Pro
                 </button>
               )}
 
               {notice && (
-                <p className="text-center text-xs text-amber-300 font-medium">
+                <p className="text-center text-xs font-medium text-coral">
                   {notice}
                 </p>
               )}

@@ -26,9 +26,9 @@ export default function BrowsePage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
+        <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
           <div className="mx-auto max-w-6xl">
-            <p className="text-slate-400">Loading browse page...</p>
+            <p className="text-slate-600">Loading browse page...</p>
           </div>
         </main>
       }
@@ -573,23 +573,23 @@ function BrowsePageContent() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <section className="overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
-          <div className="inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm font-medium text-sky-200">
+        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-warm-bg/50 to-warm-bg/30 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+          <div className="inline-flex items-center rounded-full border border-forest/30 bg-forest/10 px-3 py-1 text-xs font-medium text-forest">
             Verified Study Resource Hub
           </div>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
-              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-charcoal sm:text-5xl">
                 Find notes, past papers, and study guides
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-slate-400">
+              <p className="mt-4 max-w-2xl text-lg text-slate-600">
                 Discover trusted resources curated for your university and course in one streamlined hub.
               </p>
             </div>
-            <form onSubmit={handleSearchSubmit} className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
-              <label htmlFor="resource-search" className="mb-2 block text-sm font-medium text-slate-300">
+            <form onSubmit={handleSearchSubmit} className="rounded-2xl border border-slate-200 bg-white/80 p-4">
+              <label htmlFor="resource-search" className="mb-2 block text-sm text-slate-700">
                 Search resources
               </label>
               <input
@@ -598,43 +598,43 @@ function BrowsePageContent() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by title or unit"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none ring-0 placeholder:text-slate-500"
+                className="w-full rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400"
               />
             </form>
           </div>
         </section>
 
         {universities.length > 1 ? (
-          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
-            <span className="text-sm text-slate-400">Popular universities</span>
+          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+            <span className="text-sm text-slate-600">Popular universities</span>
             {featuredUniversities.map((university) => (
               <button
                 key={university.id}
                 type="button"
                 onClick={() => handleFeaturedUniversitySelect(university.id)}
-                className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1.5 text-sm text-slate-200 transition hover:border-sky-500 hover:text-white"
+                className="rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-sm text-slate-600 transition hover:border-forest/50 hover:text-charcoal"
               >
                 {university.name}
               </button>
             ))}
-            <span className="ml-1 text-sm text-slate-500">🔎 search above if yours isn&apos;t listed</span>
+            <span className="ml-1 text-sm text-slate-400">🔎 search above if yours isn&apos;t listed</span>
           </div>
         ) : (
-          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-center">
-            <span className="text-sm text-slate-300">Now live for {universities[0]?.name || 'Maseno University'} students</span>
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-center">
+            <span className="text-sm text-slate-500">Now live for {universities[0]?.name || 'Maseno University'} students</span>
           </div>
         )}
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-4">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
-              <h2 className="text-lg font-semibold text-white">Filters</h2>
+            <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+              <h2 className="text-lg font-semibold text-charcoal">Filters</h2>
               <div className="mt-4 space-y-4">
                 <div>
-                  <label htmlFor="university" className="mb-2 block text-sm text-slate-300">
+                  <label htmlFor="university" className="mb-2 block text-sm text-slate-700">
                     University
                   </label>
-                  <div className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-slate-200">
+                  <div className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal">
                     {activeUniversityName}
                   </div>
                 </div>
@@ -645,14 +645,14 @@ function BrowsePageContent() {
                 />
 
                 <div>
-                  <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-300">
+                  <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-700">
                     Resource Type
                   </label>
                   <select
                     id="resource-type"
                     value={resourceTypeFilter}
                     onChange={(e) => setResourceTypeFilter(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
                   >
                     <option value="all">All Types</option>
                     <option value="notes">notes</option>
@@ -665,15 +665,15 @@ function BrowsePageContent() {
             </div>
 
             {profileLoaded && !hasUnlockedAccess() ? (
-              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5 shadow-lg">
-                <h3 className="text-base font-semibold text-amber-200">Need unlimited access?</h3>
-                <p className="mt-2 text-sm leading-6 text-amber-100/90">
+              <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+                <h3 className="text-base font-semibold text-forest">Need unlimited access?</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
                   Upload 4 approved resources and unlock 7 hours of downloads with the 4-for-7 model.
                 </p>
                 <div className="mt-4 flex gap-3">
                   <Link
                     href="/upload"
-                    className="flex-1 rounded-full bg-amber-500 px-4 py-2 text-center text-sm font-medium text-slate-950 transition hover:bg-amber-400"
+                    className="flex-1 rounded-xl border border-forest bg-forest/10 px-4 py-2 text-center text-sm font-medium text-forest transition hover:bg-forest/20"
                   >
                     Upload resource
                   </Link>
@@ -683,7 +683,7 @@ function BrowsePageContent() {
                       setShowPaymentForm(true);
                       setPaymentSucceeded(false);
                     }}
-                    className="flex-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                    className="flex-1 rounded-xl border border-forest/60 bg-forest/10 px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/20"
                   >
                     Pay KES 30
                   </button>
@@ -695,10 +695,10 @@ function BrowsePageContent() {
           <section>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="text-xl font-semibold text-charcoal">
                   {searchMode ? `Search results for "${searchQuery.trim()}"` : "Approved resources"}
                 </h2>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-600">
                   {searchMode
                     ? "Showing matching approved resources from across MVCorner."
                     : selectedCourseId
@@ -707,14 +707,14 @@ function BrowsePageContent() {
                 </p>
               </div>
               {selectedCourseId ? (
-                <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-sm text-slate-300">
+                <span className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-sm text-slate-600">
                   {filteredResources.length} results
                 </span>
               ) : null}
             </div>
 
             {resourceLoading ? (
-              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
                 Loading resources...
               </div>
             ) : (searchMode || selectedCourseId) && filteredResources.length > 0 ? (
@@ -722,20 +722,20 @@ function BrowsePageContent() {
                 {filteredResources.map((resource) => (
                   <article
                     key={resource.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm transition hover:border-sky-500/40 hover:shadow-lg"
+                    className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm transition hover:border-forest/50 hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${getResourceBadge(resource.resource_type)}`}>
                         {getResourceLabel(resource.resource_type)}
                       </span>
-                      <div className="flex items-center gap-1 text-sm text-slate-400">
+                      <div className="flex items-center gap-1 text-sm text-slate-600">
                         <span>⬇</span>
                         <span>{resource.download_count}</span>
                       </div>
                     </div>
 
-                    <h3 className="mt-4 text-lg font-semibold text-white">{resource.title}</h3>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <h3 className="mt-4 text-lg font-semibold text-charcoal">{resource.title}</h3>
+                    <p className="mt-2 text-sm text-slate-600">
                       {resource.unit_name ?? "No unit listed"}
                     </p>
                     {resource.course_name || resource.university_name ? (
@@ -748,7 +748,7 @@ function BrowsePageContent() {
 
                     {unlockTargetId === resource.id && unlockNotice ? (
                       <div className="mt-5 space-y-2">
-                        <p className="text-sm text-amber-300">{unlockNotice}</p>
+                        <p className="text-sm text-coral">{unlockNotice}</p>
                         {!showPaymentForm ? (
                           <button
                             type="button"
@@ -757,7 +757,7 @@ function BrowsePageContent() {
                               setUnlockTargetId(null);
                               setUnlockNotice(null);
                             }}
-                            className="w-full rounded-xl border border-amber-500/60 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition hover:bg-amber-500/20"
+                            className="w-full rounded-xl border border-forest/60 bg-forest/10 px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/20"
                           >
                             Pay KES 30
                           </button>
@@ -768,7 +768,7 @@ function BrowsePageContent() {
                         type="button"
                         onClick={() => handleDownload(resource)}
                         disabled={downloadingId === resource.id}
-                        className="mt-5 w-full rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-700"
+                        className="mt-5 w-full rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:bg-slate-200/50"
                       >
                         {downloadingId === resource.id ? "Preparing..." : "Download"}
                       </button>
@@ -777,11 +777,11 @@ function BrowsePageContent() {
                 ))}
               </div>
             ) : (searchMode || selectedCourseId) ? (
-              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
                 No approved resources match your current filters yet.
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
                 Choose a university and course to start browsing.
               </div>
             )}
@@ -792,7 +792,7 @@ function BrowsePageContent() {
       {/* Payment Modal */}
       {showPaymentForm || paymentReference ? (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-slate-950/80 z-50 p-4"
+          className="fixed inset-0 flex items-center justify-center bg-charcoal/80 z-50 p-4"
           onClick={() => {
             if (!paymentReference) {
               setShowPaymentForm(false);
@@ -803,113 +803,113 @@ function BrowsePageContent() {
           }}
         >
           <div
-            className={`rounded-2xl border bg-slate-900 p-6 shadow-xl max-w-md w-full transition-all ${
-              paymentReference ? "border-2 border-blue-400/80 shadow-blue-500/30 animate-pulse" : "border border-blue-800/40"
+            className={`rounded-2xl border bg-white/80 p-6 shadow-xl max-w-md w-full transition-all ${
+              paymentReference ? "border-2 border-forest/80 shadow-forest/30 animate-pulse" : "border border-forest/40"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-blue-400">Need unlimited access?</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+            <h3 className="text-lg font-semibold text-forest">Need unlimited access?</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
               Pay KES 30 via M-Pesa to unlock 7 hours of downloads!
             </p>
             <div className="mt-5 space-y-3">
-  {paymentSucceeded ? (
-    <div className="flex flex-col items-center gap-4 py-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
-        <svg className="h-9 w-9 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-      <p className="text-base font-medium text-emerald-300">
-        {paymentMessage}
-      </p>
-      <button
-        type="button"
-        onClick={() => {
-          setShowPaymentForm(false);
-          setPaymentSucceeded(false);
-          setPhoneNumber("");
-          setPaymentMessage(null);
-        }}
-        className="w-full rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
-      >
-        Done
-      </button>
-    </div>
-  ) : (
-    <form onSubmit={handlePaymentSubmit} className="space-y-3">
-      {paymentMessage && (
-                  <p className={`text-sm ${paymentError ? "text-red-300" : "text-blue-300"}`}>
+              {paymentSucceeded ? (
+                <div className="flex flex-col items-center gap-4 py-4 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-charcoal/20">
+                    <svg className="h-9 w-9 text-charcoal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-base font-medium text-charcoal">
                     {paymentMessage}
                   </p>
-                )}
-                {paymentReference && pollingCount < 30 && (
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-200 border-t-transparent"></div>
-                  </div>
-                )}
-                {paymentReference && pollingCount >= 30 && (
-                  <div className="space-y-3">
-                    <p className="text-sm text-blue-300">
-                      We haven&apos;t received confirmation yet. If you didn&apos;t complete the payment on your phone, you can cancel and try again.
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={checkTransactionStatus}
-                        className="flex-1 rounded-full border border-blue-500/60 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200 transition hover:bg-blue-500/20"
-                      >
-                        Check status
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPaymentReference(null);
-                          setPollingCount(0);
-                          setPaymentMessage(null);
-                          setPaymentError(false);
-                        }}
-                        className="flex-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700"
-                      >
-                        Cancel &amp; retry
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {!paymentReference && (
-                  <>
-                    <input
-                      type="tel"
-                      placeholder="e.g. 0712345678"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      disabled={paymentInProgress}
-                      className="w-full rounded-xl border border-blue-500/40 bg-slate-800 px-4 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-500"
-                    />
-                    <button
-                      type="submit"
-                      disabled={paymentInProgress}
-                      className="w-full rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-600/50"
-                    >
-                      {paymentInProgress ? "Processing..." : "Send Payment Request"}
-                    </button>
-                  </>
-                )}
-                {!paymentReference && (
                   <button
                     type="button"
                     onClick={() => {
                       setShowPaymentForm(false);
+                      setPaymentSucceeded(false);
                       setPhoneNumber("");
                       setPaymentMessage(null);
-                      setPaymentError(false);
                     }}
-                    className="w-full text-xs text-slate-400 underline"
+                    className="w-full rounded-full bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf"
                   >
-                    Cancel payment
+                    Done
                   </button>
-                )}
-              </form>
+                </div>
+              ) : (
+                <form onSubmit={handlePaymentSubmit} className="space-y-3">
+                  {paymentMessage && (
+                    <p className={`text-sm ${paymentError ? "text-coral" : "text-forest"}`}>
+                      {paymentMessage}
+                    </p>
+                  )}
+                  {paymentReference && pollingCount < 30 && (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-forest/40 border-t-transparent"></div>
+                    </div>
+                  )}
+                  {paymentReference && pollingCount >= 30 && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-forest">
+                        We haven&apos;t received confirmation yet. If you didn&apos;t complete the payment on your phone, you can cancel and try again.
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={checkTransactionStatus}
+                          className="flex-1 rounded-full border border-forest/60 bg-forest/10 px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/20"
+                        >
+                          Check status
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPaymentReference(null);
+                            setPollingCount(0);
+                            setPaymentMessage(null);
+                            setPaymentError(false);
+                          }}
+                          className="flex-1 rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white/80"
+                        >
+                          Cancel & retry
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {!paymentReference && (
+                    <>
+                      <input
+                        type="tel"
+                        placeholder="e.g. 0712345678"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        disabled={paymentInProgress}
+                        className="w-full rounded-xl border border-forest/40 bg-white/90 px-4 py-2 text-sm text-charcoal outline-none focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400"
+                      />
+                      <button
+                        type="submit"
+                        disabled={paymentInProgress}
+                        className="w-full rounded-full bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:bg-forest/50"
+                      >
+                        {paymentInProgress ? "Processing..." : "Send Payment Request"}
+                      </button>
+                    </>
+                  )}
+                  {!paymentReference && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowPaymentForm(false);
+                        setPhoneNumber("");
+                        setPaymentMessage(null);
+                        setPaymentError(false);
+                      }}
+                      className="w-full text-xs text-slate-600 underline"
+                    >
+                      Cancel payment
+                    </button>
+                  )}
+                </form>
               )}  
             </div>
           </div>
@@ -918,4 +918,3 @@ function BrowsePageContent() {
     </main>
   );
 }
-

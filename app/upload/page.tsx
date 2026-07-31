@@ -247,36 +247,36 @@ export default function UploadPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-        <p className="text-slate-300">Loading...</p>
+      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
+        <p className="text-slate-600">Loading...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+    <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
         <div className="mb-8">
-          <div className="inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm font-medium text-sky-200">
+          <div className="inline-flex items-center rounded-full border border-forest/30 bg-forest/10 px-3 py-1 text-xs font-medium text-forest">
             Contribute a Resource
           </div>
           <h1 className="mt-4 text-3xl font-semibold">Upload a resource</h1>
-          <p className="mt-2 text-slate-400">
+          <p className="mt-2 text-slate-600">
             Share notes, past papers, assignments, or summaries for review.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="university" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
+              <label htmlFor="university" className="mb-2 block text-sm text-slate-700">
                 University
               </label>
               <select
                 id="university"
                 value={selectedUniversityId}
                 onChange={(e) => setSelectedUniversityId(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
               >
                 <option value="">Select a university</option>
                 {universities.map((university) => (
@@ -287,7 +287,7 @@ export default function UploadPage() {
               </select>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
               <SchoolCoursePicker
                 universityId={selectedUniversityId}
                 value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
@@ -296,7 +296,7 @@ export default function UploadPage() {
               <button
                 type="button"
                 onClick={() => setShowCourseRequest((current) => !current)}
-                className="mt-3 text-sm text-sky-400 transition hover:text-sky-300"
+                className="mt-3 text-sm text-forest transition hover:text-leaf"
               >
                 Can&apos;t find your course? Request it
               </button>
@@ -304,10 +304,10 @@ export default function UploadPage() {
           </div>
 
           {showCourseRequest ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
+            <div className="rounded-2xl border border-slate-200 bg-white/90 p-5">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-300">
+                  <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-700">
                     Course name
                   </label>
                   <input
@@ -316,12 +316,12 @@ export default function UploadPage() {
                     value={courseRequestName}
                     onChange={(e) => setCourseRequestName(e.target.value)}
                     placeholder="e.g. Introduction to Algorithms"
-                    className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-300">
+                  <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-700">
                     Course Code
                   </label>
                   <input
@@ -330,7 +330,7 @@ export default function UploadPage() {
                     value={courseRequestCode}
                     onChange={(e) => setCourseRequestCode(e.target.value)}
                     placeholder="e.g. BAC101"
-                    className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                    className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
                     required
                   />
                 </div>
@@ -347,7 +347,7 @@ export default function UploadPage() {
                 <button
                   type="button"
                   onClick={() => handleCourseRequestSubmit()}
-                  className="rounded-xl bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+                  className="rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf"
                 >
                   Submit request
                 </button>
@@ -356,8 +356,8 @@ export default function UploadPage() {
           ) : null}
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
+              <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-700">
                 Resource type
               </label>
               <div className="flex items-center gap-3">
@@ -365,7 +365,7 @@ export default function UploadPage() {
                   id="resourceType"
                   value={resourceType}
                   onChange={(e) => setResourceType(e.target.value as (typeof resourceTypes)[number])}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
                 >
                   {resourceTypes.map((type) => (
                     <option key={type} value={type}>
@@ -379,8 +379,8 @@ export default function UploadPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-              <label htmlFor="unitName" className="mb-2 block text-sm text-slate-300">
+            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
+              <label htmlFor="unitName" className="mb-2 block text-sm text-slate-700">
                 Unit / Topic
               </label>
               <input
@@ -389,13 +389,13 @@ export default function UploadPage() {
                 value={unitName}
                 onChange={(e) => setUnitName(e.target.value)}
                 placeholder="e.g. Financial Accounting I"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+                className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
               />
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-            <label htmlFor="title" className="mb-2 block text-sm text-slate-300">
+          <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
+            <label htmlFor="title" className="mb-2 block text-sm text-slate-700">
               Title
             </label>
             <input
@@ -404,27 +404,27 @@ export default function UploadPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Calculus Midterm Notes"
-              className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white"
+              className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
             />
           </div>
 
-          <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-5">
-            <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 px-4 py-8 text-center transition hover:border-sky-500 hover:bg-slate-900">
-              <Upload className="mb-3 h-8 w-8 text-sky-400" />
-              <span className="text-sm font-medium text-slate-200">Click to browse or drag a file here</span>
-              <span className="mt-1 text-sm text-slate-400">PDF, DOCX, PPTX, TXT, and more</span>
+          <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
+            <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white/70 px-4 py-8 text-center transition hover:border-forest/50">
+              <Upload className="mb-3 h-8 w-8 text-forest" />
+              <span className="text-sm font-medium text-slate-600">Click to browse or drag a file here</span>
+              <span className="mt-1 text-sm text-slate-500">PDF, DOCX, PPTX, TXT, and more</span>
             </label>
             <input id="file" type="file" onChange={handleFileChange} className="hidden" />
             {file ? (
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-300">
+              <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-600">
                 <div>
-                  <p className="font-medium text-white">{file.name}</p>
+                  <p className="font-medium text-charcoal">{file.name}</p>
                   <p className="text-xs text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setFile(null)}
-                  className="text-sm text-sky-400 transition hover:text-sky-300"
+                  className="text-sm text-forest transition hover:text-leaf"
                 >
                   Remove
                 </button>
@@ -432,17 +432,17 @@ export default function UploadPage() {
             ) : null}
           </div>
 
-          {error ? <p className="text-sm text-rose-400">{error}</p> : null}
-          {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
+          {error ? <p className="text-sm text-coral">{error}</p> : null}
+          {message ? <p className="text-sm text-forest">{message}</p> : null}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4">
-            <Link href="/dashboard" className="text-sm text-slate-400 transition hover:text-white">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
+            <Link href="/dashboard" className="text-sm text-forest hover:text-leaf underline">
               Back to dashboard
             </Link>
             <button
               type="submit"
               disabled={submitting || !selectedCourseId || !unitName.trim()}
-              className="rounded-xl bg-sky-600 px-4 py-2 font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-xl bg-forest px-4 py-2 font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Uploading..." : "Upload"}
             </button>

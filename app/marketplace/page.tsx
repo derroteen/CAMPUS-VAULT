@@ -26,9 +26,9 @@ export default function MarketplacePage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-slate-950 px-6 py-12 text-white">
+        <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
           <div className="mx-auto max-w-6xl">
-            <p className="text-slate-400">Loading marketplace...</p>
+            <p className="text-charcoal/60">Loading marketplace...</p>
           </div>
         </main>
       }
@@ -164,40 +164,41 @@ function MarketplaceContent() {
     `KES ${price.toLocaleString("en-KE")}`;
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* Hero */}
-        <section className="overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
-          <div className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-200">
+        <section className="relative overflow-hidden rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-8 shadow-sm sm:p-10">
+          <div className="absolute right-0 top-0 h-7 w-7 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
+          <div className="inline-flex items-center rounded-full border border-leaf/30 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
             <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
             Campus Marketplace
           </div>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
-              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-charcoal sm:text-5xl">
                 Buy &amp; sell on campus
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-slate-400">
+              <p className="mt-4 max-w-2xl text-lg text-charcoal/70">
                 Electronics, books, hostel items, and more — from students, for
                 students.
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
               <label
                 htmlFor="marketplace-search"
-                className="mb-2 block text-sm font-medium text-slate-300"
+                className="mb-2 block text-sm font-medium text-charcoal/75"
               >
                 Search listings
               </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal/40" />
                 <input
                   id="marketplace-search"
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by title…"
-                  className="w-full rounded-xl border border-slate-700 bg-slate-900 py-3 pl-10 pr-4 text-sm text-white outline-none ring-0 placeholder:text-slate-500"
+                  className="w-full rounded-xl border border-forest/15 bg-white py-3 pl-10 pr-4 text-sm text-charcoal outline-none ring-0 placeholder:text-charcoal/40"
                 />
               </div>
             </div>
@@ -208,16 +209,16 @@ function MarketplaceContent() {
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           {/* Sidebar */}
           <aside className="space-y-4">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
-              <h2 className="text-lg font-semibold text-white">Categories</h2>
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-5 shadow-sm">
+              <h2 className="text-lg font-semibold text-charcoal">Categories</h2>
               <div className="mt-4 space-y-1">
                 <button
                   type="button"
                   onClick={() => setSelectedCategoryId("all")}
                   className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
                     selectedCategoryId === "all"
-                      ? "bg-emerald-500/15 font-medium text-emerald-200"
-                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                      ? "bg-leaf/15 font-medium text-forest"
+                      : "text-charcoal/70 hover:bg-sunflower/15 hover:text-forest"
                   }`}
                 >
                   All Categories
@@ -229,8 +230,8 @@ function MarketplaceContent() {
                     onClick={() => setSelectedCategoryId(cat.id)}
                     className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
                       selectedCategoryId === cat.id
-                        ? "bg-emerald-500/15 font-medium text-emerald-200"
-                        : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                        ? "bg-leaf/15 font-medium text-forest"
+                        : "text-charcoal/70 hover:bg-sunflower/15 hover:text-forest"
                     }`}
                   >
                     {cat.name}
@@ -241,7 +242,7 @@ function MarketplaceContent() {
 
             <Link
               href="/marketplace/new"
-              className="flex items-center justify-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-200 transition hover:bg-emerald-500/20"
+              className="flex items-center justify-center gap-2 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 px-4 py-3 text-sm font-medium text-coral shadow-sm transition hover:bg-sunflower/15"
             >
               <ShoppingBag className="h-4 w-4" />
               Post a listing
@@ -252,24 +253,24 @@ function MarketplaceContent() {
           <section>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="text-xl font-semibold text-charcoal">
                   {searchQuery.trim()
                     ? `Results for "${searchQuery.trim()}"`
                     : "Active listings"}
                 </h2>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-charcoal/60">
                   {searchQuery.trim()
                     ? "Showing matching listings across the marketplace."
                     : "Browse what students are selling right now."}
                 </p>
               </div>
-              <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-sm text-slate-300">
+              <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">
                 {listings.length} listing{listings.length !== 1 ? "s" : ""}
               </span>
             </div>
 
             {loading || searching ? (
-              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+              <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
                 Loading listings...
               </div>
             ) : listings.length > 0 ? (
@@ -278,10 +279,11 @@ function MarketplaceContent() {
                   <Link
                     key={listing.id}
                     href={`/marketplace/${listing.id}`}
-                    className="group rounded-2xl border border-slate-800 bg-slate-900 shadow-sm transition hover:border-emerald-500/40 hover:shadow-lg"
+                    className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
                   >
+                    <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
                     {/* Thumbnail */}
-                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-slate-800">
+                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-warm-bg">
                       {listing.thumbnail_url ? (
                         <Image
                           src={listing.thumbnail_url}
@@ -291,12 +293,12 @@ function MarketplaceContent() {
                           className="object-cover transition group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-slate-600">
+                        <div className="flex h-full items-center justify-center text-charcoal/30">
                           <ShoppingBag className="h-10 w-10" />
                         </div>
                       )}
                       {listing.is_boosted && (
-                        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-950">
+                        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-sunflower/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-charcoal">
                           <Sparkles className="h-3 w-3" />
                           Boosted
                         </span>
@@ -306,14 +308,14 @@ function MarketplaceContent() {
                     {/* Details */}
                     <div className="p-4">
                       {listing.category_name && (
-                        <span className="mb-2 inline-block rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-200">
+                        <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
                           {listing.category_name}
                         </span>
                       )}
-                      <h3 className="line-clamp-2 text-sm font-semibold text-white group-hover:text-emerald-100">
+                      <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
                         {listing.title}
                       </h3>
-                      <p className="mt-2 text-lg font-bold text-emerald-400">
+                      <p className="mt-2 text-lg font-bold text-forest">
                         {formatPrice(listing.price)}
                       </p>
                     </div>
@@ -321,7 +323,7 @@ function MarketplaceContent() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
+              <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
                 No listings match your current filters.
               </div>
             )}

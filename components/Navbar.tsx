@@ -39,9 +39,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="relative border-b border-slate-800 bg-slate-950/90 z-50">
+    <nav className="relative z-50 border-b border-forest/15 bg-white/95">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-3 text-lg font-semibold text-white whitespace-nowrap flex-shrink-0">
+        <Link href="/" className="flex flex-shrink-0 items-center gap-3 whitespace-nowrap text-lg font-semibold text-forest">
           <Image
             src="/logo.svg"
             alt="MVCorner Logo"
@@ -56,18 +56,18 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3 text-sm">
           <Link
             href="/marketplace"
-            className="rounded-md px-3 py-2 text-slate-300 transition hover:text-white whitespace-nowrap"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
           >
             Marketplace
           </Link>
           {email ? (
             <>
-              <span className="hidden text-slate-300 sm:inline-block max-w-32 truncate">
+              <span className="hidden max-w-32 truncate text-charcoal/80 sm:inline-block">
                 {email}
               </span>
               <button
                 onClick={handleLogout}
-                className="rounded-md border border-slate-700 px-3 py-2 text-slate-100 transition hover:bg-slate-800 whitespace-nowrap"
+                className="whitespace-nowrap rounded-md border border-forest/25 px-3 py-2 text-forest transition hover:bg-sunflower/30"
               >
                 Log out
               </button>
@@ -76,13 +76,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="rounded-md px-3 py-2 text-slate-300 transition hover:text-white whitespace-nowrap"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="rounded-md bg-sky-600 px-3 py-2 text-white transition hover:bg-sky-500 whitespace-nowrap"
+                className="whitespace-nowrap rounded-md bg-coral px-3 py-2 text-white transition hover:bg-forest"
               >
                 Sign up
               </Link>
@@ -94,7 +94,7 @@ export default function Navbar() {
         <div className="flex md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-slate-300 hover:text-white focus:outline-none p-1"
+            className="p-1 text-forest hover:text-coral focus:outline-none"
             aria-label="Toggle menu"
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -104,42 +104,42 @@ export default function Navbar() {
 
       {/* Mobile Navigation Panel */}
       {isOpen && (
-        <div className="md:hidden border-t border-slate-800 bg-slate-950 px-6 py-4 space-y-3 text-sm">
+        <div className="space-y-3 border-t border-forest/15 bg-warm-bg px-6 py-4 text-sm md:hidden">
           <Link
             href="/marketplace"
             onClick={() => setIsOpen(false)}
-            className="block rounded-md px-3 py-2 text-slate-300 transition hover:text-white"
+            className="block rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
           >
             Marketplace
           </Link>
           {email ? (
             <>
-              <div className="px-3 py-1 text-xs text-slate-400 truncate">
-                Signed in as: <span className="text-slate-200">{email}</span>
+              <div className="truncate px-3 py-1 text-xs text-charcoal/70">
+                Signed in as: <span className="text-forest">{email}</span>
               </div>
               <button
                 onClick={() => {
                   handleLogout();
                   setIsOpen(false);
                 }}
-                className="w-full text-left rounded-md border border-slate-700 px-3 py-2 text-slate-100 transition hover:bg-slate-800"
+                className="w-full rounded-md border border-forest/25 px-3 py-2 text-left text-forest transition hover:bg-sunflower/30"
               >
                 Log out
               </button>
             </>
           ) : (
-            <div className="space-y-2 pt-2 border-t border-slate-800">
+            <div className="space-y-2 border-t border-forest/15 pt-2">
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="block text-center rounded-md border border-slate-700 px-3 py-2 text-slate-300 transition hover:text-white"
+                className="block rounded-md border border-forest/25 px-3 py-2 text-center text-forest transition hover:bg-sunflower/30"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setIsOpen(false)}
-                className="block text-center rounded-md bg-sky-600 px-3 py-2 text-white transition hover:bg-sky-500"
+                className="block rounded-md bg-coral px-3 py-2 text-center text-white transition hover:bg-forest"
               >
                 Sign up
               </Link>

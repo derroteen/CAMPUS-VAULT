@@ -8,14 +8,14 @@ export default function TermsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+    <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk">
+      <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Terms of Service</h1>
-          <p className="mt-4 text-slate-400">Last updated: {currentDate}</p>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl font-space-grotesk">Terms of Service</h1>
+          <p className="mt-4 text-slate-600">Last updated: {currentDate}</p>
         </div>
 
-        <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-300">
+        <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-700">
           <section>
             <p>
               These terms govern your use of MVCorner, an independently operated resource-sharing platform for Maseno University students.
@@ -23,59 +23,66 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Account Responsibilities</h2>
+            <h2 className="text-xl font-semibold text-forest">Account Responsibilities</h2>
             <p className="mt-4">
               Users must provide accurate information at signup and are responsible for maintaining the security of their account.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Uploaded Content</h2>
+            <h2 className="text-xl font-semibold text-coral">Uploaded Content</h2>
             <p className="mt-4">
               Users retain ownership of content they upload, but grant MVCorner a license to host, display, and distribute it to other users on the platform. Users must only upload content they have the right to share (their own notes, or resources they&apos;re permitted to redistribute). Uploading copyrighted material without permission is strictly prohibited. All uploads are subject to admin review before becoming publicly visible.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Access Model</h2>
+            <h2 className="text-xl font-semibold text-forest">Marketplace Listings</h2>
+            <p className="mt-4">
+              Users are responsible for the accuracy of their marketplace listings and for ensuring that any item they offer is legal to sell and permitted under applicable law and university rules. MVCorner is not a buyer, seller, reseller, broker, or other party to transactions between users, and we do not guarantee the quality, safety, or delivery of listed items. MVCorner reserves the right to remove any listing that violates these terms or appears deceptive, prohibited, or unsafe.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-coral">Access Model</h2>
             <p className="mt-4">
               Free access requires uploading 4 approved resources; alternatively, a KES 30 payment via M-Pesa unlocks unlimited downloads for 7 hours. Payments are processed by Paystack and are generally non-refundable once the unlock period has started, except where required by law or at our discretion for a genuine service failure.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Prohibited Conduct</h2>
+            <h2 className="text-xl font-semibold text-forest">Prohibited Conduct</h2>
             <p className="mt-4">
               No uploading of harmful, illegal, or plagiarized content; no attempts to abuse or circumvent the payment/unlock system; no harassment of other users.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Content Removal</h2>
+            <h2 className="text-xl font-semibold text-coral">Content Removal</h2>
             <p className="mt-4">
               MVCorner reserves the right to remove any content or suspend any account that violates these terms.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">No Warranty</h2>
+            <h2 className="text-xl font-semibold text-forest">No Warranty</h2>
             <p className="mt-4">
               The platform is provided &quot;as is&quot; without guarantees of uninterrupted availability; MVCorner is not liable for the accuracy of user-submitted academic content.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Changes to These Terms</h2>
+            <h2 className="text-xl font-semibold text-coral">Changes to These Terms</h2>
             <p className="mt-4">
               Terms may be updated as the platform develops; continued use after changes means acceptance of the updated terms.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white">Contact</h2>
+            <h2 className="text-xl font-semibold text-forest">Contact</h2>
             <p className="mt-4">
               For any questions or concerns regarding these terms, contact us at{" "}
-              <a href="mailto:infodteqsolutions@gmail.com" className="text-sky-400 hover:underline">
+              <a href="mailto:infodteqsolutions@gmail.com" className="text-forest hover:text-leaf underline">
                 infodteqsolutions@gmail.com
               </a>.
             </p>
@@ -83,7 +90,7 @@ export default function TermsPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/" className="text-sm text-slate-400 transition hover:text-white">
+          <Link href="/" className="text-sm text-forest hover:text-leaf underline">
             &larr; Back to home
           </Link>
         </div>
