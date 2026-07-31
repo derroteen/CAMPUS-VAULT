@@ -155,7 +155,7 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
               <Link
-                href="/dashboard"
+                href="/choose"
                 className="inline-flex rounded-md bg-sunflower px-6 py-3 font-medium text-charcoal transition hover:bg-coral hover:text-white"
               >
                 Go to Dashboard
@@ -358,7 +358,7 @@ export default function Home() {
       <section className="bg-sunflower/10 py-12 text-center">
         {isLoggedIn ? (
           <Link
-            href="/dashboard"
+            href="/choose"
             className="inline-flex rounded-md bg-forest px-6 py-3 font-medium text-white transition hover:bg-leaf"
           >
             Go to Dashboard
