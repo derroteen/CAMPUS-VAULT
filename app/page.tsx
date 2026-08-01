@@ -278,6 +278,24 @@ export default function Home() {
         </section>
       )}
 
+      {/* MARKETPLACE STATS SECTION */}
+      <section className="py-12">
+        <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-white/80 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Live Listings</h2>
+            <p className="mt-2 text-base">Browse what students are selling on campus right now.</p>
+          </div>
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/80 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Free to List</h2>
+            <p className="mt-2 text-base">Post up to 3 items at no cost - no fees to get started.</p>
+          </div>
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-white/80 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Direct Contact</h2>
+            <p className="mt-2 text-base">Reach sellers instantly via call or WhatsApp - no middleman.</p>
+          </div>
+        </div>
+      </section>
+
       {/* FEATURE HIGHLIGHT CARDS */}
       <section className="bg-forest/5 pb-12">
         <div className="container mx-auto grid gap-4 px-4 md:grid-cols-2 xl:grid-cols-5">
