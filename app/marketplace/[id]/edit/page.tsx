@@ -182,7 +182,7 @@ export default function EditListingPage() {
     } = await supabase.auth.getSession();
 
     if (!session?.user) {
-      setError("You must be logged in to edit this listing.");
+      setError("You must be logged in to edit this product.");
       return;
     }
 
@@ -215,7 +215,7 @@ export default function EditListingPage() {
       .eq("seller_id", userId);
 
     if (updateError) {
-      setError(`Failed to update listing: ${updateError.message}`);
+      setError(`Failed to update product: ${updateError.message}`);
       setSubmitting(false);
       return;
     }
@@ -318,7 +318,7 @@ export default function EditListingPage() {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-charcoal/60">Loading listing details...</p>
+        <p className="text-charcoal/60">Loading product details...</p>
       </main>
     );
   }
@@ -330,7 +330,7 @@ export default function EditListingPage() {
           <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
             Marketplace
           </div>
-          <h1 className="mt-4 text-3xl font-semibold">Edit listing</h1>
+          <h1 className="mt-4 text-3xl font-semibold">Edit product</h1>
           <p className="mt-2 text-charcoal/60">
             Update your item details or manage images.
           </p>
@@ -478,7 +478,7 @@ export default function EditListingPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={img.image_url}
-                      alt="Existing listing image"
+                      alt="Existing product image"
                       className="aspect-square w-full object-cover"
                     />
                     <button

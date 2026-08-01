@@ -244,7 +244,7 @@ export default function MyListingsPage() {
         {/* Header */}
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-semibold">My Listings</h1>
+            <h1 className="text-3xl font-semibold">My Products</h1>
             <p className="mt-1 text-charcoal/60">
               Manage everything you&apos;re selling on the marketplace.
             </p>
@@ -254,7 +254,7 @@ export default function MyListingsPage() {
             className="inline-flex items-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-sm font-medium text-white transition hover:bg-leaf"
           >
             <ShoppingBag className="h-4 w-4" />
-            New listing
+            New product
           </Link>
         </div>
 
@@ -263,14 +263,14 @@ export default function MyListingsPage() {
           {isPro ? (
             <p className="flex items-center gap-2 text-sm text-forest">
               <Sparkles className="h-4 w-4 text-sunflower" />
-              Unlimited listings (Pro)
+              Unlimited products (Pro)
             </p>
           ) : (
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-charcoal/70">
                 <span className="font-semibold text-charcoal">{activeCount}</span>{" "}
                 of <span className="font-semibold text-charcoal">3</span> free
-                listings used
+                products used
               </p>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-32 overflow-hidden rounded-full bg-warm-bg">
@@ -293,7 +293,7 @@ export default function MyListingsPage() {
         {soldCount > 0 ? (
           <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
             <p className="text-sm text-charcoal/80">
-              You have {soldCount} sold listing(s). Consider deleting them to keep your dashboard tidy.
+              You have {soldCount} sold product(s). Consider deleting them to keep your dashboard tidy.
             </p>
           </div>
         ) : null}
@@ -301,12 +301,12 @@ export default function MyListingsPage() {
         {/* Listings */}
         {listings.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-forest/15 bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
-            You haven&apos;t posted any listings yet.{" "}
+            You haven&apos;t posted any products yet.{" "}
             <Link
               href="/marketplace/new"
               className="text-forest transition hover:text-coral"
             >
-              Create your first listing →
+              Create your first product →
             </Link>
           </div>
         ) : (

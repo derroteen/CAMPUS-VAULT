@@ -63,7 +63,7 @@ export default function ProUpgradePage() {
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-charcoal/60 transition hover:text-forest"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to my listings
+          Back to my products
         </Link>
 
         {/* Header */}
@@ -108,15 +108,15 @@ export default function ProUpgradePage() {
               <ul className="mt-6 space-y-3 text-sm text-charcoal/70">
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  Up to 3 active listings
+                  Up to 3 active products
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  Up to 2 images per listing
+                  Up to 2 images per product
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  14 days listing duration
+                  14 days product duration
                 </li>
               </ul>
             </div>
@@ -144,7 +144,7 @@ export default function ProUpgradePage() {
                 <ShieldCheck className="h-5 w-5 text-coral" />
               </h2>
               <p className="mt-1 text-sm text-charcoal/60">
-                Maximum visibility &amp; unlimited listing capacity.
+                Maximum visibility &amp; unlimited product capacity.
               </p>
               <div className="mt-6 text-3xl font-bold text-forest">
                 Pro Upgrade
@@ -153,19 +153,19 @@ export default function ProUpgradePage() {
               <ul className="mt-6 space-y-3 text-sm text-charcoal/70">
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  <strong className="text-charcoal">Unlimited active listings</strong>
+                  <strong className="text-charcoal">Unlimited active products</strong>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  <strong className="text-charcoal">Up to 6 images per listing</strong>
+                  <strong className="text-charcoal">Up to 6 images per product</strong>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  Priority / Boosted listing support
+                  Priority / Boosted product support
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  14 days listing duration
+                  14 days product duration
                 </li>
               </ul>
             </div>

@@ -188,7 +188,7 @@ function MarketplaceContent() {
                 htmlFor="marketplace-search"
                 className="mb-2 block text-sm font-medium text-charcoal/75"
               >
-                Search listings
+                Search products
               </label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal/40" />
@@ -245,7 +245,7 @@ function MarketplaceContent() {
               className="flex items-center justify-center gap-2 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 px-4 py-3 text-sm font-medium text-coral shadow-sm transition hover:bg-sunflower/15"
             >
               <ShoppingBag className="h-4 w-4" />
-              Post a listing
+              Post a product
             </Link>
           </aside>
 
@@ -256,22 +256,22 @@ function MarketplaceContent() {
                 <h2 className="text-xl font-semibold text-charcoal">
                   {searchQuery.trim()
                     ? `Results for "${searchQuery.trim()}"`
-                    : "Active listings"}
+                    : "Active products"}
                 </h2>
                 <p className="text-sm text-charcoal/60">
                   {searchQuery.trim()
-                    ? "Showing matching listings across the marketplace."
+                    ? "Showing matching products across the marketplace."
                     : "Browse what students are selling right now."}
                 </p>
               </div>
               <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">
-                {listings.length} listing{listings.length !== 1 ? "s" : ""}
+                {listings.length} product{listings.length !== 1 ? "s" : ""}
               </span>
             </div>
 
             {loading || searching ? (
               <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
-                Loading listings...
+                Loading products...
               </div>
             ) : listings.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -324,7 +324,7 @@ function MarketplaceContent() {
               </div>
             ) : (
               <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
-                No listings match your current filters.
+                No products match your current filters.
               </div>
             )}
           </section>

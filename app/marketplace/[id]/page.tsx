@@ -166,7 +166,7 @@ export default function ListingDetailPage() {
       digits = "254" + digits.slice(1);
     }
     const message = encodeURIComponent(
-      `Hi, I'm interested in your listing on MVCorner: ${title}`
+      `Hi, I'm interested in your product on MVCorner: ${title}`
     );
     return `https://wa.me/${digits}?text=${message}`;
   };
@@ -190,7 +190,7 @@ export default function ListingDetailPage() {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-charcoal/60">Loading listing...</p>
+        <p className="text-charcoal/60">Loading product...</p>
       </main>
     );
   }
@@ -200,7 +200,7 @@ export default function ListingDetailPage() {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-warm-bg px-6 text-charcoal">
         <p className="text-lg text-charcoal/60">
-          Listing not found or no longer available.
+          Product not found or no longer available.
         </p>
         <Link
           href="/marketplace"
@@ -229,7 +229,7 @@ export default function ListingDetailPage() {
         {listing.status !== "active" && isOwner && (
           <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
             <p className="text-sm text-charcoal">
-              This listing is <span className="font-semibold">{listing.status}</span> and is only visible to you.
+              This product is <span className="font-semibold">{listing.status}</span> and is only visible to you.
             </p>
           </div>
         )}
@@ -346,13 +346,13 @@ export default function ListingDetailPage() {
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-forest px-4 py-3 text-sm font-medium text-white transition hover:bg-leaf"
                   >
                     <Pencil className="h-4 w-4" />
-                    Edit listing
+                    Edit product
                   </Link>
 
                   {showDeleteConfirm ? (
                     <div className="space-y-2 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
                       <p className="text-sm text-charcoal">
-                        Are you sure? This will permanently delete this listing
+                        Are you sure? This will permanently delete this product
                         and its images.
                       </p>
                       <div className="flex gap-2">
@@ -380,7 +380,7 @@ export default function ListingDetailPage() {
                       className="flex w-full items-center justify-center gap-2 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 px-4 py-3 text-sm font-medium text-coral shadow-sm transition hover:bg-sunflower/15"
                     >
                       <Trash2 className="h-4 w-4" />
-                      Delete listing
+                      Delete product
                     </button>
                   )}
                 </>

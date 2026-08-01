@@ -136,7 +136,7 @@ export default function NewListingPage() {
 
     if (isAtListingCap) {
       setError(
-        "Free plan allows up to 3 active listings. Upgrade to Pro for more."
+        "Free plan allows up to 3 active products. Upgrade to Pro for more."
       );
       return;
     }
@@ -146,7 +146,7 @@ export default function NewListingPage() {
     } = await supabase.auth.getSession();
 
     if (!session?.user) {
-      setError("You must be logged in to create a listing.");
+      setError("You must be logged in to create a product.");
       return;
     }
 
@@ -218,7 +218,7 @@ export default function NewListingPage() {
       .single();
 
     if (insertError || !listing) {
-      setError(insertError?.message ?? "Failed to create listing.");
+      setError(insertError?.message ?? "Failed to create product.");
       setSubmitting(false);
       return;
     }
@@ -242,7 +242,7 @@ export default function NewListingPage() {
 
     // Reset form
     images.forEach((img) => URL.revokeObjectURL(img.url));
-    setMessage("Listing created successfully!");
+    setMessage("Product created successfully!");
     setTitle("");
     setDescription("");
     setPrice("");
@@ -269,7 +269,7 @@ export default function NewListingPage() {
           <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
             Marketplace
           </div>
-          <h1 className="mt-4 text-3xl font-semibold">Create a listing</h1>
+          <h1 className="mt-4 text-3xl font-semibold">Create a product</h1>
           <p className="mt-2 text-charcoal/60">
             Sell items to fellow students on campus.
           </p>
@@ -279,7 +279,7 @@ export default function NewListingPage() {
         {isAtListingCap && (
           <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
             <p className="text-sm text-charcoal">
-              Free plan allows up to 3 active listings. Upgrade to Pro for more.
+              Free plan allows up to 3 active products. Upgrade to Pro for more.
             </p>
             <Link
               href="/marketplace/pro"
@@ -458,7 +458,7 @@ export default function NewListingPage() {
               disabled={submitting || isAtListingCap}
               className="rounded-xl bg-forest px-4 py-2 font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {submitting ? "Creating..." : "Create Listing"}
+              {submitting ? "Creating..." : "Create Product"}
             </button>
           </div>
         </form>

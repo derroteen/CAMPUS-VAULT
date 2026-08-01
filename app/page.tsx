@@ -133,7 +133,7 @@ export default function Home() {
     },
     {
       title: "Campus marketplace",
-      description: "Buy and sell with fellow students - post a listing in minutes.",
+      description: "Buy and sell with fellow students - post a product in minutes.",
     },
   ];
 
@@ -282,7 +282,7 @@ export default function Home() {
       <section className="py-12">
         <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
           <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-white/80 p-6 text-center shadow-sm">
-            <h2 className="text-xl font-semibold">Live Listings</h2>
+            <h2 className="text-xl font-semibold">Live Products</h2>
             <p className="mt-2 text-base">Browse what students are selling on campus right now.</p>
           </div>
           <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/80 p-6 text-center shadow-sm">
@@ -353,7 +353,7 @@ export default function Home() {
                 How do I sell something on the marketplace?
               </summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
-                Create a free listing, add photos and a price, and interested buyers can reach you
+                Create a free product listing, add photos and a price, and interested buyers can reach you
                 directly by call or WhatsApp.
               </p>
             </details>
@@ -362,8 +362,8 @@ export default function Home() {
                 Is there a cost to sell?
               </summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
-                The free tier allows up to 3 active listings. A Pro tier is available if you want
-                more listing capacity.
+                The free tier allows up to 3 active products. A Pro tier is available if you want
+                more product capacity.
               </p>
             </details>
           </div>
@@ -413,7 +413,7 @@ export default function Home() {
             <div>
               <h2 className="font-semibold text-forest">Marketplace</h2>
               <div className="mt-4 space-y-2 text-charcoal/80">
-                <Link href="/marketplace" className="block transition hover:text-coral">Browse listings</Link>
+                <Link href="/marketplace" className="block transition hover:text-coral">Browse products</Link>
                 <Link href="/marketplace/new" className="block transition hover:text-coral">Sell an item</Link>
                 <Link href="/marketplace/pro" className="block transition hover:text-coral">Pro plan</Link>
               </div>
