@@ -146,12 +146,12 @@ export default function Home() {
             Everything you need on campus
           </h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg text-white/90 sm:text-xl">
-            MVCorner brings both sides of student life into one platform: download verified study
-            resources and buy or sell with fellow students in the campus marketplace.
+            MVCorner brings both sides of campus life into one platform: download verified study
+            resources and buy or sell with the campus community in the marketplace.
           </p>
-          <h2 className="mx-auto mt-8 max-w-4xl text-2xl font-semibold leading-tight sm:text-3xl">
+          <p className="mx-auto mt-6 inline-flex max-w-2xl items-center justify-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/90">
             Upload 4 Notes to Unlock Unlimited Downloads for 7 Hours
-          </h2>
+          </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
               <Link
