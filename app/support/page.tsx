@@ -88,8 +88,8 @@ export default function SupportPage() {
     }
 
     const amount = Number(amountKes);
-    if (!Number.isFinite(amount) || amount <= 0) {
-      setPaymentMessage("Please enter a valid tip amount in KES.");
+    if (!Number.isFinite(amount) || amount < 5) {
+      setPaymentMessage("Please enter a tip amount of at least KES 5.");
       setPaymentError(true);
       return;
     }
@@ -116,7 +116,11 @@ export default function SupportPage() {
 
       const result = await response.json();
       if (!result.success) {
-        throw new Error("Failed to initiate tip payment");
+        setPaymentMessage(
+          result.error ?? "Something went wrong. Please try again."
+        );
+        setPaymentError(true);
+        return;
       }
 
       setPaymentReference(result.data.reference);

@@ -236,6 +236,8 @@ export default function MyListingsPage() {
     );
   }
 
+  const soldCount = listings.filter((l) => l.status === "sold").length;
+
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -287,6 +289,14 @@ export default function MyListingsPage() {
             </div>
           )}
         </div>
+
+        {soldCount > 0 ? (
+          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
+            <p className="text-sm text-charcoal/80">
+              You have {soldCount} sold listing(s). Consider deleting them to keep your dashboard tidy.
+            </p>
+          </div>
+        ) : null}
 
         {/* Listings */}
         {listings.length === 0 ? (

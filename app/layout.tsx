@@ -27,13 +27,13 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://campus-vault-six.vercel.app"),
-  title: "MVCorner | Maseno University Notes, Past Papers & Study Resources",
+  title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
   description:
-    "Download Maseno University notes, past papers, CATs and study guides. Upload notes or unlock unlimited downloads for 7 hours with MVCorner.",
+    "Download Maseno University notes, past papers, and study guides. Buy and sell with fellow students on the MVCorner marketplace.",
   openGraph: {
-    title: "MVCorner | Maseno University Notes, Past Papers & Study Resources",
+    title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
     description:
-      "Download Maseno University notes, past papers, CATs and study guides. Upload notes or unlock unlimited downloads for 7 hours with MVCorner.",
+      "Download Maseno University notes, past papers, and study guides. Buy and sell with fellow students on the MVCorner marketplace.",
     url: "https://campus-vault-six.vercel.app",
     siteName: "MVCorner",
     locale: "en_KE",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MVCorner | Maseno University Notes, Past Papers & Study Resources",
+    title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
     description:
-      "Download Maseno University notes, past papers, CATs and study guides.",
+      "Download Maseno University notes, past papers, and study guides. Buy and sell with fellow students on the MVCorner marketplace.",
   },
 };
 
