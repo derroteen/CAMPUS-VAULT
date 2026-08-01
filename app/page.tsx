@@ -149,9 +149,14 @@ export default function Home() {
             MVCorner brings both sides of campus life into one platform: download verified study
             resources and buy or sell with the campus community in the marketplace.
           </p>
-          <p className="mx-auto mt-6 inline-flex max-w-2xl items-center justify-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/90">
-            Upload 4 Notes to Unlock Unlimited Downloads for 7 Hours
-          </p>
+          <div className="mx-auto mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+            <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/90">
+              Upload 4 Notes to Unlock Unlimited Downloads for 7 Hours
+            </p>
+            <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-sunflower/20 px-4 py-2 text-sm font-medium text-sunflower">
+              New sellers get 10 days of Pro free
+            </p>
+          </div>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
               <Link
