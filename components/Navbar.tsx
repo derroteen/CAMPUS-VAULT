@@ -67,6 +67,12 @@ export default function Navbar() {
           >
             Marketplace
           </Link>
+          <Link
+            href="/support"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
+          >
+            Support
+          </Link>
           {email ? (
             <>
               <span className="hidden max-w-32 truncate text-charcoal/80 sm:inline-block">
@@ -125,6 +131,13 @@ export default function Navbar() {
             className="block rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
           >
             Marketplace
+          </Link>
+          <Link
+            href="/support"
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 text-charcoal transition hover:bg-sunflower/30 hover:text-forest"
+          >
+            Support
           </Link>
           {email ? (
             <>
