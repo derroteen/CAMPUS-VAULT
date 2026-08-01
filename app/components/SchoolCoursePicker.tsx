@@ -28,7 +28,7 @@ type SchoolCoursePickerProps = {
 };
 
 const selectClassName =
-  "w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white disabled:cursor-not-allowed disabled:bg-slate-900 disabled:text-slate-500";
+  "w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400";
 
 export default function SchoolCoursePicker({
   universityId,
@@ -131,7 +131,7 @@ export default function SchoolCoursePicker({
   return (
     <div className={showCourseDropdown ? "grid gap-4 md:grid-cols-2" : "grid gap-4 md:grid-cols-1"}>
       <div>
-        <label htmlFor="school" className="mb-2 block text-sm text-slate-300">
+        <label htmlFor="school" className="mb-2 block text-sm text-slate-700">
           School
         </label>
         <select
@@ -155,7 +155,7 @@ export default function SchoolCoursePicker({
 
       {showCourseDropdown ? (
         <div>
-          <label htmlFor="course" className="mb-2 block text-sm text-slate-300">
+          <label htmlFor="course" className="mb-2 block text-sm text-slate-700">
             Course
           </label>
           <select

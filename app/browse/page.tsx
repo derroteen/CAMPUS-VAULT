@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
 
@@ -50,6 +50,12 @@ function BrowsePageContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState(false);
   const [resourceTypeFilter, setResourceTypeFilter] = useState("all");
+  const [showCourseRequest, setShowCourseRequest] = useState(false);
+  const [courseRequestName, setCourseRequestName] = useState("");
+  const [courseRequestCode, setCourseRequestCode] = useState("");
+  const [courseRequestSchoolId, setCourseRequestSchoolId] = useState<string | null>(null);
+  const [courseRequestError, setCourseRequestError] = useState<string | null>(null);
+  const [courseRequestMessage, setCourseRequestMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [unlockExpiresAt, setUnlockExpiresAt] = useState<string | null>(null);
@@ -442,6 +448,66 @@ function BrowsePageContent() {
     setSelectedCourseId(nextValue.courseId ?? "");
   };
 
+  const handleCourseRequestSubmit = async (event?: FormEvent<HTMLFormElement> | null) => {
+    event?.preventDefault();
+    setCourseRequestError(null);
+    setCourseRequestMessage(null);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setCourseRequestError("You must be logged in to request a course.");
+      return;
+    }
+
+    if (!selectedUniversityId || !courseRequestName.trim() || !courseRequestCode.trim()) {
+      setCourseRequestError("Please choose a university, enter a course name, and provide a course code.");
+      return;
+    }
+
+    const { error: requestError } = await supabase.from("course_requests").insert({
+      university_id: selectedUniversityId,
+      requested_name: courseRequestName.trim(),
+      requested_code: courseRequestCode.trim(),
+      requested_by: session.user.id,
+      status: "pending",
+    });
+
+    if (requestError) {
+      setCourseRequestError(requestError.message);
+      return;
+    }
+
+    fetch("/api/notify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        type: "course_request",
+        title: `${courseRequestCode.trim()} - ${courseRequestName.trim()}`,
+        userEmail: session.user.email ?? "",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          console.error("Admin notification API returned error status:", res.status);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to send course request admin email notification:", err);
+      });
+
+    setShowCourseRequest(false);
+    setCourseRequestName("");
+    setCourseRequestCode("");
+    setCourseRequestSchoolId(null);
+    setCourseRequestMessage("Thanks! Your course has been submitted for review. You can still upload once it's approved.");
+  };
+
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     runSearch(searchQuery);
@@ -537,6 +603,70 @@ function BrowsePageContent() {
                   </select>
                 </div>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+              <button
+                type="button"
+                onClick={() => setShowCourseRequest((current) => !current)}
+                className="text-left text-sm font-medium text-forest transition hover:text-leaf"
+              >
+                Can&apos;t find your course? Request it
+              </button>
+
+              {showCourseRequest ? (
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white/90 p-5">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-700">
+                        Course name
+                      </label>
+                      <input
+                        id="courseRequestName"
+                        type="text"
+                        value={courseRequestName}
+                        onChange={(e) => setCourseRequestName(e.target.value)}
+                        placeholder="e.g. Introduction to Algorithms"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-700">
+                        Course Code
+                      </label>
+                      <input
+                        id="courseRequestCode"
+                        type="text"
+                        value={courseRequestCode}
+                        onChange={(e) => setCourseRequestCode(e.target.value)}
+                        placeholder="e.g. BAC101"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <SchoolCoursePicker
+                      universityId={selectedUniversityId}
+                      value={{ schoolId: courseRequestSchoolId, courseId: null }}
+                      onChange={(nextValue) => setCourseRequestSchoolId(nextValue.schoolId)}
+                      showCourseDropdown={false}
+                    />
+                  </div>
+                  {courseRequestError ? <p className="mt-3 text-sm text-coral">{courseRequestError}</p> : null}
+                  {courseRequestMessage ? <p className="mt-3 text-sm text-forest">{courseRequestMessage}</p> : null}
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleCourseRequestSubmit()}
+                      className="rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf"
+                    >
+                      Submit request
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {profileLoaded && !hasUnlockedAccess() ? (
