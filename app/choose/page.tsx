@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { supabase } from "@/lib/supabase";
 
 export default function ChoosePage() {
@@ -42,6 +43,10 @@ export default function ChoosePage() {
         <div className="text-center mb-10">
           <h1 className="text-3xl font-semibold text-charcoal">Where would you like to go?</h1>
           <p className="mt-2 text-charcoal/60">Choose a destination to continue</p>
+        </div>
+
+        <div className="mb-8">
+          <ProTrialBanner />
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2">

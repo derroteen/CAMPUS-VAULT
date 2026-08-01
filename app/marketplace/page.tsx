@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { Search, ShoppingBag, Sparkles } from "lucide-react";
+import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -204,6 +205,10 @@ function MarketplaceContent() {
             </div>
           </div>
         </section>
+
+        <div className="mt-6">
+          <ProTrialBanner />
+        </div>
 
         {/* Main grid: sidebar + cards */}
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">

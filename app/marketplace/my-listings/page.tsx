@@ -13,6 +13,7 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
+import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { supabase } from "@/lib/supabase";
 
 type ListingRow = {
@@ -256,6 +257,10 @@ export default function MyListingsPage() {
             <ShoppingBag className="h-4 w-4" />
             New product
           </Link>
+        </div>
+
+        <div className="mb-6">
+          <ProTrialBanner />
         </div>
 
         {/* Quota summary */}
