@@ -133,7 +133,7 @@ export default function Home() {
     },
     {
       title: "Campus marketplace",
-      description: "Buy and sell with fellow students - post a product in minutes.",
+      description: "Buy and sell with the campus community - post a product in minutes.",
     },
   ];
 
@@ -231,7 +231,7 @@ export default function Home() {
             <div className="absolute inset-0 flex flex-col items-center justify-end p-8 text-center text-charcoal">
               <h2 className="text-3xl font-semibold">Marketplace</h2>
               <p className="mt-3 max-w-md text-sm text-charcoal/90">
-                Buy and sell electronics, books, hostel essentials and more with fellow students.
+                Buy and sell electronics, books, hostel essentials and more with the campus community.
               </p>
               <Link
                 href="/marketplace"
@@ -253,7 +253,7 @@ export default function Home() {
           </div>
           <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">New Resources Weekly</h2>
-            <p className="mt-2 text-base">Fresh uploads from Maseno University students every week</p>
+            <p className="mt-2 text-base">Fresh uploads from the Maseno University community every week</p>
           </div>
           <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Organized by Course</h2>
@@ -288,7 +288,7 @@ export default function Home() {
         <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
           <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-white/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Live Products</h2>
-            <p className="mt-2 text-base">Browse what students are selling on campus right now.</p>
+            <p className="mt-2 text-base">Browse what&apos;s being sold on campus right now.</p>
           </div>
           <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Free to List</h2>

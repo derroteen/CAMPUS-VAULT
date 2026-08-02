@@ -271,7 +271,7 @@ export default function NewListingPage() {
           </div>
           <h1 className="mt-4 text-3xl font-semibold">Create a product</h1>
           <p className="mt-2 text-charcoal/60">
-            Sell items to fellow students on campus.
+            Sell items to the campus community.
           </p>
         </div>
 

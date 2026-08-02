@@ -180,8 +180,8 @@ function MarketplaceContent() {
                 Buy &amp; sell on campus
               </h1>
               <p className="mt-4 max-w-2xl text-lg text-charcoal/70">
-                Electronics, books, hostel items, and more — from students, for
-                students.
+                Electronics, books, hostel items, and more — from the campus community, for
+                the campus community.
               </p>
             </div>
             <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
@@ -266,7 +266,7 @@ function MarketplaceContent() {
                 <p className="text-sm text-charcoal/60">
                   {searchQuery.trim()
                     ? "Showing matching products across the marketplace."
-                    : "Browse what students are selling right now."}
+                    : "Browse what's being sold on campus right now."}
                 </p>
               </div>
               <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">

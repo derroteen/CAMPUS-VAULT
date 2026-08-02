@@ -18,7 +18,7 @@ export default function TermsPage() {
         <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-700">
           <section>
             <p>
-              These terms govern your use of MVCorner, an independently operated resource-sharing platform for Maseno University students.
+              These terms govern your use of MVCorner, an independently operated resource-sharing platform for the Maseno University community.
             </p>
           </section>
 

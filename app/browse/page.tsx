@@ -562,7 +562,7 @@ function BrowsePageContent() {
           </div>
         ) : (
           <div className="mt-6 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-center">
-            <span className="text-sm text-slate-500">Now live for {universities[0]?.name || 'Maseno University'} students</span>
+            <span className="text-sm text-slate-500">Now live for {universities[0]?.name || 'Maseno University'}</span>
           </div>
         )}
 

@@ -29,11 +29,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://campus-vault-six.vercel.app"),
   title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
   description:
-    "Download Maseno University notes, past papers, and study guides. Buy and sell with fellow students on the MVCorner marketplace.",
+    "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
   openGraph: {
     title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
     description:
-      "Download Maseno University notes, past papers, and study guides. Buy and sell with fellow students on the MVCorner marketplace.",
+      "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
     url: "https://campus-vault-six.vercel.app",
     siteName: "MVCorner",
     locale: "en_KE",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
     description:
-      "Download Maseno University notes, past papers, and study guides. Buy and sell with fellow students on the MVCorner marketplace.",
+      "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
   },
 };
 

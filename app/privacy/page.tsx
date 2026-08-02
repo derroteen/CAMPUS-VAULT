@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
         <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-700">
           <section>
             <p>
-              MVCorner is an independently operated platform (not a registered company) built to help Maseno University students share and access academic resources. This policy explains what data we collect and how it&apos;s used.
+              MVCorner is an independently operated platform (not a registered company) built to help the Maseno University community share and access academic resources. This policy explains what data we collect and how it&apos;s used.
             </p>
           </section>
 
