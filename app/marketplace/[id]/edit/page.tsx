@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -317,8 +318,24 @@ export default function EditListingPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-charcoal/60">Loading product details...</p>
+      <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 shadow-sm sm:p-10">
+          <Skeleton className="h-7 w-44 rounded-lg" />
+          <Skeleton className="mt-3 h-4 w-64 rounded-lg" />
+
+          <div className="mt-8 space-y-6">
+            <Skeleton className="h-20 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <div className="grid gap-4 md:grid-cols-2">
+              <Skeleton className="h-20 w-full rounded-2xl" />
+              <Skeleton className="h-20 w-full rounded-2xl" />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Skeleton className="h-20 w-full rounded-2xl" />
+              <Skeleton className="h-20 w-full rounded-2xl" />
+            </div>
+          </div>
+        </div>
       </main>
     );
   }

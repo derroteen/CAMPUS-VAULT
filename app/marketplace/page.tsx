@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { Search, ShoppingBag, Sparkles } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -29,8 +30,21 @@ export default function MarketplacePage() {
     <Suspense
       fallback={
         <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
-          <div className="mx-auto max-w-6xl">
-            <p className="text-charcoal/60">Loading marketplace...</p>
+          <div className="mx-auto max-w-6xl space-y-4">
+            <Skeleton className="h-9 w-56 rounded-xl" />
+            <Skeleton className="h-5 w-80 rounded-xl" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm"
+                >
+                  <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+                  <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
+                  <Skeleton className="mt-3 h-4 w-1/3 rounded-lg" />
+                </div>
+              ))}
+            </div>
           </div>
         </main>
       }
@@ -300,8 +314,17 @@ function MarketplaceContent() {
             </div>
 
             {loading || searching ? (
-              <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
-                Loading products...
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm"
+                  >
+                    <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+                    <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
+                    <Skeleton className="mt-3 h-4 w-1/3 rounded-lg" />
+                  </div>
+                ))}
               </div>
             ) : listings.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

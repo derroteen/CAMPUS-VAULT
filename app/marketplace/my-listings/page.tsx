@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 type ListingRow = {
@@ -231,8 +232,30 @@ export default function MyListingsPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-charcoal/60">Loading...</p>
+      <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl space-y-4">
+          <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+            <Skeleton className="h-4 w-56 rounded-lg" />
+            <Skeleton className="mt-3 h-2 w-36 rounded-full" />
+          </div>
+
+          {Array.from({ length: 3 }).map((_, index) => (
+            <article
+              key={index}
+              className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm sm:p-5"
+            >
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <Skeleton className="aspect-square w-full rounded-xl sm:w-36" />
+                <div className="flex flex-1 flex-col gap-3">
+                  <Skeleton className="h-4 w-24 rounded-full" />
+                  <Skeleton className="h-5 w-3/4 rounded-lg" />
+                  <Skeleton className="h-5 w-1/3 rounded-lg" />
+                  <Skeleton className="h-3 w-2/3 rounded-lg" />
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </main>
     );
   }
