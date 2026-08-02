@@ -140,8 +140,16 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-warm-bg text-charcoal">
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-forest to-leaf px-6 py-16 text-white">
-        <div className="mx-auto max-w-6xl text-center">
+      <section className="relative overflow-hidden bg-forest px-6 py-16 text-white">
+        <Image
+          src="/images/hero-campus.jpg"
+          alt="Maseno University campus"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-forest/75" />
+        <div className="relative z-10 mx-auto max-w-6xl text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
             Everything you need on campus
           </h1>
