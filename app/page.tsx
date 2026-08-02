@@ -279,7 +279,7 @@ export default function Home() {
                 {popularCourses.map((course) => (
                   <Link
                     key={course.id}
-                    href={`/browse?university=${course.universityId}&course=${course.id}`}
+                    href={`/browse?q=${encodeURIComponent(course.name)}`}
                     className="rounded-full border border-forest/30 bg-warm-bg px-3 py-1.5 text-sm text-forest transition hover:border-coral hover:text-coral"
                   >
                     {course.name}
