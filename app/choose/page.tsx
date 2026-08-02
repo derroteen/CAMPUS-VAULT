@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 export default function ChoosePage() {
@@ -29,9 +30,20 @@ export default function ChoosePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-warm-bg flex items-center justify-center text-charcoal">
-        <div className="animate-pulse rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-8 w-80 text-center shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-charcoal/70">Loading...</p>
+      <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
+        <div className="mx-auto max-w-4xl">
+          <div className="grid gap-6 sm:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div
+                key={index}
+                className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/20 border-y-forest/20 border-l-4 border-l-forest bg-white/90 p-8 shadow-sm"
+              >
+                <Skeleton className="mx-auto h-16 w-16 rounded-xl" />
+                <Skeleton className="mx-auto mt-4 h-6 w-40 rounded-lg" />
+                <Skeleton className="mx-auto mt-3 h-4 w-56 rounded-lg" />
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Check, ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 const PRO_PLANS = [
@@ -181,8 +182,23 @@ export default function ProUpgradePage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-charcoal/60">Loading plan options...</p>
+      <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl grid gap-6 md:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div
+              key={index}
+              className="rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm sm:p-8"
+            >
+              <Skeleton className="h-6 w-32 rounded-lg" />
+              <Skeleton className="mt-6 h-8 w-40 rounded-lg" />
+              <div className="mt-6 space-y-3">
+                <Skeleton className="h-4 w-3/4 rounded-lg" />
+                <Skeleton className="h-4 w-2/3 rounded-lg" />
+                <Skeleton className="h-4 w-1/2 rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
       </main>
     );
   }

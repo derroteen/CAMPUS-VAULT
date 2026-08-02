@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 type Resource = {
@@ -21,8 +22,22 @@ export default function BrowsePage() {
     <Suspense
       fallback={
         <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
-          <div className="mx-auto max-w-6xl">
-            <p className="text-slate-600">Loading browse page...</p>
+          <div className="mx-auto max-w-7xl space-y-8">
+            <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-warm-bg/50 to-warm-bg/30 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+              <Skeleton className="h-10 w-3/5 rounded-xl" />
+              <Skeleton className="mt-4 h-5 w-4/5 rounded-xl" />
+            </section>
+            <div className="grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
+              <aside className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+                <Skeleton className="h-6 w-28 rounded-lg" />
+                <Skeleton className="mt-4 h-10 w-full rounded-xl" />
+                <Skeleton className="mt-3 h-10 w-full rounded-xl" />
+              </aside>
+              <section className="rounded-2xl border border-slate-200 bg-white/70 p-5">
+                <Skeleton className="h-6 w-48 rounded-lg" />
+                <Skeleton className="mt-4 h-32 w-full rounded-2xl" />
+              </section>
+            </div>
           </div>
         </main>
       }
@@ -557,8 +572,18 @@ function BrowsePageContent() {
             </div>
 
             {resourceLoading ? (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
-                Loading resources...
+              <div className="grid gap-4 md:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <article
+                    key={index}
+                    className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm"
+                  >
+                    <Skeleton className="h-5 w-24 rounded-full" />
+                    <Skeleton className="mt-4 h-6 w-4/5 rounded-lg" />
+                    <Skeleton className="mt-2 h-4 w-2/5 rounded-lg" />
+                    <Skeleton className="mt-5 h-10 w-full rounded-xl" />
+                  </article>
+                ))}
               </div>
             ) : searchMode && filteredResources.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">

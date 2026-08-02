@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 const PRESET_AMOUNTS = [20, 50, 100, 200] as const;
@@ -137,7 +138,13 @@ export default function SupportPage() {
   if (!authChecked) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal font-space-grotesk">
-        <p className="text-slate-600">Loading...</p>
+        <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest">
+          <Skeleton className="h-7 w-52 rounded-lg" />
+          <Skeleton className="mt-3 h-4 w-full rounded-lg" />
+          <Skeleton className="mt-6 h-12 w-full rounded-xl" />
+          <Skeleton className="mt-4 h-12 w-full rounded-xl" />
+          <Skeleton className="mt-4 h-12 w-full rounded-xl" />
+        </div>
       </main>
     );
   }
