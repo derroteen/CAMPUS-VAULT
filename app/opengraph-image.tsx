@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const contentType = "image/png";
 export const size = { width: 1200, height: 630 };
-export const alt = "MVCorner - Maseno University Study Resources";
+export const alt = "MVCorner - Maseno University Study Resources & Campus Marketplace";
 
 // Skip static generation — ImageResponse has a known Windows incompatibility
 // with fileURLToPath. The image will still be generated at request time on Vercel.
@@ -19,7 +19,7 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%)",
+          background: "linear-gradient(135deg, #122E23 0%, #1B4332 50%, #2FA66A 100%)",
           fontFamily: "system-ui, -apple-system, sans-serif",
           padding: "80px",
           position: "relative",
@@ -32,7 +32,7 @@ export default async function Image() {
             left: 0,
             right: 0,
             height: "8px",
-            background: "linear-gradient(90deg, #0284c7, #38bdf8, #0284c7)",
+            background: "linear-gradient(90deg, #FFD23F, #FF6B5B, #FFD23F)",
           }}
         />
         <div
@@ -44,25 +44,38 @@ export default async function Image() {
             width: "96px",
             height: "96px",
             borderRadius: "24px",
-            background: "#0284c7",
+            background: "#1B4332",
+            position: "relative",
           }}
         >
-          <svg
-            width="64"
-            height="64"
-            viewBox="0 0 192 192"
-            fill="none"
-          >
-            <polygon points="96,24 16,64 96,104 176,64" fill="white" />
-            <rect x="92" y="104" width="8" height="40" fill="white" />
-            <polygon points="96,144 88,160 104,160" fill="white" />
+          <svg width="56" height="56" viewBox="0 0 32 32" fill="none">
+            <path
+              d="M8 23V9L16 17L24 9V23"
+              stroke="#FFFBF5"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: 0,
+              height: 0,
+              borderStyle: "solid",
+              borderWidth: "0 22px 22px 0",
+              borderColor: "transparent #FFD23F transparent transparent",
+              borderTopRightRadius: "24px",
+            }}
+          />
         </div>
         <h1
           style={{
             fontSize: "64px",
             fontWeight: "800",
-            color: "#f8fafc",
+            color: "#FFFBF5",
             marginBottom: "16px",
             lineHeight: "1.1",
             textAlign: "center",
@@ -74,14 +87,14 @@ export default async function Image() {
           style={{
             fontSize: "28px",
             fontWeight: "400",
-            color: "#38bdf8",
+            color: "#FFD23F",
             marginBottom: "32px",
             textAlign: "center",
             maxWidth: "900px",
             lineHeight: "1.4",
           }}
         >
-          Maseno University Notes, Past Papers &amp; Study Resources
+          Maseno University Study Resources &amp; Campus Marketplace
         </p>
         <div
           style={{
@@ -94,11 +107,11 @@ export default async function Image() {
             alignItems: "center",
           }}
         >
-          <p style={{ fontSize: "18px", color: "#64748b" }}>
-            Download • Upload • Unlock
+          <p style={{ fontSize: "18px", color: "#EAF3DE" }}>
+            Download • Upload • Buy • Sell
           </p>
-          <p style={{ fontSize: "18px", color: "#64748b" }}>
-            campus-vault-six.vercel.app
+          <p style={{ fontSize: "18px", color: "#EAF3DE" }}>
+            campusvault.top
           </p>
         </div>
       </div>
