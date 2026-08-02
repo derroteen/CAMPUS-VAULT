@@ -4,12 +4,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
-
-type University = {
-  id: string;
-  name: string;
-};
 
 type Resource = {
   id: string;
@@ -40,12 +34,7 @@ export default function BrowsePage() {
 
 function BrowsePageContent() {
   const searchParams = useSearchParams();
-  const [universities, setUniversities] = useState<University[]>([]);
-  const [resources, setResources] = useState<Resource[]>([]);
   const [searchResults, setSearchResults] = useState<Resource[]>([]);
-  const [selectedUniversityId, setSelectedUniversityId] = useState("");
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
-  const [selectedCourseId, setSelectedCourseId] = useState("");
   const [resourceLoading, setResourceLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState(false);
@@ -53,7 +42,7 @@ function BrowsePageContent() {
   const [showCourseRequest, setShowCourseRequest] = useState(false);
   const [courseRequestName, setCourseRequestName] = useState("");
   const [courseRequestCode, setCourseRequestCode] = useState("");
-  const [courseRequestSchoolId, setCourseRequestSchoolId] = useState<string | null>(null);
+  const [masenoUniversityId, setMasenoUniversityId] = useState<string | null>(null);
   const [courseRequestError, setCourseRequestError] = useState<string | null>(null);
   const [courseRequestMessage, setCourseRequestMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -218,108 +207,23 @@ function BrowsePageContent() {
   }, [searchQuery]);
 
   useEffect(() => {
-    const loadUniversities = async () => {
+    const prefillSearchAndUniversity = async () => {
+      const initialQuery = searchParams.get("q") ?? "";
+      setSearchQuery(initialQuery);
+
       const { data, error } = await supabase
         .from("universities")
-        .select("id, name")
-        .eq("is_active", true)
-        .order("name", { ascending: true });
-
-      if (!error && data) {
-        setUniversities(data);
-
-        const masenoUniversity = data.find((university) => university.name === "Maseno University");
-        const activeUniversityId = masenoUniversity?.id ?? data[0]?.id ?? "";
-        setSelectedUniversityId(activeUniversityId);
-      }
-    };
-
-    loadUniversities();
-  }, [searchParams]);
-
-  useEffect(() => {
-    const loadCourseSelection = async () => {
-      if (!selectedUniversityId) {
-        setSelectedSchoolId(null);
-        setSelectedCourseId("");
-        setResources([]);
-        return;
-      }
-
-      const courseParam = searchParams.get("course");
-
-      if (!courseParam) {
-        setSelectedSchoolId(null);
-        setSelectedCourseId("");
-        setResources([]);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("courses")
-        .select("id, school_id")
-        .eq("id", courseParam)
-        .eq("university_id", selectedUniversityId)
+        .select("id")
+        .eq("name", "Maseno University")
         .maybeSingle();
 
       if (!error && data) {
-        setSelectedSchoolId(data.school_id ?? null);
-        setSelectedCourseId(data.id);
-        return;
+        setMasenoUniversityId(data.id);
       }
-
-      setSelectedSchoolId(null);
-      setSelectedCourseId("");
-      setResources([]);
     };
 
-    loadCourseSelection();
-  }, [searchParams, selectedUniversityId]);
-
-  useEffect(() => {
-    const loadResources = async () => {
-      if (!selectedCourseId) {
-        setResources([]);
-        return;
-      }
-
-      setResourceLoading(true);
-
-      // Step 1: resolve which resource_ids are linked to this course via the
-      // junction table (covers both the primary course_id column and any
-      // additional courses added through resource_courses).
-      const { data: linkedRows, error: linkError } = await supabase
-        .from("resource_courses")
-        .select("resource_id")
-        .eq("course_id", selectedCourseId);
-
-      if (linkError || !linkedRows || linkedRows.length === 0) {
-        setResources([]);
-        setResourceLoading(false);
-        return;
-      }
-
-      const resourceIds = linkedRows.map((row) => row.resource_id);
-
-      // Step 2: fetch the actual resources filtered by those ids.
-      const { data, error } = await supabase
-        .from("resources")
-        .select("id, title, unit_name, resource_type, storage_path, download_count")
-        .in("id", resourceIds)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
-
-      if (!error && data) {
-        setResources(data);
-      } else {
-        setResources([]);
-      }
-
-      setResourceLoading(false);
-    };
-
-    loadResources();
-  }, [selectedCourseId]);
+    prefillSearchAndUniversity();
+  }, [searchParams]);
 
   const hasUnlockedAccess = () => {
     if (isAdmin) {
@@ -333,8 +237,7 @@ function BrowsePageContent() {
     return new Date(unlockExpiresAt).getTime() > Date.now();
   };
 
-  const activeResources = searchMode ? searchResults : resources;
-  const filteredResources = activeResources.filter((resource) => {
+  const filteredResources = searchResults.filter((resource) => {
     const matchesType =
       resourceTypeFilter === "all" || resource.resource_type === resourceTypeFilter;
 
@@ -407,7 +310,7 @@ function BrowsePageContent() {
 
       window.open(result.signedUrl, "_blank", "noopener,noreferrer");
 
-      setResources((current) =>
+      setSearchResults((current) =>
         current.map((item) =>
           item.id === resource.id
             ? { ...item, download_count: item.download_count + 1 }
@@ -417,35 +320,6 @@ function BrowsePageContent() {
     } finally {
       setDownloadingId(null);
     }
-  };
-
-  const featuredUniversities = universities.filter((university) =>
-    [
-      "University of Nairobi",
-      "Kenyatta University",
-      "Moi University",
-      "JKUAT",
-      "Maseno University",
-      "Strathmore University",
-    ].includes(university.name)
-  );
-  const activeUniversityName =
-    universities.find((university) => university.id === selectedUniversityId)?.name ??
-    "Maseno University";
-
-  const handleFeaturedUniversitySelect = (universityId: string) => {
-    setSelectedUniversityId(universityId);
-    setSelectedSchoolId(null);
-    setSelectedCourseId("");
-    setResources([]);
-    setSearchQuery("");
-    setSearchMode(false);
-    setSearchResults([]);
-  };
-
-  const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
-    setSelectedSchoolId(nextValue.schoolId);
-    setSelectedCourseId(nextValue.courseId ?? "");
   };
 
   const handleCourseRequestSubmit = async (event?: FormEvent<HTMLFormElement> | null) => {
@@ -462,13 +336,33 @@ function BrowsePageContent() {
       return;
     }
 
-    if (!selectedUniversityId || !courseRequestName.trim() || !courseRequestCode.trim()) {
-      setCourseRequestError("Please choose a university, enter a course name, and provide a course code.");
+    if (!courseRequestName.trim() || !courseRequestCode.trim()) {
+      setCourseRequestError("Please enter a course name and provide a course code.");
+      return;
+    }
+
+    let universityId = masenoUniversityId;
+
+    if (!universityId) {
+      const { data, error } = await supabase
+        .from("universities")
+        .select("id")
+        .eq("name", "Maseno University")
+        .maybeSingle();
+
+      if (!error && data) {
+        universityId = data.id;
+        setMasenoUniversityId(data.id);
+      }
+    }
+
+    if (!universityId) {
+      setCourseRequestError("Unable to resolve university. Please try again shortly.");
       return;
     }
 
     const { error: requestError } = await supabase.from("course_requests").insert({
-      university_id: selectedUniversityId,
+      university_id: universityId,
       requested_name: courseRequestName.trim(),
       requested_code: courseRequestCode.trim(),
       requested_by: session.user.id,
@@ -504,7 +398,6 @@ function BrowsePageContent() {
     setShowCourseRequest(false);
     setCourseRequestName("");
     setCourseRequestCode("");
-    setCourseRequestSchoolId(null);
     setCourseRequestMessage("Thanks! Your course has been submitted for review. You can still upload once it's approved.");
   };
 
@@ -545,46 +438,11 @@ function BrowsePageContent() {
           </div>
         </section>
 
-        {universities.length > 1 ? (
-          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
-            <span className="text-sm text-slate-600">Popular universities</span>
-            {featuredUniversities.map((university) => (
-              <button
-                key={university.id}
-                type="button"
-                onClick={() => handleFeaturedUniversitySelect(university.id)}
-                className="rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-sm text-slate-600 transition hover:border-forest/50 hover:text-charcoal"
-              >
-                {university.name}
-              </button>
-            ))}
-            <span className="ml-1 text-sm text-slate-400">🔎 search above if yours isn&apos;t listed</span>
-          </div>
-        ) : (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-center">
-            <span className="text-sm text-slate-500">Now live for {universities[0]?.name || 'Maseno University'}</span>
-          </div>
-        )}
-
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
               <h2 className="text-lg font-semibold text-charcoal">Filters</h2>
               <div className="mt-4 space-y-4">
-                <div>
-                  <label htmlFor="university" className="mb-2 block text-sm text-slate-700">
-                    University
-                  </label>
-                  <div className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal">
-                    {activeUniversityName}
-                  </div>
-                </div>
-                <SchoolCoursePicker
-                  universityId={selectedUniversityId}
-                  value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
-                  onChange={handleSchoolCourseChange}
-                />
-
                 <div>
                   <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-700">
                     Resource Type
@@ -647,12 +505,6 @@ function BrowsePageContent() {
                     </div>
                   </div>
                   <div className="mt-4">
-                    <SchoolCoursePicker
-                      universityId={selectedUniversityId}
-                      value={{ schoolId: courseRequestSchoolId, courseId: null }}
-                      onChange={(nextValue) => setCourseRequestSchoolId(nextValue.schoolId)}
-                      showCourseDropdown={false}
-                    />
                   </div>
                   {courseRequestError ? <p className="mt-3 text-sm text-coral">{courseRequestError}</p> : null}
                   {courseRequestMessage ? <p className="mt-3 text-sm text-forest">{courseRequestMessage}</p> : null}
@@ -694,12 +546,10 @@ function BrowsePageContent() {
                 <p className="text-sm text-slate-600">
                   {searchMode
                     ? "Showing matching approved resources from across MVCorner."
-                    : selectedCourseId
-                      ? "Explore the current course collection below."
-                      : "Choose a university and course to start browsing."}
+                    : "Search by title, unit, or course name to find resources."}
                 </p>
               </div>
-              {selectedCourseId ? (
+              {searchMode ? (
                 <span className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-sm text-slate-600">
                   {filteredResources.length} results
                 </span>
@@ -710,7 +560,7 @@ function BrowsePageContent() {
               <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
                 Loading resources...
               </div>
-            ) : (searchMode || selectedCourseId) && filteredResources.length > 0 ? (
+            ) : searchMode && filteredResources.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {filteredResources.map((resource) => (
                   <article
@@ -762,13 +612,13 @@ function BrowsePageContent() {
                   </article>
                 ))}
               </div>
-            ) : (searchMode || selectedCourseId) ? (
+            ) : searchMode ? (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
                 No approved resources match your current filters yet.
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
-                Choose a university and course to start browsing.
+                Search by title, unit, or course name to find resources.
               </div>
             )}
           </section>
