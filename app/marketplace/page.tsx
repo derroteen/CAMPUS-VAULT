@@ -18,6 +18,7 @@ type Listing = {
   title: string;
   price: number;
   is_boosted: boolean;
+  seller_id: string;
   created_at: string;
   category_name: string | null;
   thumbnail_url: string | null;
@@ -72,9 +73,8 @@ function MarketplaceContent() {
 
       let query = supabase
         .from("listings")
-        .select("id, title, price, is_boosted, created_at, category_id")
+        .select("id, title, price, seller_id, created_at, category_id")
         .eq("status", "active")
-        .order("is_boosted", { ascending: false })
         .order("created_at", { ascending: false });
 
       if (selectedCategoryId !== "all") {
@@ -103,9 +103,25 @@ function MarketplaceContent() {
       }
 
       const listingIds = listingsData.map((l) => l.id);
+      const sellerIds = Array.from(new Set(listingsData.map((l) => l.seller_id)));
       const categoryIds = Array.from(
         new Set(listingsData.map((l) => l.category_id).filter(Boolean))
       );
+
+      const activeProSellers = new Set<string>();
+      if (sellerIds.length > 0) {
+        const { data: activeSubscriptions } = await supabase
+          .from("subscriptions")
+          .select("user_id")
+          .in("user_id", sellerIds)
+          .eq("tier", "pro")
+          .eq("status", "active")
+          .gt("expires_at", new Date().toISOString());
+
+        (activeSubscriptions ?? []).forEach((subscription) => {
+          activeProSellers.add(subscription.user_id);
+        });
+      }
 
       // Fetch first image per listing (lowest sort_order)
       const { data: imagesData } = await supabase
@@ -144,13 +160,22 @@ function MarketplaceContent() {
         id: l.id,
         title: l.title,
         price: l.price,
-        is_boosted: l.is_boosted,
+        is_boosted: activeProSellers.has(l.seller_id),
+        seller_id: l.seller_id,
         created_at: l.created_at,
         category_name: l.category_id ? (categoryMap.get(l.category_id) ?? null) : null,
         thumbnail_url: imageMap.get(l.id) ?? null,
       }));
 
-      setListings(merged);
+      const sortedListings = merged.sort((a, b) => {
+        if (a.is_boosted !== b.is_boosted) {
+          return a.is_boosted ? -1 : 1;
+        }
+
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+
+      setListings(sortedListings);
       setSearching(false);
       setLoading(false);
     };
