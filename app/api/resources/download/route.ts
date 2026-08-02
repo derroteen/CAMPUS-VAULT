@@ -47,6 +47,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
+    const { count: recentDownloadCount } = await supabaseAdmin
+      .from("download_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", oneMinuteAgo);
+
+    if ((recentDownloadCount ?? 0) >= 15) {
+      return NextResponse.json(
+        { success: false, error: "Too many download requests. Please wait a minute before trying again." },
+        { status: 429 }
+      );
+    }
+
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("is_admin, unlock_expires_at")
@@ -101,6 +115,10 @@ export async function POST(request: Request) {
       .from("resources")
       .update({ download_count: (resource.download_count ?? 0) + 1 })
       .eq("id", resource.id);
+
+    await supabaseAdmin
+      .from("download_logs")
+      .insert({ user_id: user.id, resource_id: resource.id });
 
     return NextResponse.json({
       success: true,
