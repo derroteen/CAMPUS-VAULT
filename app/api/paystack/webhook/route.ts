@@ -18,7 +18,13 @@ export async function POST(request: Request) {
     }
 
     const hash = crypto.createHmac('sha512', secret).update(rawBody).digest('hex');
-    if (hash !== signature) {
+    const hashBuffer = Buffer.from(hash, 'utf8');
+    const signatureBuffer = Buffer.from(signature ?? '', 'utf8');
+    const signatureValid =
+      hashBuffer.length === signatureBuffer.length &&
+      crypto.timingSafeEqual(hashBuffer, signatureBuffer);
+
+    if (!signatureValid) {
       console.log('Paystack webhook signature verification failed');
       return NextResponse.json({ success: false }, { status: 401 });
     }
