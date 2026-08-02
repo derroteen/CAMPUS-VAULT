@@ -43,7 +43,13 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true });
       }
 
-      // Tips do not grant unlock access — just record the successful payment.
+      // Avoid double-processing if the webhook fires more than once for the
+      // same reference (Paystack can retry webhook delivery).
+      if (transaction.status === "success") {
+        console.log('Transaction already processed, skipping.');
+        return NextResponse.json({ success: true });
+      }
+
       const { error: updateError } = await supabaseAdmin
         .from("transactions")
         .update({
@@ -52,6 +58,50 @@ export async function POST(request: Request) {
         .eq("id", transaction.id)
         .select();
       console.log('Transaction update:', updateError ? `error: ${updateError.message}` : 'success');
+
+      if (transaction.purpose === "pro_subscription" && transaction.plan_days) {
+        console.log('Processing Pro subscription grant, plan_days:', transaction.plan_days);
+
+        const { data: existingSub } = await supabaseAdmin
+          .from("subscriptions")
+          .select("id, expires_at")
+          .eq("user_id", transaction.profile_id)
+          .eq("tier", "pro")
+          .order("expires_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const now = new Date();
+        const currentExpiry = existingSub?.expires_at ? new Date(existingSub.expires_at) : null;
+        const baseDate = currentExpiry && currentExpiry > now ? currentExpiry : now;
+
+        const newExpiresAt = new Date(baseDate);
+        newExpiresAt.setDate(newExpiresAt.getDate() + transaction.plan_days);
+
+        if (existingSub) {
+          const { error: subUpdateError } = await supabaseAdmin
+            .from("subscriptions")
+            .update({
+              status: "active",
+              expires_at: newExpiresAt.toISOString(),
+              paystack_ref: reference,
+            })
+            .eq("id", existingSub.id);
+          console.log('Subscription extend:', subUpdateError ? `error: ${subUpdateError.message}` : `success, new expiry: ${newExpiresAt.toISOString()}`);
+       } else {
+          const { error: subInsertError } = await supabaseAdmin
+            .from("subscriptions")
+            .insert({
+              user_id: transaction.profile_id,
+              tier: "pro",
+              status: "active",
+              started_at: now.toISOString(),
+              expires_at: newExpiresAt.toISOString(),
+              paystack_ref: reference,
+            });
+          console.log('Subscription create:', subInsertError ? `error: ${subInsertError.message}` : `success, expiry: ${newExpiresAt.toISOString()}`);
+        }
+      }
     } else {
       console.log('Ignoring Paystack event:', event.event);
     }
