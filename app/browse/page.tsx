@@ -614,7 +614,14 @@ function BrowsePageContent() {
               </div>
             ) : searchMode ? (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
-                No approved resources match your current filters yet.
+                <p>No approved resources match your search yet.</p>
+                <p className="mt-2">
+                  Have this resource?{" "}
+                  <Link href="/upload" className="font-medium text-forest transition hover:text-leaf underline">
+                    Upload it
+                  </Link>{" "}
+                  and help others in the community.
+                </p>
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
