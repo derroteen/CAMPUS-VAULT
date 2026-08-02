@@ -13,6 +13,7 @@ import {
   Phone,
   Trash2,
 } from "lucide-react";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
 type ListingDetail = {
@@ -189,8 +190,28 @@ export default function ListingDetailPage() {
   // ── Loading state ──────────────────────────────────────────────────────
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-charcoal/60">Loading product...</p>
+      <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+            <div className="space-y-3">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-3 shadow-sm">
+                <Skeleton className="h-full w-full rounded-xl" />
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm sm:p-8">
+              <Skeleton className="h-5 w-24 rounded-full" />
+              <Skeleton className="mt-4 h-8 w-4/5 rounded-lg" />
+              <Skeleton className="mt-4 h-9 w-1/2 rounded-lg" />
+              <div className="mt-6 space-y-3">
+                <Skeleton className="h-4 w-full rounded-lg" />
+                <Skeleton className="h-4 w-5/6 rounded-lg" />
+                <Skeleton className="h-4 w-2/3 rounded-lg" />
+              </div>
+              <Skeleton className="mt-8 h-11 w-full rounded-xl" />
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
