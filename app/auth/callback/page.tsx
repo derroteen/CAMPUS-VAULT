@@ -9,22 +9,35 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const completeSignIn = async () => {
-      const nextPath = searchParams.get("next") || "/choose";
+    const nextPath = searchParams.get("next") || "/choose";
 
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        window.location.href
-      );
-
-      if (error) {
-        router.replace("/login?error=oauth_failed");
-        return;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        subscription.unsubscribe();
+        router.replace(nextPath);
       }
+    });
 
-      router.replace(nextPath);
+    // In case the session was already established before this listener
+    // attached (detectSessionInUrl runs automatically on client init).
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        subscription.unsubscribe();
+        router.replace(nextPath);
+      }
+    });
+
+    const timeout = setTimeout(() => {
+      subscription.unsubscribe();
+      router.replace("/login?error=oauth_failed");
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
     };
-
-    completeSignIn();
   }, [router, searchParams]);
 
   return (
