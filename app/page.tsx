@@ -417,9 +417,9 @@ export default function Home() {
         <section className="pb-12">
           <div className="container mx-auto px-4">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-charcoal">Featured from our Pro sellers</h2>
+              <h2 className="text-2xl font-semibold text-charcoal">Featured products</h2>
               <p className="mt-2 text-sm text-charcoal/60">
-                Products from sellers supporting MVCorner Pro
+                Check out what&apos;s available on the marketplace right now
               </p>
             </div>
 
