@@ -12,9 +12,18 @@ type PopularCourse = {
   resourceCount: number;
 };
 
+type FeaturedProduct = {
+  id: string;
+  title: string;
+  price: number;
+  thumbnail_url: string | null;
+  category_name: string | null;
+};
+
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [popularCourses, setPopularCourses] = useState<PopularCourse[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -44,6 +53,101 @@ export default function Home() {
       subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFeaturedProducts = async () => {
+      const { data: activeSubscriptions } = await supabase
+        .from("subscriptions")
+        .select("user_id")
+        .eq("tier", "pro")
+        .eq("status", "active")
+        .gt("expires_at", new Date().toISOString());
+
+      const proSellerIds = Array.from(
+        new Set((activeSubscriptions ?? []).map((subscription) => subscription.user_id))
+      );
+
+      if (proSellerIds.length === 0) {
+        if (isMounted) {
+          setFeaturedProducts([]);
+        }
+        return;
+      }
+
+      const { data: listingsData, error: listingsError } = await supabase
+        .from("listings")
+        .select("id, title, price, seller_id, created_at, category_id")
+        .in("seller_id", proSellerIds)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(8);
+
+      if (listingsError || !listingsData || listingsData.length === 0) {
+        if (isMounted) {
+          setFeaturedProducts([]);
+        }
+        return;
+      }
+
+      const listingIds = listingsData.map((listing) => listing.id);
+      const categoryIds = Array.from(
+        new Set(listingsData.map((listing) => listing.category_id).filter(Boolean))
+      );
+
+      const { data: imagesData } = await supabase
+        .from("listing_images")
+        .select("listing_id, image_url, sort_order")
+        .in("listing_id", listingIds)
+        .order("sort_order", { ascending: true });
+
+      const imageMap = new Map<string, string>();
+      if (imagesData) {
+        for (const image of imagesData) {
+          if (!imageMap.has(image.listing_id)) {
+            imageMap.set(image.listing_id, image.image_url);
+          }
+        }
+      }
+
+      const categoryMap = new Map<string, string>();
+      if (categoryIds.length > 0) {
+        const { data: categoriesData } = await supabase
+          .from("market_categories")
+          .select("id, name")
+          .in("id", categoryIds);
+
+        if (categoriesData) {
+          for (const category of categoriesData) {
+            categoryMap.set(category.id, category.name);
+          }
+        }
+      }
+
+      const mergedFeaturedProducts: FeaturedProduct[] = listingsData.map((listing) => ({
+        id: listing.id,
+        title: listing.title,
+        price: listing.price,
+        thumbnail_url: imageMap.get(listing.id) ?? null,
+        category_name: listing.category_id
+          ? (categoryMap.get(listing.category_id) ?? null)
+          : null,
+      }));
+
+      if (isMounted) {
+        setFeaturedProducts(mergedFeaturedProducts);
+      }
+    };
+
+    loadFeaturedProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const formatProductPrice = (price: number) => `KES ${price.toLocaleString("en-KE")}`;
 
   useEffect(() => {
     let isMounted = true;
@@ -308,6 +412,61 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {featuredProducts.length > 0 && (
+        <section className="pb-12">
+          <div className="container mx-auto px-4">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-charcoal">Featured from our Pro sellers</h2>
+              <p className="mt-2 text-sm text-charcoal/60">
+                Products from sellers supporting MVCorner Pro
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredProducts.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/marketplace/${product.id}`}
+                  className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
+                >
+                  <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
+
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-warm-bg">
+                    {product.thumbnail_url ? (
+                      <Image
+                        src={product.thumbnail_url}
+                        alt={product.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        className="object-cover transition group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-charcoal/30">
+                        No image
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-4">
+                    {product.category_name && (
+                      <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
+                        {product.category_name}
+                      </span>
+                    )}
+                    <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
+                      {product.title}
+                    </h3>
+                    <p className="mt-2 text-lg font-bold text-forest">
+                      {formatProductPrice(product.price)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FEATURE HIGHLIGHT CARDS */}
       <section className="bg-forest/5 pb-12">
