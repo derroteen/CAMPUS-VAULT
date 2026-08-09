@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense, useEffect, useState } from "react";
-import { Search, ShoppingBag, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { MouseEvent, Suspense, useEffect, useState } from "react";
+import { Heart, Search, ShoppingBag, Sparkles } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
@@ -55,12 +56,28 @@ export default function MarketplacePage() {
 }
 
 function MarketplaceContent() {
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [wishlistedListingIds, setWishlistedListingIds] = useState<Set<string>>(new Set());
+  const [wishlistLoadingIds, setWishlistLoadingIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const loadSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setCurrentUserId(session?.user?.id ?? null);
+    };
+
+    loadSession();
+  }, []);
 
   // Load categories once on mount
   useEffect(() => {
@@ -199,6 +216,91 @@ function MarketplaceContent() {
     const timeout = window.setTimeout(fetchListings, delay);
     return () => window.clearTimeout(timeout);
   }, [selectedCategoryId, searchQuery]);
+
+  useEffect(() => {
+    const loadWishlistState = async () => {
+      if (!currentUserId) {
+        setWishlistedListingIds(new Set());
+        return;
+      }
+
+      const displayedListingIds = listings.map((listing) => listing.id);
+      if (displayedListingIds.length === 0) {
+        setWishlistedListingIds(new Set());
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("wishlist_items")
+        .select("listing_id")
+        .eq("user_id", currentUserId)
+        .in("listing_id", displayedListingIds);
+
+      if (error || !data) {
+        setWishlistedListingIds(new Set());
+        return;
+      }
+
+      setWishlistedListingIds(new Set(data.map((row) => row.listing_id)));
+    };
+
+    loadWishlistState();
+  }, [currentUserId, listings]);
+
+  const handleWishlistToggle = async (
+    event: MouseEvent<HTMLButtonElement>,
+    listingId: string
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!currentUserId) {
+      router.push("/login");
+      return;
+    }
+
+    setWishlistLoadingIds((prev) => {
+      const next = new Set(prev);
+      next.add(listingId);
+      return next;
+    });
+
+    const isWishlisted = wishlistedListingIds.has(listingId);
+
+    if (isWishlisted) {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .delete()
+        .eq("user_id", currentUserId)
+        .eq("listing_id", listingId);
+
+      if (!error) {
+        setWishlistedListingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(listingId);
+          return next;
+        });
+      }
+    } else {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .insert({ user_id: currentUserId, listing_id: listingId });
+
+      if (!error) {
+        setWishlistedListingIds((prev) => {
+          const next = new Set(prev);
+          next.add(listingId);
+          return next;
+        });
+      }
+    }
+
+    setWishlistLoadingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(listingId);
+      return next;
+    });
+  };
 
   const formatPrice = (price: number) =>
     `KES ${price.toLocaleString("en-KE")}`;
@@ -356,6 +458,17 @@ function MarketplaceContent() {
                           Boosted
                         </span>
                       )}
+                      <button
+                        type="button"
+                        onClick={(event) => handleWishlistToggle(event, listing.id)}
+                        disabled={wishlistLoadingIds.has(listing.id)}
+                        className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
+                        aria-label={wishlistedListingIds.has(listing.id) ? "Remove from wishlist" : "Save to wishlist"}
+                      >
+                        <Heart
+                          className={`h-4 w-4 ${wishlistedListingIds.has(listing.id) ? "fill-coral text-coral" : "text-charcoal/60"}`}
+                        />
+                      </button>
                     </div>
 
                     {/* Details */}
