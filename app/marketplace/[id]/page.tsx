@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
+  Heart,
   MessageCircle,
   Pencil,
   Phone,
@@ -50,6 +51,8 @@ export default function ListingDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -121,7 +124,64 @@ export default function ListingDetailPage() {
     load();
   }, [listingId]);
 
+  useEffect(() => {
+    const loadWishlistState = async () => {
+      if (!currentUserId || !listing?.id) {
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("wishlist_items")
+        .select("id")
+        .eq("user_id", currentUserId)
+        .eq("listing_id", listing.id)
+        .maybeSingle();
+
+      if (error) {
+        setIsWishlisted(false);
+        return;
+      }
+
+      setIsWishlisted(Boolean(data));
+    };
+
+    loadWishlistState();
+  }, [currentUserId, listing?.id]);
+
   const isOwner = currentUserId != null && listing?.seller_id === currentUserId;
+
+  const handleWishlistToggle = async () => {
+    if (!listing) return;
+
+    if (!currentUserId) {
+      router.push("/login");
+      return;
+    }
+
+    setWishlistLoading(true);
+
+    if (isWishlisted) {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .delete()
+        .eq("user_id", currentUserId)
+        .eq("listing_id", listing.id);
+
+      if (!error) {
+        setIsWishlisted(false);
+      }
+    } else {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .insert({ user_id: currentUserId, listing_id: listing.id });
+
+      if (!error) {
+        setIsWishlisted(true);
+      }
+    }
+
+    setWishlistLoading(false);
+  };
 
   const handleDelete = async () => {
     if (!listing) return;
@@ -407,6 +467,22 @@ export default function ListingDetailPage() {
                 </>
               ) : (
                 <>
+                  <button
+                    type="button"
+                    onClick={handleWishlistToggle}
+                    disabled={wishlistLoading}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-leaf/25 bg-leaf/10 px-4 py-3 text-sm font-medium text-forest transition hover:bg-sunflower/15 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    <Heart
+                      className={`h-4 w-4 ${isWishlisted ? "fill-coral text-coral" : "text-charcoal/60"}`}
+                    />
+                    {wishlistLoading
+                      ? "Updating..."
+                      : isWishlisted
+                        ? "Saved to wishlist"
+                        : "Save to wishlist"}
+                  </button>
+
                   <a
                     href={`tel:${listing.phone_number}`}
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-sm font-medium text-white transition hover:bg-forest"
