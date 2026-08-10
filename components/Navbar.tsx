@@ -81,6 +81,12 @@ export default function Navbar() {
               >
                 My Products
               </Link>
+              <Link
+                href="/marketplace/wishlist"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+              >
+                Wishlist
+              </Link>
               <span className="hidden max-w-32 truncate text-warm-bg/80 sm:inline-block">
                 {email}
               </span>
@@ -153,6 +159,13 @@ export default function Navbar() {
                 className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 My Products
+              </Link>
+              <Link
+                href="/marketplace/wishlist"
+                onClick={() => setIsOpen(false)}
+                className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+              >
+                Wishlist
               </Link>
               <div className="truncate px-3 py-1 text-xs text-warm-bg/70">
                 Signed in as: <span className="text-sunflower">{email}</span>
