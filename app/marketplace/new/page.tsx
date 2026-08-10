@@ -200,7 +200,7 @@ export default function NewListingPage() {
 
     // 3. Insert listing row
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 14);
+    expiresAt.setDate(expiresAt.getDate() + (isPro ? 30 : 14));
 
     const { data: listing, error: insertError } = await supabase
       .from("listings")

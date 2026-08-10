@@ -265,7 +265,7 @@ export default function ProUpgradePage() {
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-leaf" />
-                  14 days product duration
+                  Listings stay active for 14 days, then expire automatically
                 </li>
               </ul>
             </div>
@@ -298,6 +298,29 @@ export default function ProUpgradePage() {
               <div className="mt-6 text-3xl font-bold text-forest">
                 Pro Upgrade
               </div>
+
+              <ul className="mt-6 space-y-3 text-sm text-charcoal/70">
+                <li className="flex items-center gap-2.5">
+                  <Check className="h-4 w-4 text-leaf" />
+                  Unlimited active products (vs. 3 on Free)
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="h-4 w-4 text-leaf" />
+                  Up to 6 images per product (vs. 2 on Free)
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="h-4 w-4 text-leaf" />
+                  Boosted visibility - your products appear first in marketplace search results
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="h-4 w-4 text-leaf" />
+                  Priority placement on the MVCorner homepage featured section
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="h-4 w-4 text-leaf" />
+                  Listings stay active for 30 days, then expire automatically (vs. 14 days on Free)
+                </li>
+              </ul>
             </div>
 
             <div className="mt-8 space-y-3">
