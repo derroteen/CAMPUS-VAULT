@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
 import { getPlanPrice, type ProPlanId } from "@/lib/pricing";
+import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
 const PRO_PLANS = [
@@ -45,21 +46,17 @@ export default function ProUpgradePage() {
 
       const { data } = await supabase
         .from("subscriptions")
-        .select("tier, expires_at, paystack_ref")
+        .select("tier, status, expires_at, paystack_ref")
         .eq("user_id", session.user.id)
         .eq("status", "active")
         .order("started_at", { ascending: false })
         .limit(1)
         .maybeSingle();
 
-      if (data?.tier === "pro") {
+      if (data?.tier === "pro" && isSubscriptionCurrentlyActive(data)) {
         setIsPro(true);
         setProExpiresAt(data.expires_at ?? null);
-
-        const expiresAtMs = data.expires_at ? new Date(data.expires_at).getTime() : null;
-        const hasUnexpiredWindow = expiresAtMs === null || expiresAtMs > Date.now();
-        const looksLikeTrial = !data.paystack_ref && hasUnexpiredWindow;
-        setIsTrialAccess(looksLikeTrial);
+        setIsTrialAccess(!data.paystack_ref);
       }
 
       setLoading(false);

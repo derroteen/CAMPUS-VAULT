@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { Skeleton } from "@/components/Skeleton";
+import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
 type ListingRow = {
@@ -70,14 +71,18 @@ export default function MyListingsPage() {
           .order("created_at", { ascending: false }),
         supabase
           .from("subscriptions")
-          .select("tier")
+          .select("tier, status, expires_at")
           .eq("user_id", uid)
           .eq("status", "active")
+          .order("started_at", { ascending: false })
           .limit(1)
           .maybeSingle(),
       ]);
 
-      if (subResult.data?.tier === "pro") {
+      if (
+        subResult.data?.tier === "pro" &&
+        isSubscriptionCurrentlyActive(subResult.data)
+      ) {
         setIsPro(true);
       }
 

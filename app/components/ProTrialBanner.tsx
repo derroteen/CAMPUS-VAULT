@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Sparkles, X } from "lucide-react";
+import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -42,7 +43,7 @@ export default function ProTrialBanner() {
 
       const { data } = await supabase
         .from("subscriptions")
-        .select("expires_at")
+        .select("status, expires_at, paystack_ref")
         .eq("user_id", session.user.id)
         .eq("tier", "pro")
         .eq("status", "active")
@@ -50,16 +51,17 @@ export default function ProTrialBanner() {
         .limit(1)
         .maybeSingle();
 
-      if (!data?.expires_at || !isMounted) {
+      if (
+        !isMounted ||
+        !data ||
+        !isSubscriptionCurrentlyActive(data) ||
+        !!data.paystack_ref
+      ) {
         return;
       }
 
       const expiresAt = new Date(data.expires_at);
       const now = new Date();
-
-      if (Number.isNaN(expiresAt.getTime()) || expiresAt <= now) {
-        return;
-      }
 
       const remainingDays = Math.ceil((expiresAt.getTime() - now.getTime()) / MS_PER_DAY);
 

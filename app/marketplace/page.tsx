@@ -7,6 +7,7 @@ import { MouseEvent, Suspense, useEffect, useState } from "react";
 import { Heart, Search, ShoppingBag, Sparkles } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { Skeleton } from "@/components/Skeleton";
+import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -143,14 +144,16 @@ function MarketplaceContent() {
       if (sellerIds.length > 0) {
         const { data: activeSubscriptions } = await supabase
           .from("subscriptions")
-          .select("user_id")
+          .select("user_id, status, expires_at")
           .in("user_id", sellerIds)
           .eq("tier", "pro")
           .eq("status", "active")
           .gt("expires_at", new Date().toISOString());
 
         (activeSubscriptions ?? []).forEach((subscription) => {
-          activeProSellers.add(subscription.user_id);
+          if (isSubscriptionCurrentlyActive(subscription)) {
+            activeProSellers.add(subscription.user_id);
+          }
         });
       }
 

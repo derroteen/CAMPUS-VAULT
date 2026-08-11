@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
+import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -75,9 +76,10 @@ export default function EditListingPage() {
           .order("name", { ascending: true }),
         supabase
           .from("subscriptions")
-          .select("tier")
+          .select("tier, status, expires_at")
           .eq("user_id", userId)
           .eq("status", "active")
+          .order("started_at", { ascending: false })
           .limit(1)
           .maybeSingle(),
         supabase
@@ -96,7 +98,10 @@ export default function EditListingPage() {
         setCategories(catResult.data);
       }
 
-      if (subResult.data?.tier === "pro") {
+      if (
+        subResult.data?.tier === "pro" &&
+        isSubscriptionCurrentlyActive(subResult.data)
+      ) {
         setIsPro(true);
       }
 

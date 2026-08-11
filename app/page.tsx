@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
 type PopularCourse = {
@@ -60,13 +61,17 @@ export default function Home() {
     const loadFeaturedProducts = async () => {
       const { data: activeSubscriptions } = await supabase
         .from("subscriptions")
-        .select("user_id")
+        .select("user_id, status, expires_at")
         .eq("tier", "pro")
         .eq("status", "active")
         .gt("expires_at", new Date().toISOString());
 
       const proSellerIds = Array.from(
-        new Set((activeSubscriptions ?? []).map((subscription) => subscription.user_id))
+        new Set(
+          (activeSubscriptions ?? [])
+            .filter((subscription) => isSubscriptionCurrentlyActive(subscription))
+            .map((subscription) => subscription.user_id)
+        )
       );
 
       if (proSellerIds.length === 0) {
