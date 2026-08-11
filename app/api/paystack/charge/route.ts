@@ -118,6 +118,10 @@ export async function POST(request: Request) {
     });
 
     const chargeData = await chargeResponse.json();
+    console.log("Paystack charge chargeData:", chargeData);
+
+    const chargeFailed =
+      chargeData.status === false || chargeData.data?.status === "failed";
 
     const { error: insertError } = await supabaseAdmin
       .from("transactions")
@@ -126,11 +130,24 @@ export async function POST(request: Request) {
         phone_number: normalizedPhoneNumber,
         provider: "paystack",
         paystack_reference: generatedReference,
-        status: "pending",
+        status: chargeFailed ? "failed" : "pending",
         amount_kes: tipAmount
       });
     if (insertError) {
       throw insertError;
+    }
+
+    if (chargeFailed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            chargeData.data?.gateway_response ||
+            chargeData.message ||
+            "Payment failed",
+        },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({
