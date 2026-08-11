@@ -47,6 +47,8 @@ export async function GET(request: Request) {
       .eq("profile_id", user.id)
       .maybeSingle();
 
+    console.log("Verify: local transaction status:", transaction?.status, "id:", transaction?.id);
+
     if (transactionError || !transaction) {
       return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
     }
@@ -66,6 +68,13 @@ export async function GET(request: Request) {
     );
 
     const verificationData = await verificationResponse.json();
+
+    console.log(
+      "Verify: Paystack remote status:",
+      verificationData?.data?.status,
+      "full response:",
+      JSON.stringify(verificationData)
+    );
 
     if (verificationData?.data?.status === "success" && transaction.status === "pending") {
       const { data: successUpdatedRows, error: successUpdateError } = await supabaseAdmin
@@ -124,6 +133,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ status: "failed" });
     }
 
+    console.log("Verify: falling through to final return with local status:", transaction.status);
     return NextResponse.json({ status: transaction.status });
   } catch (error) {
     console.error("Error in Paystack verify route:", error);
