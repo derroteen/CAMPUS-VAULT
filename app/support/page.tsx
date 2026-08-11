@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 
@@ -15,10 +15,12 @@ export default function SupportPage() {
   const [amountKes, setAmountKes] = useState("");
   const [paymentInProgress, setPaymentInProgress] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
-  const [pollingCount, setPollingCount] = useState(0);
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState(false);
   const [paymentSucceeded, setPaymentSucceeded] = useState(false);
+  const verifyPollStartRef = useRef<number | null>(null);
+  const verifyPollInFlightRef = useRef(false);
+  const verifyPollIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -37,44 +39,91 @@ export default function SupportPage() {
     checkAuth();
   }, [router]);
 
-  const checkTransactionStatus = useCallback(async () => {
-    if (!paymentReference) return;
-
-    const { data } = await supabase
-      .from("transactions")
-      .select("status")
-      .eq("paystack_reference", paymentReference)
-      .single();
-
-    if (!data) return;
-
-    if (data.status === "success") {
-      setPaymentMessage(
-        "Thank you for supporting MVCorner! Your tip has been received."
-      );
-      setPollingCount(0);
-      setPaymentReference(null);
-      setPaymentSucceeded(true);
-    } else if (data.status === "failed") {
-      setPaymentMessage("Payment was not completed. Please try again.");
-      setPollingCount(0);
-      setPaymentReference(null);
-      setPaymentError(true);
-    }
-  }, [paymentReference]);
-
   useEffect(() => {
-    if (!paymentReference || pollingCount >= 30) {
+    if (!paymentReference) {
       return;
     }
 
-    const interval = setInterval(async () => {
-      await checkTransactionStatus();
-      setPollingCount((prev) => prev + 1);
-    }, 3000);
+    let cancelled = false;
+    verifyPollStartRef.current = Date.now();
 
-    return () => clearInterval(interval);
-  }, [paymentReference, pollingCount, checkTransactionStatus]);
+    const stopPolling = () => {
+      if (verifyPollIntervalRef.current !== null) {
+        window.clearInterval(verifyPollIntervalRef.current);
+        verifyPollIntervalRef.current = null;
+      }
+    };
+
+    const checkTransactionStatus = async () => {
+      if (verifyPollInFlightRef.current || cancelled) {
+        return;
+      }
+
+      const startedAt = verifyPollStartRef.current ?? Date.now();
+      if (Date.now() - startedAt >= 120000) {
+        stopPolling();
+        setPaymentMessage("This is taking longer than expected — check back shortly or try again");
+        setPaymentReference(null);
+        setPaymentError(true);
+        return;
+      }
+
+      verifyPollInFlightRef.current = true;
+
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session?.access_token) {
+          return;
+        }
+
+        const response = await fetch(
+          `/api/paystack/verify?reference=${encodeURIComponent(paymentReference)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          stopPolling();
+          setPaymentMessage(
+            "Thank you for supporting MVCorner! Your tip has been received."
+          );
+          setPaymentReference(null);
+          setPaymentSucceeded(true);
+          setPaymentError(false);
+          return;
+        }
+
+        if (result.status === "failed") {
+          stopPolling();
+          setPaymentMessage("Payment was not completed. Please try again.");
+          setPaymentReference(null);
+          setPaymentError(true);
+          return;
+        }
+      } finally {
+        verifyPollInFlightRef.current = false;
+      }
+    };
+
+    verifyPollIntervalRef.current = window.setInterval(() => {
+      void checkTransactionStatus();
+    }, 8000);
+
+    void checkTransactionStatus();
+
+    return () => {
+      cancelled = true;
+      stopPolling();
+    };
+  }, [paymentReference]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -151,7 +200,6 @@ export default function SupportPage() {
 
   const isPolling =
     Boolean(paymentReference) &&
-    pollingCount < 30 &&
     !paymentSucceeded &&
     !paymentError;
   const isBusy = paymentInProgress || isPolling;
@@ -226,16 +274,6 @@ export default function SupportPage() {
             {paymentMessage ? (
               <p className={`text-sm ${paymentError ? "text-coral" : "text-forest"}`}>
                 {paymentMessage}
-              </p>
-            ) : null}
-
-            {paymentReference &&
-            pollingCount >= 30 &&
-            !paymentSucceeded &&
-            !paymentError ? (
-              <p className="text-xs text-slate-500">
-                We haven&apos;t received confirmation yet. If you didn&apos;t complete
-                the payment on your phone, please cancel and try again.
               </p>
             ) : null}
 
