@@ -1,10 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
+
+const ResourceViewer = dynamic(() => import("@/components/ResourceViewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <Skeleton className="h-10 w-full rounded-xl" />
+      <Skeleton className="mt-3 h-[65vh] w-full rounded-2xl" />
+    </div>
+  ),
+});
 
 type Resource = {
   id: string;
@@ -66,6 +77,7 @@ function BrowsePageContent() {
   const [unlockNotice, setUnlockNotice] = useState<string | null>(null);
   const [unlockTargetId, setUnlockTargetId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [viewingResource, setViewingResource] = useState<Resource | null>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -239,6 +251,26 @@ function BrowsePageContent() {
 
     prefillSearchAndUniversity();
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!viewingResource) {
+      return;
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setViewingResource(null);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [viewingResource]);
 
   const hasUnlockedAccess = () => {
     if (isAdmin) {
@@ -634,6 +666,14 @@ function BrowsePageContent() {
                         {downloadingId === resource.id ? "Preparing..." : "Download"}
                       </button>
                     )}
+
+                    <button
+                      type="button"
+                      onClick={() => setViewingResource(resource)}
+                      className="mt-3 w-full rounded-xl border border-forest/35 bg-white px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/10"
+                    >
+                      View
+                    </button>
                   </article>
                 ))}
               </div>
@@ -656,6 +696,28 @@ function BrowsePageContent() {
           </section>
         </div>
       </div>
+
+      {viewingResource ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/70 p-4 sm:p-6">
+          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-5">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold text-charcoal">View resource</h2>
+              <button
+                type="button"
+                onClick={() => setViewingResource(null)}
+                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-charcoal transition hover:bg-slate-50"
+              >
+                Close
+              </button>
+            </div>
+
+            <ResourceViewer
+              resourceId={viewingResource.id}
+              resourceTitle={viewingResource.title}
+            />
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
