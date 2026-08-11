@@ -146,6 +146,20 @@ export async function GET(request: Request) {
     }
 
     console.log("Verify: falling through to final return with local status:", transaction.status);
+
+    if (transaction.status === "success" && transaction.purpose === "pro_subscription") {
+      const { data: currentSub } = await supabaseAdminNoStore
+        .from("subscriptions")
+        .select("expires_at")
+        .eq("user_id", transaction.profile_id)
+        .eq("tier", "pro")
+        .order("expires_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      return NextResponse.json({ status: "success", expiresAt: currentSub?.expires_at ?? null });
+    }
+
     return NextResponse.json({ status: transaction.status });
   } catch (error) {
     console.error("Error in Paystack verify route:", error);
