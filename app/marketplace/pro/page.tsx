@@ -427,11 +427,29 @@ export default function ProUpgradePage() {
                             >
                               <span className="flex items-center justify-between gap-3">
                                 <span>{plan.label}</span>
-                                <span>KES {plan.amountKes}</span>
+                                {plan.isLaunchOffer ? (
+                                  <span className="flex items-baseline gap-2">
+                                    <span>KES {plan.amountKes}</span>
+                                    <span
+                                      className={`text-xs line-through ${
+                                        isSelected ? "text-white/50" : "text-charcoal/40"
+                                      }`}
+                                    >
+                                      KES {plan.regularAmountKes}
+                                    </span>
+                                  </span>
+                                ) : (
+                                  <span>KES {plan.amountKes}</span>
+                                )}
                               </span>
                             </button>
                           );
                         })}
+                        {showLaunchOffer ? (
+                          <p className="text-xs text-charcoal/50">
+                            Prices increase to the amounts shown after Nov 5, 2026.
+                          </p>
+                        ) : null}
                       </div>
 
                       <div>

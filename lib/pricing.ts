@@ -2,6 +2,7 @@ export type ProPlanId = "week" | "two_week" | "month";
 
 type PlanPrice = {
   amountKes: number;
+  regularAmountKes: number;
   isLaunchOffer: boolean;
 };
 
@@ -27,12 +28,14 @@ export function getPlanPrice(planId: ProPlanId, now = new Date()): PlanPrice {
   if (useRegularPricing) {
     return {
       amountKes: REGULAR_PRICES[planId],
+      regularAmountKes: REGULAR_PRICES[planId],
       isLaunchOffer: false,
     };
   }
 
   return {
     amountKes: OFFER_PRICES[planId],
+    regularAmountKes: REGULAR_PRICES[planId],
     isLaunchOffer: inLaunchWindow,
   };
 }
