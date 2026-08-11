@@ -5,15 +5,14 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Check, ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
+import { getPlanPrice, type ProPlanId } from "@/lib/pricing";
 import { supabase } from "@/lib/supabase";
 
 const PRO_PLANS = [
-  { id: "week", label: "1 Week - KES 40" },
-  { id: "two_week", label: "2 Weeks - KES 70" },
-  { id: "month", label: "1 Month - KES 130" },
+  { id: "week", label: "1 Week" },
+  { id: "two_week", label: "2 Weeks" },
+  { id: "month", label: "1 Month" },
 ] as const;
-
-type ProPlanId = (typeof PRO_PLANS)[number]["id"];
 
 export default function ProUpgradePage() {
   const router = useRouter();
@@ -179,6 +178,11 @@ export default function ProUpgradePage() {
         year: "numeric",
       })
     : null;
+  const pricedPlans = PRO_PLANS.map((plan) => ({
+    ...plan,
+    ...getPlanPrice(plan.id),
+  }));
+  const showLaunchOffer = pricedPlans.some((plan) => plan.isLaunchOffer);
 
   if (loading) {
     return (
@@ -292,9 +296,19 @@ export default function ProUpgradePage() {
                 Pro Plan
                 <ShieldCheck className="h-5 w-5 text-coral" />
               </h2>
+              {showLaunchOffer ? (
+                <div className="mt-3 inline-flex items-center rounded-full border border-sunflower/40 bg-sunflower/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-charcoal">
+                  Launch Offer
+                </div>
+              ) : null}
               <p className="mt-1 text-sm text-charcoal/60">
                 Maximum visibility &amp; unlimited product capacity.
               </p>
+              {showLaunchOffer ? (
+                <p className="mt-2 text-sm text-coral">
+                  Launch offer pricing ends on Nov 5, 2026. Prices increase after that date.
+                </p>
+              ) : null}
               <div className="mt-6 text-3xl font-bold text-forest">
                 Pro Upgrade
               </div>
@@ -339,7 +353,7 @@ export default function ProUpgradePage() {
                   {showRenewalForm ? (
                     <form onSubmit={handleSubmit} className="space-y-3">
                       <div className="space-y-2">
-                        {PRO_PLANS.map((plan) => {
+                        {pricedPlans.map((plan) => {
                           const isSelected = selectedPlan === plan.id;
                           return (
                             <button
@@ -353,7 +367,10 @@ export default function ProUpgradePage() {
                                   : "border-forest/30 bg-forest/10 text-forest hover:bg-forest/20"
                               }`}
                             >
-                              {plan.label}
+                              <span className="flex items-center justify-between gap-3">
+                                <span>{plan.label}</span>
+                                <span>KES {plan.amountKes}</span>
+                              </span>
                             </button>
                           );
                         })}

@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getPlanPrice, type ProPlanId } from "@/lib/pricing";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 
 export const runtime = 'nodejs';
 export const preferredRegion = 'fra1';
 
-const PLANS: Record<string, { days: number; amountKes: number }> = {
-  week: { days: 7, amountKes: 40 },
-  two_week: { days: 14, amountKes: 70 },
-  month: { days: 30, amountKes: 130 },
+const PLAN_DURATIONS: Record<ProPlanId, number> = {
+  week: 7,
+  two_week: 14,
+  month: 30,
 };
 
 export async function POST(request: Request) {
@@ -24,13 +25,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const selectedPlan = PLANS[plan];
-    if (!selectedPlan) {
+    if (typeof plan !== "string" || !(plan in PLAN_DURATIONS)) {
       return NextResponse.json(
         { success: false, error: "Invalid plan selected" },
         { status: 400 }
       );
     }
+
+    const planId = plan as ProPlanId;
+    const selectedPlanDays = PLAN_DURATIONS[planId];
+    const computedPrice = getPlanPrice(planId);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -112,7 +116,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         email: userEmail,
-        amount: Math.round(selectedPlan.amountKes * 100),
+        amount: Math.round(computedPrice.amountKes * 100),
         currency: "KES",
         reference: generatedReference,
         mobile_money: {
@@ -132,9 +136,10 @@ export async function POST(request: Request) {
         provider: "paystack",
         paystack_reference: generatedReference,
         status: "pending",
-        amount_kes: selectedPlan.amountKes,
+        amount_kes: computedPrice.amountKes,
+        is_launch_offer: computedPrice.isLaunchOffer,
         purpose: "pro_subscription",
-        plan_days: selectedPlan.days,
+        plan_days: selectedPlanDays,
       });
     if (insertError) {
       throw insertError;

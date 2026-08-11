@@ -91,6 +91,8 @@ export async function POST(request: Request) {
               status: "active",
               expires_at: newExpiresAt.toISOString(),
               paystack_ref: reference,
+              paid_amount: transaction.amount_kes,
+              was_launch_offer: transaction.is_launch_offer,
             })
             .eq("id", existingSub.id);
           console.log('Subscription extend:', subUpdateError ? `error: ${subUpdateError.message}` : `success, new expiry: ${newExpiresAt.toISOString()}`);
@@ -104,6 +106,8 @@ export async function POST(request: Request) {
               started_at: now.toISOString(),
               expires_at: newExpiresAt.toISOString(),
               paystack_ref: reference,
+              paid_amount: transaction.amount_kes,
+              was_launch_offer: transaction.is_launch_offer,
             });
           console.log('Subscription create:', subInsertError ? `error: ${subInsertError.message}` : `success, expiry: ${newExpiresAt.toISOString()}`);
         }
