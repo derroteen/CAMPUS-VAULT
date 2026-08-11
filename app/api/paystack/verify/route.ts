@@ -23,10 +23,21 @@ export async function GET(request: Request) {
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
+      },
+    });
+
+    const supabaseAdminNoStore = createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+      global: {
+        fetch: (url, options = {}) => fetch(url, { ...options, cache: "no-store" }),
       },
     });
 
@@ -40,7 +51,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: transaction, error: transactionError } = await supabaseAdmin
+    const { data: transaction, error: transactionError } = await supabaseAdminNoStore
       .from("transactions")
       .select("id, profile_id, status, purpose, plan_days, amount_kes, is_launch_offer, paystack_reference")
       .eq("paystack_reference", reference)
@@ -98,11 +109,12 @@ export async function GET(request: Request) {
         return NextResponse.json({ status: latestTransaction?.status ?? transaction.status });
       }
 
-      if (transaction.purpose === "pro_subscription") {
-        await activateProSubscriptionFromTransaction(transaction, reference);
-      }
+      const newExpiresAt =
+        transaction.purpose === "pro_subscription"
+          ? await activateProSubscriptionFromTransaction(transaction, reference)
+          : null;
 
-      return NextResponse.json({ status: "success" });
+      return NextResponse.json({ status: "success", expiresAt: newExpiresAt });
     }
 
     if (

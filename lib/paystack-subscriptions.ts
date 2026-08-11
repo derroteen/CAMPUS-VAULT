@@ -50,7 +50,7 @@ export async function activateProSubscriptionFromTransaction(
       throw subUpdateError;
     }
 
-    return;
+    return newExpiresAt.toISOString();
   }
 
   const { error: subInsertError } = await supabaseAdmin
@@ -69,4 +69,6 @@ export async function activateProSubscriptionFromTransaction(
   if (subInsertError) {
     throw subInsertError;
   }
+
+  return newExpiresAt.toISOString();
 }

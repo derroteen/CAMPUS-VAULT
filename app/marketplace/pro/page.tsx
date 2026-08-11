@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
+import PaymentSuccessModal from "@/components/PaymentSuccessModal";
 import { Skeleton } from "@/components/Skeleton";
 import { getPlanPrice, type ProPlanId } from "@/lib/pricing";
 import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
@@ -29,6 +30,7 @@ export default function ProUpgradePage() {
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState(false);
   const [paymentSucceeded, setPaymentSucceeded] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const verifyPollStartRef = useRef<number | null>(null);
   const verifyPollInFlightRef = useRef(false);
   const verifyPollIntervalRef = useRef<number | null>(null);
@@ -121,6 +123,8 @@ export default function ProUpgradePage() {
           setPaymentMessage("You're now Pro! Enjoy boosted visibility and unlimited listings.");
           setPaymentReference(null);
           setPaymentSucceeded(true);
+          setProExpiresAt(result.expiresAt);
+          setShowSuccessModal(true);
           setPaymentError(false);
           setIsPro(true);
           setIsTrialAccess(false);
@@ -226,6 +230,9 @@ export default function ProUpgradePage() {
     ...getPlanPrice(plan.id),
   }));
   const showLaunchOffer = pricedPlans.some((plan) => plan.isLaunchOffer);
+  const selectedPlanPricing = selectedPlan
+    ? pricedPlans.find((plan) => plan.id === selectedPlan)
+    : null;
 
   if (loading) {
     return (
@@ -252,6 +259,14 @@ export default function ProUpgradePage() {
 
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
+      {showSuccessModal ? (
+        <PaymentSuccessModal
+          amountPaid={selectedPlanPricing?.amountKes ?? 0}
+          expiresAt={proExpiresAt ?? ""}
+          onClose={() => setShowSuccessModal(false)}
+        />
+      ) : null}
+
       <div className="mx-auto max-w-4xl">
         {/* Navigation */}
         <Link
