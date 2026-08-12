@@ -1,0 +1,2 @@
+export const FREE_LISTING_WINDOW_DAYS = 14;
+export const PRO_LISTING_WINDOW_DAYS = 30;

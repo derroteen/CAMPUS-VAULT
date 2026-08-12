@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { PRO_LISTING_WINDOW_DAYS } from "@/lib/listing-expiry";
 
 type SubscriptionTransaction = {
   id: string;
@@ -50,6 +51,16 @@ export async function activateProSubscriptionFromTransaction(
       throw subUpdateError;
     }
 
+    const proListingWindowDays = PRO_LISTING_WINDOW_DAYS;
+    const newListingExpiry = new Date();
+    newListingExpiry.setDate(newListingExpiry.getDate() + proListingWindowDays);
+
+    await supabaseAdmin
+      .from("listings")
+      .update({ expires_at: newListingExpiry.toISOString() })
+      .eq("seller_id", transaction.profile_id)
+      .eq("status", "active");
+
     return newExpiresAt.toISOString();
   }
 
@@ -69,6 +80,16 @@ export async function activateProSubscriptionFromTransaction(
   if (subInsertError) {
     throw subInsertError;
   }
+
+  const proListingWindowDays = PRO_LISTING_WINDOW_DAYS;
+  const newListingExpiry = new Date();
+  newListingExpiry.setDate(newListingExpiry.getDate() + proListingWindowDays);
+
+  await supabaseAdmin
+    .from("listings")
+    .update({ expires_at: newListingExpiry.toISOString() })
+    .eq("seller_id", transaction.profile_id)
+    .eq("status", "active");
 
   return newExpiresAt.toISOString();
 }

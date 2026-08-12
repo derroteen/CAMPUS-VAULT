@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
+import { FREE_LISTING_WINDOW_DAYS, PRO_LISTING_WINDOW_DAYS } from "@/lib/listing-expiry";
 import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
@@ -211,7 +212,9 @@ export default function NewListingPage() {
 
     // 3. Insert listing row
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + (isPro ? 30 : 14));
+    expiresAt.setDate(
+      expiresAt.getDate() + (isPro ? PRO_LISTING_WINDOW_DAYS : FREE_LISTING_WINDOW_DAYS)
+    );
 
     const { data: listing, error: insertError } = await supabase
       .from("listings")

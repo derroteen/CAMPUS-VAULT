@@ -137,6 +137,14 @@ export default function MyListingsPage() {
     `KES ${price.toLocaleString("en-KE")}`;
   const hasOriginalPrice = (listing: ListingRow) =>
     listing.original_price !== null && listing.original_price > listing.price;
+  const isExpiringTomorrow = (listing: ListingRow) => {
+    if (listing.status !== "active") {
+      return false;
+    }
+
+    const msRemaining = new Date(listing.expires_at).getTime() - Date.now();
+    return msRemaining > 0 && msRemaining <= 24 * 60 * 60 * 1000;
+  };
 
   const statusBadge = (status: string) => {
     switch (status) {
@@ -436,6 +444,20 @@ export default function MyListingsPage() {
                           Posted {formatDate(listing.created_at)} · Expires{" "}
                           {formatDate(listing.expires_at)}
                         </p>
+
+                        {isExpiringTomorrow(listing) ? (
+                          <div className="mt-2 inline-flex flex-wrap items-center gap-2 rounded-xl border border-sunflower/35 bg-sunflower/15 px-2.5 py-1 text-xs text-charcoal/80">
+                            <span className="font-medium text-coral">Expires tomorrow</span>
+                            {!isPro ? (
+                              <Link
+                                href="/marketplace/pro"
+                                className="font-medium text-coral underline decoration-coral/50 underline-offset-2 transition hover:text-forest"
+                              >
+                                Upgrade to Pro to extend it
+                              </Link>
+                            ) : null}
+                          </div>
+                        ) : null}
                       </div>
 
                       {/* Action buttons */}
