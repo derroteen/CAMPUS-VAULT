@@ -60,6 +60,9 @@ export async function POST(request: Request) {
     if (type === "course_request") {
       subject = "New course request pending approval";
       itemLabel = "Course Details";
+    } else if (type === "product_request") {
+      subject = "New product request pending approval";
+      itemLabel = "Requested Product";
     } else if (type === "upload") {
       subject = "New upload pending approval";
       itemLabel = "Upload Title";

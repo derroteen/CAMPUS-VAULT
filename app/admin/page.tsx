@@ -24,6 +24,13 @@ type PendingCourseRequest = {
   requested_by: string;
 };
 
+type PendingProductRequest = {
+  id: string;
+  title: string;
+  description: string | null;
+  requested_by: string;
+};
+
 type TopContributor = {
   id: string;
   full_name: string | null;
@@ -36,6 +43,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [resources, setResources] = useState<PendingResource[]>([]);
   const [courseRequests, setCourseRequests] = useState<PendingCourseRequest[]>([]);
+  const [productRequests, setProductRequests] = useState<PendingProductRequest[]>([]);
   const [profiles, setProfiles] = useState<Record<string, string>>({});
   const [courses, setCourses] = useState<Record<string, string>>({});
   const [universities, setUniversities] = useState<Record<string, string>>({});
@@ -89,6 +97,16 @@ export default function AdminPage() {
         setCourseRequests(pendingRequests);
       }
 
+      const { data: pendingProductRequests, error: productRequestsError } = await supabase
+        .from("product_requests")
+        .select("id, title, description, requested_by")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
+
+      if (!productRequestsError && pendingProductRequests) {
+        setProductRequests(pendingProductRequests);
+      }
+
       const uploaderIds = Array.from(
         new Set((pendingResources ?? []).map((resource) => resource.uploader_id))
       );
@@ -96,7 +114,10 @@ export default function AdminPage() {
         new Set((pendingResources ?? []).map((resource) => resource.course_id))
       );
       const requestersIds = Array.from(
-        new Set((pendingRequests ?? []).map((request) => request.requested_by))
+        new Set([
+          ...(pendingRequests ?? []).map((request) => request.requested_by),
+          ...(pendingProductRequests ?? []).map((request) => request.requested_by),
+        ])
       );
       const universityIds = Array.from(
         new Set((pendingRequests ?? []).map((request) => request.university_id))
@@ -276,6 +297,30 @@ export default function AdminPage() {
     setProcessingId(null);
   };
 
+  const handleApproveProductRequest = async (requestId: string) => {
+    setProcessingId(requestId);
+
+    await supabase
+      .from("product_requests")
+      .update({ status: "approved" })
+      .eq("id", requestId);
+
+    setProductRequests((current) => current.filter((request) => request.id !== requestId));
+    setProcessingId(null);
+  };
+
+  const handleRejectProductRequest = async (requestId: string) => {
+    setProcessingId(requestId);
+
+    await supabase
+      .from("product_requests")
+      .update({ status: "rejected" })
+      .eq("id", requestId);
+
+    setProductRequests((current) => current.filter((request) => request.id !== requestId));
+    setProcessingId(null);
+  };
+
   const handleGrantPremium = async (userId: string) => {
     if (!currentAdminId) return;
     setProcessingId(userId);
@@ -426,7 +471,7 @@ export default function AdminPage() {
           </Link>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
             <p className="text-sm text-slate-600">Pending resources</p>
             <p className="mt-2 text-3xl font-semibold text-charcoal">{resources.length}</p>
@@ -434,6 +479,10 @@ export default function AdminPage() {
           <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
             <p className="text-sm text-slate-600">Pending course requests</p>
             <p className="mt-2 text-3xl font-semibold text-charcoal">{courseRequests.length}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+            <p className="text-sm text-slate-600">Pending product requests</p>
+            <p className="mt-2 text-3xl font-semibold text-charcoal">{productRequests.length}</p>
           </div>
         </div>
 
@@ -582,6 +631,50 @@ export default function AdminPage() {
                     </button>
                     <button
                       onClick={() => handleRejectCourseRequest(request.id)}
+                      disabled={processingId === request.id}
+                      className="rounded-xl bg-coral px-3 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-60"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        <div className="border-t border-slate-200" />
+
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <h2 className="text-xl font-semibold font-space-grotesk">Pending product requests</h2>
+          <div className="mt-4 space-y-3">
+            {productRequests.length === 0 ? (
+              <p className="text-slate-600">No pending product requests.</p>
+            ) : (
+              productRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <h3 className="font-medium text-charcoal">{request.title}</h3>
+                    {request.description ? (
+                      <p className="mt-1 text-sm text-slate-600">{request.description}</p>
+                    ) : null}
+                    <p className="text-sm text-slate-600">
+                      requester: {requesters[request.requested_by] ?? "Unknown"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleApproveProductRequest(request.id)}
+                      disabled={processingId === request.id}
+                      className="rounded-xl bg-forest px-3 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:opacity-60"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleRejectProductRequest(request.id)}
                       disabled={processingId === request.id}
                       className="rounded-xl bg-coral px-3 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-60"
                     >

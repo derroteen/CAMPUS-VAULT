@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MouseEvent, Suspense, useEffect, useState } from "react";
+import { FormEvent, MouseEvent, Suspense, useEffect, useState } from "react";
 import { Heart, Search, ShoppingBag, Sparkles } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
 import { Skeleton } from "@/components/Skeleton";
@@ -67,6 +67,11 @@ function MarketplaceContent() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [wishlistedListingIds, setWishlistedListingIds] = useState<Set<string>>(new Set());
   const [wishlistLoadingIds, setWishlistLoadingIds] = useState<Set<string>>(new Set());
+  const [showProductRequest, setShowProductRequest] = useState(false);
+  const [productRequestTitle, setProductRequestTitle] = useState("");
+  const [productRequestDescription, setProductRequestDescription] = useState("");
+  const [productRequestError, setProductRequestError] = useState<string | null>(null);
+  const [productRequestMessage, setProductRequestMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSession = async () => {
@@ -305,6 +310,66 @@ function MarketplaceContent() {
     });
   };
 
+  const handleProductRequestSubmit = async (event?: FormEvent<HTMLFormElement> | null) => {
+    event?.preventDefault();
+    setProductRequestError(null);
+    setProductRequestMessage(null);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setProductRequestError("You must be logged in to request a product.");
+      return;
+    }
+
+    if (!productRequestTitle.trim()) {
+      setProductRequestError("Please enter the product title you're looking for.");
+      return;
+    }
+
+    const { error: requestError } = await supabase.from("product_requests").insert({
+      requested_by: session.user.id,
+      title: productRequestTitle.trim(),
+      description: productRequestDescription.trim() || null,
+      status: "pending",
+    });
+
+    if (requestError) {
+      setProductRequestError(requestError.message);
+      return;
+    }
+
+    fetch("/api/notify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        type: "product_request",
+        title: productRequestTitle.trim(),
+        userEmail: session.user.email ?? "",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          console.error("Admin notification API returned error status:", res.status);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to send product request admin email notification:", err);
+      });
+
+    setShowProductRequest(false);
+    setProductRequestTitle("");
+    setProductRequestDescription("");
+    setProductRequestMessage(
+      "Thanks! Your request has been submitted for review. Approved requests appear on the homepage so sellers can spot demand."
+    );
+  };
+
   const formatPrice = (price: number) =>
     `KES ${price.toLocaleString("en-KE")}`;
 
@@ -396,6 +461,65 @@ function MarketplaceContent() {
               <ShoppingBag className="h-4 w-4" />
               Post a product
             </Link>
+
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-5 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setShowProductRequest((current) => !current)}
+                className="text-left text-sm font-medium text-forest transition hover:text-leaf"
+              >
+                Can&apos;t find a product? Request it
+              </button>
+
+              {showProductRequest ? (
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white/90 p-5">
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="productRequestTitle" className="mb-2 block text-sm text-slate-700">
+                        Product title
+                      </label>
+                      <input
+                        id="productRequestTitle"
+                        type="text"
+                        value={productRequestTitle}
+                        onChange={(e) => setProductRequestTitle(e.target.value)}
+                        placeholder="e.g. Engineering Drawing Set"
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="productRequestDescription" className="mb-2 block text-sm text-slate-700">
+                        Description (optional)
+                      </label>
+                      <textarea
+                        id="productRequestDescription"
+                        value={productRequestDescription}
+                        onChange={(e) => setProductRequestDescription(e.target.value)}
+                        placeholder="Add preferred condition, model, size, or budget range."
+                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                  {productRequestError ? <p className="mt-3 text-sm text-coral">{productRequestError}</p> : null}
+                  {productRequestMessage ? <p className="mt-3 text-sm text-forest">{productRequestMessage}</p> : null}
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleProductRequestSubmit()}
+                      className="rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf"
+                    >
+                      Submit request
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              {!showProductRequest && productRequestMessage ? (
+                <p className="mt-3 text-sm text-forest">{productRequestMessage}</p>
+              ) : null}
+            </div>
           </aside>
 
           {/* Listings grid */}

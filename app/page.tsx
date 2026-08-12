@@ -21,10 +21,17 @@ type FeaturedProduct = {
   category_name: string | null;
 };
 
+type ProductRequest = {
+  id: string;
+  title: string;
+  description: string | null;
+};
+
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [popularCourses, setPopularCourses] = useState<PopularCourse[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>([]);
+  const [approvedProductRequests, setApprovedProductRequests] = useState<ProductRequest[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -52,6 +59,32 @@ export default function Home() {
     return () => {
       isMounted = false;
       subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadApprovedProductRequests = async () => {
+      const response = await fetch("/api/product-requests/approved");
+      const result = await response.json();
+
+      if (!response.ok || !result.requests) {
+        if (isMounted) {
+          setApprovedProductRequests([]);
+        }
+        return;
+      }
+
+      if (isMounted) {
+        setApprovedProductRequests(result.requests);
+      }
+    };
+
+    loadApprovedProductRequests();
+
+    return () => {
+      isMounted = false;
     };
   }, []);
 
@@ -467,6 +500,40 @@ export default function Home() {
                     </p>
                   </div>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {approvedProductRequests.length > 0 && (
+        <section className="pb-12">
+          <div className="container mx-auto px-4">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-charcoal">Buyers are looking for...</h2>
+              <p className="mt-2 text-sm text-charcoal/60">
+                Demand signals from buyers - post a matching listing to meet campus needs.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {approvedProductRequests.map((request) => (
+                <article
+                  key={request.id}
+                  className="relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-5 shadow-sm"
+                >
+                  <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
+                  <h3 className="text-base font-semibold text-charcoal">{request.title}</h3>
+                  {request.description ? (
+                    <p className="mt-2 text-sm text-charcoal/70">{request.description}</p>
+                  ) : null}
+                  <Link
+                    href="/marketplace/new"
+                    className="mt-4 inline-flex text-sm font-medium text-forest transition hover:text-coral"
+                  >
+                    Post this product →
+                  </Link>
+                </article>
               ))}
             </div>
           </div>
