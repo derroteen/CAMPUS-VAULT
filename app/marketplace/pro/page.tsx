@@ -225,9 +225,15 @@ export default function ProUpgradePage() {
         year: "numeric",
       })
     : null;
+  // Temporary local testing aid for Sept 5-Nov 5, 2026 launch-offer verification; remove after manual validation.
+  const testDateParam =
+    process.env.NODE_ENV !== "production" && typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("testDate")
+      : null;
+  const testDate = testDateParam ? new Date(testDateParam) : undefined;
   const pricedPlans = PRO_PLANS.map((plan) => ({
     ...plan,
-    ...getPlanPrice(plan.id),
+    ...getPlanPrice(plan.id, testDate),
   }));
   const showLaunchOffer = pricedPlans.some((plan) => plan.isLaunchOffer);
   const selectedPlanPricing = selectedPlan
