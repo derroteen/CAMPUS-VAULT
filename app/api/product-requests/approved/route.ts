@@ -16,9 +16,24 @@ export async function GET() {
       throw error;
     }
 
-    return NextResponse.json({ requests: data ?? [] });
+    return NextResponse.json(
+      { requests: data ?? [] },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching approved product requests:", error);
-    return NextResponse.json({ requests: [] }, { status: 500 });
+    return NextResponse.json(
+      { requests: [] },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        },
+      }
+    );
   }
 }
