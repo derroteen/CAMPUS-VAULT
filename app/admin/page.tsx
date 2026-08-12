@@ -31,6 +31,13 @@ type PendingProductRequest = {
   requested_by: string;
 };
 
+type ApprovedProductRequest = {
+  id: string;
+  title: string;
+  description: string | null;
+  requested_by: string;
+};
+
 type TopContributor = {
   id: string;
   full_name: string | null;
@@ -44,6 +51,7 @@ export default function AdminPage() {
   const [resources, setResources] = useState<PendingResource[]>([]);
   const [courseRequests, setCourseRequests] = useState<PendingCourseRequest[]>([]);
   const [productRequests, setProductRequests] = useState<PendingProductRequest[]>([]);
+  const [approvedProductRequests, setApprovedProductRequests] = useState<ApprovedProductRequest[]>([]);
   const [profiles, setProfiles] = useState<Record<string, string>>({});
   const [courses, setCourses] = useState<Record<string, string>>({});
   const [universities, setUniversities] = useState<Record<string, string>>({});
@@ -107,6 +115,16 @@ export default function AdminPage() {
         setProductRequests(pendingProductRequests);
       }
 
+      const { data: approvedRequests, error: approvedRequestsError } = await supabase
+        .from("product_requests")
+        .select("id, title, description, requested_by")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false });
+
+      if (!approvedRequestsError && approvedRequests) {
+        setApprovedProductRequests(approvedRequests);
+      }
+
       const uploaderIds = Array.from(
         new Set((pendingResources ?? []).map((resource) => resource.uploader_id))
       );
@@ -117,6 +135,7 @@ export default function AdminPage() {
         new Set([
           ...(pendingRequests ?? []).map((request) => request.requested_by),
           ...(pendingProductRequests ?? []).map((request) => request.requested_by),
+          ...(approvedRequests ?? []).map((request) => request.requested_by),
         ])
       );
       const universityIds = Array.from(
@@ -318,6 +337,18 @@ export default function AdminPage() {
       .eq("id", requestId);
 
     setProductRequests((current) => current.filter((request) => request.id !== requestId));
+    setProcessingId(null);
+  };
+
+  const handleDeleteProductRequest = async (requestId: string) => {
+    setProcessingId(requestId);
+
+    await supabase
+      .from("product_requests")
+      .delete()
+      .eq("id", requestId);
+
+    setApprovedProductRequests((current) => current.filter((request) => request.id !== requestId));
     setProcessingId(null);
   };
 
@@ -679,6 +710,43 @@ export default function AdminPage() {
                       className="rounded-xl bg-coral px-3 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-60"
                     >
                       Reject
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        <div className="border-t border-slate-200" />
+
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <h2 className="text-xl font-semibold font-space-grotesk">Approved product requests</h2>
+          <div className="mt-4 space-y-3">
+            {approvedProductRequests.length === 0 ? (
+              <p className="text-slate-600">No approved product requests.</p>
+            ) : (
+              approvedProductRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <h3 className="font-medium text-charcoal">{request.title}</h3>
+                    {request.description ? (
+                      <p className="mt-1 text-sm text-slate-600">{request.description}</p>
+                    ) : null}
+                    <p className="text-sm text-slate-600">
+                      requester: {requesters[request.requested_by] ?? "Unknown"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleDeleteProductRequest(request.id)}
+                      disabled={processingId === request.id}
+                      className="rounded-xl bg-coral px-3 py-2 text-sm font-medium text-white transition hover:bg-forest disabled:opacity-60"
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>
