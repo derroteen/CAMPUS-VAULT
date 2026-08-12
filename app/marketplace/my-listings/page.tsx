@@ -266,6 +266,7 @@ export default function MyListingsPage() {
   }
 
   const soldCount = listings.filter((l) => l.status === "sold").length;
+  const isOverFreeLimit = !isPro && activeCount > 3;
 
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
@@ -290,6 +291,22 @@ export default function MyListingsPage() {
         <div className="mb-6">
           <ProTrialBanner />
         </div>
+
+        {isOverFreeLimit ? (
+          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/25 border-y-coral/25 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <p className="text-sm text-charcoal/80">
+                You have <span className="font-semibold text-charcoal">{activeCount}</span> active products, but the Free plan allows only 3. You won&apos;t be able to add new products until you&apos;re back at 3 or fewer - delete some listings, or upgrade to Pro again to continue enjoying unlimited listings and boosted visibility.
+              </p>
+              <Link
+                href="/marketplace/pro"
+                className="inline-flex items-center rounded-xl border border-coral/30 bg-sunflower/15 px-3 py-1.5 text-sm font-medium text-coral transition hover:bg-sunflower/25"
+              >
+                Upgrade to Pro
+              </Link>
+            </div>
+          </div>
+        ) : null}
 
         {/* Quota summary */}
         <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
