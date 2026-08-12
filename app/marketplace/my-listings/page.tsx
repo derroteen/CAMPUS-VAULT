@@ -22,6 +22,7 @@ type ListingRow = {
   id: string;
   title: string;
   price: number;
+  original_price: number | null;
   status: string;
   is_boosted: boolean;
   created_at: string;
@@ -66,7 +67,7 @@ export default function MyListingsPage() {
       const [listingsResult, subResult] = await Promise.all([
         supabase
           .from("listings")
-          .select("id, title, price, status, is_boosted, created_at, expires_at")
+          .select("id, title, price, original_price, status, is_boosted, created_at, expires_at")
           .eq("seller_id", uid)
           .order("created_at", { ascending: false }),
         supabase
@@ -134,6 +135,8 @@ export default function MyListingsPage() {
 
   const formatPrice = (price: number) =>
     `KES ${price.toLocaleString("en-KE")}`;
+  const hasOriginalPrice = (listing: ListingRow) =>
+    listing.original_price !== null && listing.original_price > listing.price;
 
   const statusBadge = (status: string) => {
     switch (status) {
@@ -418,9 +421,16 @@ export default function MyListingsPage() {
                           {listing.title}
                         </Link>
 
-                        <p className="mt-1 text-lg font-bold text-forest">
-                          {formatPrice(listing.price)}
-                        </p>
+                        <div className="mt-1 flex flex-wrap items-baseline gap-2">
+                          <p className="text-lg font-bold text-forest">
+                            {formatPrice(listing.price)}
+                          </p>
+                          {hasOriginalPrice(listing) ? (
+                            <p className="text-sm line-through text-charcoal/40">
+                              {formatPrice(listing.original_price ?? listing.price)}
+                            </p>
+                          ) : null}
+                        </div>
 
                         <p className="mt-1 text-xs text-charcoal/50">
                           Posted {formatDate(listing.created_at)} · Expires{" "}

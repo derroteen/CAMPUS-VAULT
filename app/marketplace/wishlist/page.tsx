@@ -17,6 +17,7 @@ type WishlistListingRow = {
   id: string;
   title: string;
   price: number;
+  original_price: number | null;
   status: string;
   seller_id: string;
   category_id: string | null;
@@ -27,6 +28,7 @@ type WishlistListing = {
   id: string;
   title: string;
   price: number;
+  original_price: number | null;
   status: string;
   seller_id: string;
   category_name: string | null;
@@ -57,7 +59,7 @@ export default function WishlistPage() {
       const { data: wishlistData, error: wishlistError } = await supabase
         .from("wishlist_items")
         .select(
-          "listing_id, listings(id, title, price, status, seller_id, category_id, created_at)"
+          "listing_id, listings(id, title, price, original_price, status, seller_id, category_id, created_at)"
         )
         .eq("user_id", uid)
         .order("created_at", { ascending: false });
@@ -138,6 +140,7 @@ export default function WishlistPage() {
             id: row.listing.id,
             title: row.listing.title,
             price: row.listing.price,
+            original_price: row.listing.original_price,
             status: row.listing.status,
             seller_id: row.listing.seller_id,
             category_name: row.listing.category_id
@@ -191,6 +194,8 @@ export default function WishlistPage() {
   };
 
   const formatPrice = (price: number) => `KES ${price.toLocaleString("en-KE")}`;
+  const hasOriginalPrice = (listing: WishlistListing) =>
+    listing.original_price !== null && listing.original_price > listing.price;
 
   if (loading) {
     return (
@@ -280,9 +285,16 @@ export default function WishlistPage() {
                   <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
                     {listing.title}
                   </h3>
-                  <p className="mt-2 text-lg font-bold text-forest">
-                    {formatPrice(listing.price)}
-                  </p>
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <p className="text-lg font-bold text-forest">
+                      {formatPrice(listing.price)}
+                    </p>
+                    {hasOriginalPrice(listing) ? (
+                      <p className="text-sm line-through text-charcoal/40">
+                        {formatPrice(listing.original_price ?? listing.price)}
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
               </Link>
             ))}

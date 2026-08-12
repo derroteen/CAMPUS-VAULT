@@ -39,6 +39,7 @@ export default function EditListingPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [originalPrice, setOriginalPrice] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("");
@@ -84,7 +85,7 @@ export default function EditListingPage() {
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, seller_id, title, description, price, category_id, phone_number, whatsapp_number")
+          .select("id, seller_id, title, description, price, original_price, category_id, phone_number, whatsapp_number")
           .eq("id", listingId)
           .maybeSingle(),
         supabase
@@ -121,6 +122,11 @@ export default function EditListingPage() {
       setTitle(listingData.title ?? "");
       setDescription(listingData.description ?? "");
       setPrice(listingData.price !== undefined && listingData.price !== null ? String(listingData.price) : "");
+      setOriginalPrice(
+        listingData.original_price !== undefined && listingData.original_price !== null
+          ? String(listingData.original_price)
+          : ""
+      );
       setCategoryId(listingData.category_id ?? "");
       setPhoneNumber(listingData.phone_number ?? "");
       setWhatsappNumber(listingData.whatsapp_number ?? "");
@@ -203,6 +209,11 @@ export default function EditListingPage() {
       return;
     }
 
+    if (originalPrice && parseFloat(originalPrice) <= parseFloat(price)) {
+      setError("Original price must be higher than the current price");
+      return;
+    }
+
     setSubmitting(true);
     const userId = session.user.id;
 
@@ -213,6 +224,7 @@ export default function EditListingPage() {
         title: title.trim(),
         description: description.trim() || null,
         price: parseFloat(price),
+        original_price: originalPrice ? parseFloat(originalPrice) : null,
         category_id: categoryId,
         phone_number: phoneNumber.trim(),
         whatsapp_number: whatsappNumber.trim() || null,
@@ -405,6 +417,23 @@ export default function EditListingPage() {
                 placeholder="e.g. 3500"
                 className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
+            </div>
+
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">
+              <label htmlFor="listing-original-price" className="mb-2 block text-sm text-charcoal/75">
+                Original price (optional)
+              </label>
+              <input
+                id="listing-original-price"
+                type="number"
+                min="0"
+                step="1"
+                value={originalPrice}
+                onChange={(e) => setOriginalPrice(e.target.value)}
+                placeholder="e.g. 4500"
+                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+              />
+              <p className="mt-2 text-xs text-charcoal/60">Show buyers you&apos;re offering a discount</p>
             </div>
 
             <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-warm-bg p-4 shadow-sm">

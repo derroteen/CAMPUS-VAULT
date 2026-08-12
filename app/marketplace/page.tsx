@@ -20,6 +20,7 @@ type Listing = {
   id: string;
   title: string;
   price: number;
+  original_price: number | null;
   is_boosted: boolean;
   seller_id: string;
   created_at: string;
@@ -110,7 +111,7 @@ function MarketplaceContent() {
 
       let query = supabase
         .from("listings")
-        .select("id, title, price, seller_id, created_at, category_id")
+        .select("id, title, price, original_price, seller_id, created_at, category_id")
         .eq("status", "active")
         .order("created_at", { ascending: false });
 
@@ -199,6 +200,7 @@ function MarketplaceContent() {
         id: l.id,
         title: l.title,
         price: l.price,
+        original_price: l.original_price,
         is_boosted: activeProSellers.has(l.seller_id),
         seller_id: l.seller_id,
         created_at: l.created_at,
@@ -372,6 +374,9 @@ function MarketplaceContent() {
 
   const formatPrice = (price: number) =>
     `KES ${price.toLocaleString("en-KE")}`;
+
+  const hasOriginalPrice = (listing: Listing) =>
+    listing.original_price !== null && listing.original_price > listing.price;
 
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
@@ -608,9 +613,16 @@ function MarketplaceContent() {
                       <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
                         {listing.title}
                       </h3>
-                      <p className="mt-2 text-lg font-bold text-forest">
-                        {formatPrice(listing.price)}
-                      </p>
+                      <div className="mt-2 flex items-baseline gap-2">
+                        <p className="text-lg font-bold text-forest">
+                          {formatPrice(listing.price)}
+                        </p>
+                        {hasOriginalPrice(listing) ? (
+                          <p className="text-sm line-through text-charcoal/40">
+                            {formatPrice(listing.original_price ?? listing.price)}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
                   </Link>
                 ))}

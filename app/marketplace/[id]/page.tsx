@@ -23,6 +23,7 @@ type ListingDetail = {
   title: string;
   description: string | null;
   price: number;
+  original_price: number | null;
   phone_number: string;
   whatsapp_number: string | null;
   status: string;
@@ -66,7 +67,7 @@ export default function ListingDetailPage() {
       // Fetch listing
       const { data: listingData, error: listingError } = await supabase
         .from("listings")
-        .select("id, seller_id, title, description, price, phone_number, whatsapp_number, status, is_boosted, created_at, expires_at, category_id")
+        .select("id, seller_id, title, description, price, original_price, phone_number, whatsapp_number, status, is_boosted, created_at, expires_at, category_id")
         .eq("id", listingId)
         .single();
 
@@ -100,6 +101,7 @@ export default function ListingDetailPage() {
         title: listingData.title,
         description: listingData.description,
         price: listingData.price,
+        original_price: listingData.original_price,
         phone_number: listingData.phone_number,
         whatsapp_number: listingData.whatsapp_number,
         status: listingData.status,
@@ -241,6 +243,10 @@ export default function ListingDetailPage() {
 
   const formatPrice = (price: number) =>
     `KES ${price.toLocaleString("en-KE")}`;
+  const hasOriginalPrice =
+    listing != null &&
+    listing.original_price !== null &&
+    listing.original_price > listing.price;
 
   const prevImage = () =>
     setCurrentImage((i) => (i === 0 ? images.length - 1 : i - 1));
@@ -399,9 +405,16 @@ export default function ListingDetailPage() {
               {listing.title}
             </h1>
 
-            <p className="mt-3 text-3xl font-bold text-forest">
-              {formatPrice(listing.price)}
-            </p>
+            <div className="mt-3 flex flex-wrap items-baseline gap-3">
+              <p className="text-3xl font-bold text-forest">
+                {formatPrice(listing.price)}
+              </p>
+              {hasOriginalPrice ? (
+                <p className="text-lg line-through text-charcoal/40">
+                  {formatPrice(listing.original_price ?? listing.price)}
+                </p>
+              ) : null}
+            </div>
 
             <p className="mt-1 text-sm text-charcoal/60">
               Posted {formatDate(listing.created_at)}
