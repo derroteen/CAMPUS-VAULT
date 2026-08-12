@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, MouseEvent, Suspense, useEffect, useState } from "react";
-import { Heart, Search, ShoppingBag, Sparkles } from "lucide-react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
+import { Search, ShoppingBag } from "lucide-react";
 import ProTrialBanner from "@/app/components/ProTrialBanner";
+import {
+  MarketplaceListingCard,
+  type MarketplaceListingCardData,
+} from "@/components/MarketplaceListingCard";
 import { Skeleton } from "@/components/Skeleton";
-import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
+import {
+  fetchActiveProSellerIds,
+  hydrateMarketplaceListings,
+  type MarketplaceListing,
+} from "@/lib/marketplace-listings";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -16,16 +23,10 @@ type Category = {
   slug: string;
 };
 
-type Listing = {
-  id: string;
+type RecommendationSection = {
   title: string;
-  price: number;
-  original_price: number | null;
-  is_boosted: boolean;
-  seller_id: string;
-  created_at: string;
-  category_name: string | null;
-  thumbnail_url: string | null;
+  description: string;
+  listings: MarketplaceListingCardData[];
 };
 
 export default function MarketplacePage() {
@@ -60,7 +61,8 @@ export default function MarketplacePage() {
 function MarketplaceContent() {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<MarketplaceListing[]>([]);
+  const [recommendedSection, setRecommendedSection] = useState<RecommendationSection | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -140,83 +142,9 @@ function MarketplaceContent() {
         return;
       }
 
-      const listingIds = listingsData.map((l) => l.id);
-      const sellerIds = Array.from(new Set(listingsData.map((l) => l.seller_id)));
-      const categoryIds = Array.from(
-        new Set(listingsData.map((l) => l.category_id).filter(Boolean))
-      );
+      const hydratedListings = await hydrateMarketplaceListings(listingsData);
 
-      const activeProSellers = new Set<string>();
-      if (sellerIds.length > 0) {
-        const { data: activeSubscriptions } = await supabase
-          .from("subscriptions")
-          .select("user_id, status, expires_at")
-          .in("user_id", sellerIds)
-          .eq("tier", "pro")
-          .eq("status", "active")
-          .gt("expires_at", new Date().toISOString());
-
-        (activeSubscriptions ?? []).forEach((subscription) => {
-          if (isSubscriptionCurrentlyActive(subscription)) {
-            activeProSellers.add(subscription.user_id);
-          }
-        });
-      }
-
-      // Fetch first image per listing (lowest sort_order)
-      const { data: imagesData } = await supabase
-        .from("listing_images")
-        .select("listing_id, image_url, sort_order")
-        .in("listing_id", listingIds)
-        .order("sort_order", { ascending: true });
-
-      // Build a map: listing_id -> first image_url
-      const imageMap = new Map<string, string>();
-      if (imagesData) {
-        for (const img of imagesData) {
-          if (!imageMap.has(img.listing_id)) {
-            imageMap.set(img.listing_id, img.image_url);
-          }
-        }
-      }
-
-      // Fetch category names
-      const categoryMap = new Map<string, string>();
-      if (categoryIds.length > 0) {
-        const { data: catData } = await supabase
-          .from("market_categories")
-          .select("id, name")
-          .in("id", categoryIds);
-
-        if (catData) {
-          for (const cat of catData) {
-            categoryMap.set(cat.id, cat.name);
-          }
-        }
-      }
-
-      // Merge
-      const merged: Listing[] = listingsData.map((l) => ({
-        id: l.id,
-        title: l.title,
-        price: l.price,
-        original_price: l.original_price,
-        is_boosted: activeProSellers.has(l.seller_id),
-        seller_id: l.seller_id,
-        created_at: l.created_at,
-        category_name: l.category_id ? (categoryMap.get(l.category_id) ?? null) : null,
-        thumbnail_url: imageMap.get(l.id) ?? null,
-      }));
-
-      const sortedListings = merged.sort((a, b) => {
-        if (a.is_boosted !== b.is_boosted) {
-          return a.is_boosted ? -1 : 1;
-        }
-
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      });
-
-      setListings(sortedListings);
+      setListings(hydratedListings);
       setSearching(false);
       setLoading(false);
     };
@@ -228,13 +156,102 @@ function MarketplaceContent() {
   }, [selectedCategoryId, searchQuery]);
 
   useEffect(() => {
+    const loadRecommendations = async () => {
+      if (!currentUserId) {
+        setRecommendedSection(null);
+        return;
+      }
+
+      const { data: wishlistData } = await supabase
+        .from("wishlist_items")
+        .select("listing_id, listings(category_id)")
+        .eq("user_id", currentUserId);
+
+      const wishlistListingIds = new Set<string>();
+      const categoryIds = new Set<string>();
+
+      for (const row of wishlistData ?? []) {
+        wishlistListingIds.add(row.listing_id);
+
+        const relatedListing = Array.isArray(row.listings) ? row.listings[0] : row.listings;
+        if (relatedListing?.category_id) {
+          categoryIds.add(relatedListing.category_id);
+        }
+      }
+
+      if (categoryIds.size > 0) {
+        const { data: recommendedListingsData, error } = await supabase
+          .from("listings")
+          .select("id, title, price, original_price, seller_id, created_at, category_id")
+          .in("category_id", Array.from(categoryIds))
+          .eq("status", "active")
+          .not("id", "in", `(${Array.from(wishlistListingIds).map((id) => `\"${id}\"`).join(",")})`)
+          .order("created_at", { ascending: false })
+          .limit(24);
+
+        if (!error && recommendedListingsData) {
+          const recommendedListings = (await hydrateMarketplaceListings(recommendedListingsData)).slice(0, 8);
+
+          if (recommendedListings.length > 0) {
+            setRecommendedSection({
+              title: "Recommended for you",
+              description: "Based on the categories you already save to your wishlist.",
+              listings: recommendedListings,
+            });
+            return;
+          }
+        }
+      }
+
+      const proSellerIds = Array.from(await fetchActiveProSellerIds());
+
+      if (proSellerIds.length === 0) {
+        setRecommendedSection(null);
+        return;
+      }
+
+      const { data: fallbackListingsData, error: fallbackError } = await supabase
+        .from("listings")
+        .select("id, title, price, original_price, seller_id, created_at, category_id")
+        .in("seller_id", proSellerIds)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(8);
+
+      if (fallbackError || !fallbackListingsData || fallbackListingsData.length === 0) {
+        setRecommendedSection(null);
+        return;
+      }
+
+      const fallbackListings = await hydrateMarketplaceListings(fallbackListingsData);
+
+      setRecommendedSection(
+        fallbackListings.length > 0
+          ? {
+              title: "Popular right now",
+              description: "Live picks from sellers with active Pro boosts.",
+              listings: fallbackListings.slice(0, 8),
+            }
+          : null
+      );
+    };
+
+    loadRecommendations();
+  }, [currentUserId]);
+
+  useEffect(() => {
     const loadWishlistState = async () => {
       if (!currentUserId) {
         setWishlistedListingIds(new Set());
         return;
       }
 
-      const displayedListingIds = listings.map((listing) => listing.id);
+      const displayedListingIds = Array.from(
+        new Set([
+          ...listings.map((listing) => listing.id),
+          ...(recommendedSection?.listings.map((listing) => listing.id) ?? []),
+        ])
+      );
       if (displayedListingIds.length === 0) {
         setWishlistedListingIds(new Set());
         return;
@@ -255,15 +272,9 @@ function MarketplaceContent() {
     };
 
     loadWishlistState();
-  }, [currentUserId, listings]);
+  }, [currentUserId, listings, recommendedSection]);
 
-  const handleWishlistToggle = async (
-    event: MouseEvent<HTMLButtonElement>,
-    listingId: string
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-
+  const handleWishlistToggle = async (listingId: string) => {
     if (!currentUserId) {
       router.push("/login");
       return;
@@ -371,13 +382,6 @@ function MarketplaceContent() {
       "Thanks! Your request has been submitted for review. Approved requests appear on the homepage so sellers can spot demand."
     );
   };
-
-  const formatPrice = (price: number) =>
-    `KES ${price.toLocaleString("en-KE")}`;
-
-  const hasOriginalPrice = (listing: Listing) =>
-    listing.original_price !== null && listing.original_price > listing.price;
-
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -529,6 +533,34 @@ function MarketplaceContent() {
 
           {/* Listings grid */}
           <section>
+            {recommendedSection ? (
+              <div className="mb-8">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-semibold text-charcoal">
+                      {recommendedSection.title}
+                    </h2>
+                    <p className="text-sm text-charcoal/60">{recommendedSection.description}</p>
+                  </div>
+                  <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">
+                    {recommendedSection.listings.length} pick{recommendedSection.listings.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {recommendedSection.listings.map((listing) => (
+                    <MarketplaceListingCard
+                      key={listing.id}
+                      listing={listing}
+                      isWishlisted={wishlistedListingIds.has(listing.id)}
+                      wishlistLoading={wishlistLoadingIds.has(listing.id)}
+                      onWishlistToggle={handleWishlistToggle}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-semibold text-charcoal">
@@ -563,68 +595,13 @@ function MarketplaceContent() {
             ) : listings.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {listings.map((listing) => (
-                  <Link
+                  <MarketplaceListingCard
                     key={listing.id}
-                    href={`/marketplace/${listing.id}`}
-                    className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
-                  >
-                    <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
-                    {/* Thumbnail */}
-                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-warm-bg">
-                      {listing.thumbnail_url ? (
-                        <Image
-                          src={listing.thumbnail_url}
-                          alt={listing.title}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover transition group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-charcoal/30">
-                          <ShoppingBag className="h-10 w-10" />
-                        </div>
-                      )}
-                      {listing.is_boosted && (
-                        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-sunflower/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-charcoal">
-                          <Sparkles className="h-3 w-3" />
-                          Boosted
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={(event) => handleWishlistToggle(event, listing.id)}
-                        disabled={wishlistLoadingIds.has(listing.id)}
-                        className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
-                        aria-label={wishlistedListingIds.has(listing.id) ? "Remove from wishlist" : "Save to wishlist"}
-                      >
-                        <Heart
-                          className={`h-4 w-4 ${wishlistedListingIds.has(listing.id) ? "fill-coral text-coral" : "text-charcoal/60"}`}
-                        />
-                      </button>
-                    </div>
-
-                    {/* Details */}
-                    <div className="p-4">
-                      {listing.category_name && (
-                        <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
-                          {listing.category_name}
-                        </span>
-                      )}
-                      <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
-                        {listing.title}
-                      </h3>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <p className="text-lg font-bold text-forest">
-                          {formatPrice(listing.price)}
-                        </p>
-                        {hasOriginalPrice(listing) ? (
-                          <p className="text-sm line-through text-charcoal/40">
-                            {formatPrice(listing.original_price ?? listing.price)}
-                          </p>
-                        ) : null}
-                      </div>
-                    </div>
-                  </Link>
+                    listing={listing}
+                    isWishlisted={wishlistedListingIds.has(listing.id)}
+                    wishlistLoading={wishlistLoadingIds.has(listing.id)}
+                    onWishlistToggle={handleWishlistToggle}
+                  />
                 ))}
               </div>
             ) : (

@@ -14,7 +14,9 @@ import {
   Phone,
   Trash2,
 } from "lucide-react";
+import { MarketplaceListingCard } from "@/components/MarketplaceListingCard";
 import { Skeleton } from "@/components/Skeleton";
+import { hydrateMarketplaceListings, type MarketplaceListing } from "@/lib/marketplace-listings";
 import { supabase } from "@/lib/supabase";
 
 type ListingDetail = {
@@ -30,6 +32,7 @@ type ListingDetail = {
   is_boosted: boolean;
   created_at: string;
   expires_at: string;
+  category_id: string | null;
   category_name: string | null;
 };
 
@@ -54,6 +57,9 @@ export default function ListingDetailPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [relatedListings, setRelatedListings] = useState<MarketplaceListing[]>([]);
+  const [relatedWishlistIds, setRelatedWishlistIds] = useState<Set<string>>(new Set());
+  const [relatedWishlistLoadingIds, setRelatedWishlistLoadingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const load = async () => {
@@ -108,8 +114,29 @@ export default function ListingDetailPage() {
         is_boosted: listingData.is_boosted,
         created_at: listingData.created_at,
         expires_at: listingData.expires_at,
+        category_id: listingData.category_id,
         category_name: categoryName,
       });
+
+      if (listingData.category_id) {
+        const { data: relatedListingsData, error: relatedListingsError } = await supabase
+          .from("listings")
+          .select("id, title, price, original_price, seller_id, created_at, category_id")
+          .eq("status", "active")
+          .eq("category_id", listingData.category_id)
+          .neq("id", listingId)
+          .order("created_at", { ascending: false })
+          .limit(18);
+
+        if (!relatedListingsError && relatedListingsData && relatedListingsData.length >= 2) {
+          const hydratedRelatedListings = (await hydrateMarketplaceListings(relatedListingsData)).slice(0, 6);
+          setRelatedListings(hydratedRelatedListings.length >= 2 ? hydratedRelatedListings : []);
+        } else {
+          setRelatedListings([]);
+        }
+      } else {
+        setRelatedListings([]);
+      }
 
       // Fetch images
       const { data: imgData } = await supabase
@@ -129,6 +156,7 @@ export default function ListingDetailPage() {
   useEffect(() => {
     const loadWishlistState = async () => {
       if (!currentUserId || !listing?.id) {
+        setRelatedWishlistIds(new Set());
         return;
       }
 
@@ -145,10 +173,31 @@ export default function ListingDetailPage() {
       }
 
       setIsWishlisted(Boolean(data));
+
+      if (relatedListings.length === 0) {
+        setRelatedWishlistIds(new Set());
+        return;
+      }
+
+      const { data: relatedWishlistData, error: relatedWishlistError } = await supabase
+        .from("wishlist_items")
+        .select("listing_id")
+        .eq("user_id", currentUserId)
+        .in(
+          "listing_id",
+          relatedListings.map((relatedListing) => relatedListing.id)
+        );
+
+      if (relatedWishlistError || !relatedWishlistData) {
+        setRelatedWishlistIds(new Set());
+        return;
+      }
+
+      setRelatedWishlistIds(new Set(relatedWishlistData.map((row) => row.listing_id)));
     };
 
     loadWishlistState();
-  }, [currentUserId, listing?.id]);
+  }, [currentUserId, listing?.id, relatedListings]);
 
   const isOwner = currentUserId != null && listing?.seller_id === currentUserId;
 
@@ -183,6 +232,55 @@ export default function ListingDetailPage() {
     }
 
     setWishlistLoading(false);
+  };
+
+  const handleRelatedWishlistToggle = async (relatedListingId: string) => {
+    if (!currentUserId) {
+      router.push("/login");
+      return;
+    }
+
+    setRelatedWishlistLoadingIds((prev) => {
+      const next = new Set(prev);
+      next.add(relatedListingId);
+      return next;
+    });
+
+    const isRelatedWishlisted = relatedWishlistIds.has(relatedListingId);
+
+    if (isRelatedWishlisted) {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .delete()
+        .eq("user_id", currentUserId)
+        .eq("listing_id", relatedListingId);
+
+      if (!error) {
+        setRelatedWishlistIds((prev) => {
+          const next = new Set(prev);
+          next.delete(relatedListingId);
+          return next;
+        });
+      }
+    } else {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .insert({ user_id: currentUserId, listing_id: relatedListingId });
+
+      if (!error) {
+        setRelatedWishlistIds((prev) => {
+          const next = new Set(prev);
+          next.add(relatedListingId);
+          return next;
+        });
+      }
+    }
+
+    setRelatedWishlistLoadingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(relatedListingId);
+      return next;
+    });
   };
 
   const handleDelete = async () => {
@@ -523,6 +621,34 @@ export default function ListingDetailPage() {
             </div>
           </div>
         </div>
+
+        {relatedListings.length >= 2 ? (
+          <section className="mt-10">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold text-charcoal">You might also like</h2>
+                <p className="text-sm text-charcoal/60">
+                  More active picks from this category, with live Pro boosts ranked first.
+                </p>
+              </div>
+              <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">
+                {relatedListings.length} product{relatedListings.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedListings.map((relatedListing) => (
+                <MarketplaceListingCard
+                  key={relatedListing.id}
+                  listing={relatedListing}
+                  isWishlisted={relatedWishlistIds.has(relatedListing.id)}
+                  wishlistLoading={relatedWishlistLoadingIds.has(relatedListing.id)}
+                  onWishlistToggle={handleRelatedWishlistToggle}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </main>
   );
