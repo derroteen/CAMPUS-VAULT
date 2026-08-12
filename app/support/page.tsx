@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/Skeleton";
+import TipGratitudeModal from "@/components/TipGratitudeModal";
 import { supabase } from "@/lib/supabase";
 
 const PRESET_AMOUNTS = [20, 50, 100, 200] as const;
@@ -18,6 +19,7 @@ export default function SupportPage() {
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState(false);
   const [paymentSucceeded, setPaymentSucceeded] = useState(false);
+  const [showGratitudeModal, setShowGratitudeModal] = useState(false);
   const verifyPollStartRef = useRef<number | null>(null);
   const verifyPollInFlightRef = useRef(false);
   const verifyPollIntervalRef = useRef<number | null>(null);
@@ -97,6 +99,7 @@ export default function SupportPage() {
           );
           setPaymentReference(null);
           setPaymentSucceeded(true);
+          setShowGratitudeModal(true);
           setPaymentError(false);
           return;
         }
@@ -203,6 +206,7 @@ export default function SupportPage() {
     !paymentSucceeded &&
     !paymentError;
   const isBusy = paymentInProgress || isPolling;
+  const tipAmount = Number(amountKes);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal font-space-grotesk">
@@ -307,6 +311,13 @@ export default function SupportPage() {
           </p>
         </div>
       </div>
+
+      {showGratitudeModal ? (
+        <TipGratitudeModal
+          amountPaid={Number.isFinite(tipAmount) ? tipAmount : 0}
+          onClose={() => setShowGratitudeModal(false)}
+        />
+      ) : null}
     </main>
   );
 }
