@@ -677,6 +677,9 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div className="mt-10 border-t border-forest/10 pt-6 text-center text-xs text-charcoal/50">
+            Powered by DTEQ Solutions
+          </div>
         </div>
       </footer>
     </main>
