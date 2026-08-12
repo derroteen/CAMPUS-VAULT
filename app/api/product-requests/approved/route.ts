@@ -1,12 +1,24 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase-admin";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const { data, error } = await supabaseAdmin
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+    const supabaseNoStore = createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+      global: {
+        fetch: (url, options = {}) => fetch(url, { ...options, cache: "no-store" }),
+      },
+    });
+
+    const { data, error } = await supabaseNoStore
       .from("product_requests")
       .select("id, title, description")
       .eq("status", "approved")
