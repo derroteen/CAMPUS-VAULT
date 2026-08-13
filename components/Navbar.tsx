@@ -87,6 +87,12 @@ export default function Navbar() {
               >
                 Wishlist
               </Link>
+              <Link
+                href="/account"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+              >
+                Account
+              </Link>
               <span className="hidden max-w-32 truncate text-warm-bg/80 sm:inline-block">
                 {email}
               </span>
@@ -166,6 +172,13 @@ export default function Navbar() {
                 className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Wishlist
+              </Link>
+              <Link
+                href="/account"
+                onClick={() => setIsOpen(false)}
+                className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+              >
+                Account
               </Link>
               <div className="truncate px-3 py-1 text-xs text-warm-bg/70">
                 Signed in as: <span className="text-sunflower">{email}</span>

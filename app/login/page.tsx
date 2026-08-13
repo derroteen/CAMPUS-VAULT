@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import {
+  getVerifiedTotpFactorFromList,
+  userMustEnrollAdminMfa,
+} from "@/lib/auth-mfa";
 import { supabase } from "@/lib/supabase";
 import PasswordInput from "@/components/PasswordInput";
 
@@ -10,18 +14,42 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
+  const [requiresMfaChallenge, setRequiresMfaChallenge] = useState(false);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  const finalizePostLogin = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      router.replace("/login");
+      return;
+    }
+
+    const mustEnrollMfa = await userMustEnrollAdminMfa(session.user.id);
+    if (mustEnrollMfa) {
+      router.push("/account?mfa_required=1");
+      return;
+    }
+
+    router.push("/dashboard");
+  };
+
   const handleGoogleSignIn = async () => {
     setError(null);
+    setInfoMessage(null);
     setGoogleLoading(true);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/choose`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
       },
     });
 
@@ -34,9 +62,75 @@ export default function LoginPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setInfoMessage(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!requiresMfaChallenge) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+
+      const { data: aalData, error: aalError } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+      if (aalError) {
+        setError(aalError.message);
+        setLoading(false);
+        return;
+      }
+
+      const secondFactorRequired =
+        aalData.currentLevel === "aal1" && aalData.nextLevel === "aal2";
+
+      if (secondFactorRequired) {
+        const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+
+        if (factorsError) {
+          setError(factorsError.message);
+          setLoading(false);
+          return;
+        }
+
+        const verifiedFactor = getVerifiedTotpFactorFromList(factorsData);
+        if (!verifiedFactor) {
+          setError("No verified authenticator factor found for this account.");
+          setLoading(false);
+          return;
+        }
+
+        setMfaFactorId(verifiedFactor.id);
+        setRequiresMfaChallenge(true);
+        setInfoMessage("Enter the 6-digit code from your authenticator app to complete sign-in.");
+        setLoading(false);
+        return;
+      }
+
+      await finalizePostLogin();
+      setLoading(false);
+      return;
+    }
+
+    if (!mfaFactorId) {
+      setError("No MFA factor is available for this sign-in.");
+      setLoading(false);
+      return;
+    }
+
+    const trimmedCode = mfaCode.trim();
+    if (!/^\d{6}$/.test(trimmedCode)) {
+      setError("Enter a valid 6-digit authentication code.");
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.mfa.challengeAndVerify({
+      factorId: mfaFactorId,
+      code: trimmedCode,
+    });
 
     if (error) {
       setError(error.message);
@@ -44,7 +138,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/choose");
+    await finalizePostLogin();
+    setLoading(false);
   };
 
   return (
@@ -90,37 +185,61 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-            <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="email">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
-              />
-            </div>
+            {!requiresMfaChallenge ? (
+              <>
+                <div>
+                  <label className="mb-1 block text-sm text-slate-700" htmlFor="email">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                  />
+                </div>
 
-            <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="password">
-                Password
-              </label>
-              <PasswordInput
-                id="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+                <div>
+                  <label className="mb-1 block text-sm text-slate-700" htmlFor="password">
+                    Password
+                  </label>
+                  <PasswordInput
+                    id="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
 
-            <p className="mt-1 text-right">
-              <Link href="/forgot-password" className="text-xs text-forest hover:text-leaf underline">
-                Forgot password?
-              </Link>
-            </p>
+                <p className="mt-1 text-right">
+                  <Link href="/forgot-password" className="text-xs text-forest hover:text-leaf underline">
+                    Forgot password?
+                  </Link>
+                </p>
+              </>
+            ) : (
+              <div>
+                <label className="mb-1 block text-sm text-slate-700" htmlFor="mfaCode">
+                  6-digit authentication code
+                </label>
+                <input
+                  id="mfaCode"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  required
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                  placeholder="123456"
+                />
+              </div>
+            )}
+
+            {infoMessage ? <p className="text-sm text-forest">{infoMessage}</p> : null}
 
             {error ? <p className="text-sm text-coral">{error}</p> : null}
 
@@ -129,7 +248,11 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full rounded-xl bg-forest px-4 py-3 font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {loading ? "Signing in..." : "Log in"}
+              {loading
+                ? "Signing in..."
+                : requiresMfaChallenge
+                  ? "Verify and continue"
+                  : "Log in"}
             </button>
           </form>
 
