@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
@@ -26,10 +26,23 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://campus-vault-six.vercel.app"),
+  metadataBase: new URL("https://www.campusvault.top"),
   title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
   description:
     "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "MVCorner",
+  },
   openGraph: {
     title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
     description:
@@ -51,6 +64,10 @@ export const metadata: Metadata = {
     description:
       "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1B4332",
 };
 
 export default function RootLayout({

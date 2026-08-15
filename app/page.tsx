@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import InstallPWAButton from "@/components/InstallPWAButton";
 import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 
@@ -306,6 +307,7 @@ export default function Home() {
             <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-sunflower/20 px-4 py-2 text-sm font-medium text-sunflower">
               New sellers get 10 days of Pro free
             </p>
+            <InstallPWAButton />
           </div>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {isLoggedIn ? (
