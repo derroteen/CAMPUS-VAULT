@@ -321,7 +321,7 @@ function BrowsePageContent() {
     if (!hasUnlockedAccess()) {
       setUnlockTargetId(resource.id);
       setUnlockNotice(
-        "Upload 4 approved resources to unlock 7 hours of downloads."
+        "Upload 4 approved resources to unlock 24 hours of downloads."
       );
       return;
     }
@@ -572,7 +572,7 @@ function BrowsePageContent() {
               <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
                 <h3 className="text-base font-semibold text-forest">Need unlimited access?</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Upload 4 approved resources and unlock 7 hours of downloads with the 4-for-7 model.
+                  Upload 4 approved resources and unlock 24 hours of downloads with the 4-for-24 model.
                 </p>
                 <Link
                   href="/upload"

@@ -265,9 +265,9 @@ export default function Home() {
       description: "Organized by course for faster discovery across Maseno University.",
     },
     {
-      title: "4-for-7 unlock model",
+      title: "4-for-24 unlock model",
       description:
-        "Upload 4 approved resources or pay a small fee for 7 hours of unlimited downloads.",
+        "Upload 4 approved resources or pay a small fee for 24 hours of unlimited downloads.",
     },
     {
       title: "Course requests",
@@ -301,7 +301,7 @@ export default function Home() {
           </p>
           <div className="mx-auto mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
             <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/90">
-              Upload 4 Notes to Unlock Unlimited Downloads for 7 Hours
+              Upload 4 Notes to Unlock Unlimited Downloads for 24 Hours
             </p>
             <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-sunflower/20 px-4 py-2 text-sm font-medium text-sunflower">
               New sellers get 10 days of Pro free
@@ -566,13 +566,13 @@ export default function Home() {
                 How do I download notes?
               </summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
-                Upload 4 approved resources to unlock unlimited downloads for 7 hours.
+                Upload 4 approved resources to unlock unlimited downloads for 24 hours.
               </p>
             </details>
             <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">Are the notes free?</summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
-                Yes - upload your own notes to earn access. Once 4 of your uploads are approved, you unlock 7 hours of unlimited downloads.
+                Yes - upload your own notes to earn access. Once 4 of your uploads are approved, you unlock 24 hours of unlimited downloads.
               </p>
             </details>
             <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">

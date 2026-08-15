@@ -229,7 +229,7 @@ export default function AdminPage() {
     const currentCount = profileData?.approved_uploads_count ?? 0;
     const nextCount = currentCount + 1;
     const unlockAt = nextCount >= 4
-      ? new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString()
+      ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       : profileData?.unlock_expires_at ?? null;
 
     await supabase

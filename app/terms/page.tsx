@@ -46,7 +46,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-coral">Access Model</h2>
             <p className="mt-4">
-              Access requires uploading 4 approved resources, which unlocks unlimited downloads for 7 hours. There is no paid option to unlock downloads.
+              Access requires uploading 4 approved resources, which unlocks unlimited downloads for 24 hours. There is no paid option to unlock downloads.
             </p>
           </section>
 

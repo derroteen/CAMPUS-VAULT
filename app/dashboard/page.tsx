@@ -143,7 +143,7 @@ export default function DashboardPage() {
           Unlock status
         </p>
         <p className="mt-2 text-lg font-medium text-charcoal">
-          {approvedUploadsCount ?? 0}/4 resources approved — upload {remainingUploads} more to unlock 7 hours of downloads
+          {approvedUploadsCount ?? 0}/4 resources approved — upload {remainingUploads} more to unlock 24 hours of downloads
         </p>
       </div>
     );
