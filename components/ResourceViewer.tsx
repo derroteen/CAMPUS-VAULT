@@ -163,7 +163,7 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
         <p className="text-sm font-medium text-charcoal">{resourceTitle}</p>
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
           <button
             type="button"
             onClick={goPrev}
