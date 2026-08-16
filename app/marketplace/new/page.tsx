@@ -177,40 +177,34 @@ export default function NewListingPage() {
     setSubmitting(true);
 
     const userId = session.user.id;
-    const timestamp = Date.now();
 
-    // 1. Upload images to storage
-    const uploadedPaths: string[] = [];
+    // 1. Upload images through the R2 proxy route
+    const uploadedUrls: string[] = [];
     for (let i = 0; i < images.length; i++) {
       const img = images[i];
-      const safeName = img.file.name.replace(/\s+/g, "-");
-      const storagePath = `${userId}/${timestamp}-${i}-${safeName}`;
+      const formData = new FormData();
+      formData.append("file", img.file);
 
-      const { error: uploadError } = await supabase.storage
-        .from("listing-images")
-        .upload(storagePath, img.file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const response = await fetch("/api/marketplace/upload-image", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: formData,
+      });
 
-      if (uploadError) {
-        setError(`Image upload failed: ${uploadError.message}`);
+      const result = await response.json();
+
+      if (!response.ok || !result.url) {
+        setError(`Image upload failed: ${result.error ?? "Unable to upload image."}`);
         setSubmitting(false);
         return;
       }
 
-      uploadedPaths.push(storagePath);
+      uploadedUrls.push(result.url);
     }
 
-    // 2. Build public URLs
-    const publicUrls = uploadedPaths.map((path) => {
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("listing-images").getPublicUrl(path);
-      return publicUrl;
-    });
-
-    // 3. Insert listing row
+    // 2. Insert listing row
     const expiresAt = new Date();
     expiresAt.setDate(
       expiresAt.getDate() + (isPro ? PRO_LISTING_WINDOW_DAYS : FREE_LISTING_WINDOW_DAYS)
@@ -239,8 +233,8 @@ export default function NewListingPage() {
       return;
     }
 
-    // 4. Insert listing_images rows
-    const imageRows = publicUrls.map((url, idx) => ({
+    // 3. Insert listing_images rows
+    const imageRows = uploadedUrls.map((url, idx) => ({
       listing_id: listing.id,
       image_url: url,
       sort_order: idx,
