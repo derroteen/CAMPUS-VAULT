@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const pngToIcoModule = require('png-to-ico');
+const pngToIco = pngToIcoModule.default || pngToIcoModule;
 
 const root = path.resolve(__dirname, '..');
 const svgPath = path.join(root, 'public', 'logo.svg');
@@ -52,15 +54,46 @@ async function generate() {
     .png()
     .toFile(path.join(root, 'public', 'apple-touch-icon.png'));
 
+  // Build favicon sizes by rendering large first, then downscaling with lanczos3
+  // to preserve thin stroke details better than direct tiny rasterization.
+  const faviconMaster = await sharp(svg, { density: 2048 })
+    .resize(128, 128, { fit: 'contain' })
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+
+  const favicon16 = await sharp(faviconMaster)
+    .resize(16, 16, { kernel: 'lanczos3' })
+    .sharpen()
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+
+  const favicon32 = await sharp(faviconMaster)
+    .resize(32, 32, { kernel: 'lanczos3' })
+    .sharpen()
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+
+  const favicon48 = await sharp(faviconMaster)
+    .resize(48, 48, { kernel: 'lanczos3' })
+    .sharpen()
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+
+  const faviconBuffer = await pngToIco([favicon16, favicon32, favicon48]);
+  fs.writeFileSync(path.join(root, 'public', 'favicon.ico'), faviconBuffer);
+
   console.log('Generated icon assets:');
-  for (const filename of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {
+  for (const filename of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'favicon.ico']) {
     const file = path.join(root, 'public', filename);
-    const { width, height, size } = await sharp(file).metadata().then((meta) => ({
-      width: meta.width,
-      height: meta.height,
-      size: fs.statSync(file).size,
-    }));
-    console.log(`${filename}: ${width}x${height}, ${size} bytes`);
+    const size = fs.statSync(file).size;
+
+    if (filename.endsWith('.ico')) {
+      console.log(`${filename}: ${size} bytes`);
+      continue;
+    }
+
+    const meta = await sharp(file).metadata();
+    console.log(`${filename}: ${meta.width}x${meta.height}, ${size} bytes`);
   }
 }
 
