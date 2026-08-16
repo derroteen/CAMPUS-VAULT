@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { deleteImageByUrl } from "@/lib/image-storage";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const runtime = "nodejs";
@@ -71,7 +72,6 @@ export async function GET(request: NextRequest) {
   }
 
   const protectedProSellers = new Set((activeProSubscriptions ?? []).map((row) => row.user_id));
-  const bucketBase = supabaseAdmin.storage.from("listing-images").getPublicUrl("").data.publicUrl;
 
   for (const listing of listings) {
     if (protectedProSellers.has(listing.seller_id)) {
@@ -89,24 +89,24 @@ export async function GET(request: NextRequest) {
       continue;
     }
 
-    const storagePaths = ((imageRows ?? []) as ListingImageRow[])
-      .map((row) => {
-        if (row.image_url.startsWith(bucketBase)) {
-          return decodeURIComponent(row.image_url.slice(bucketBase.length));
+    const imageUrls = ((imageRows ?? []) as ListingImageRow[]).map((row) => row.image_url);
+
+    if (imageUrls.length > 0) {
+      let failedDelete = false;
+
+      for (const imageUrl of imageUrls) {
+        try {
+          await deleteImageByUrl(imageUrl);
+          summary.deletedImages += 1;
+        } catch (error) {
+          failedDelete = true;
+          const message = error instanceof Error ? error.message : "Unknown error";
+          summary.errors.push(`Listing ${listing.id}: failed to remove image ${imageUrl} (${message})`);
         }
-        return null;
-      })
-      .filter(Boolean) as string[];
+      }
 
-    if (storagePaths.length > 0) {
-      const { error: storageDeleteError } = await supabaseAdmin.storage
-        .from("listing-images")
-        .remove(storagePaths);
-
-      if (storageDeleteError) {
-        summary.errors.push(`Listing ${listing.id}: failed to remove images (${storageDeleteError.message})`);
-      } else {
-        summary.deletedImages += storagePaths.length;
+      if (failedDelete) {
+        continue;
       }
     }
 

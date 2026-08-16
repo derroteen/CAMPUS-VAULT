@@ -287,21 +287,33 @@ export default function ListingDetailPage() {
     if (!listing) return;
     setDeleting(true);
 
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setDeleting(false);
+      router.push("/login");
+      return;
+    }
+
     // Delete associated images from storage first
     if (images.length > 0) {
-      // Extract storage paths from public URLs
-      const bucketBase = supabase.storage.from("listing-images").getPublicUrl("").data.publicUrl;
-      const storagePaths = images
-        .map((img) => {
-          if (img.image_url.startsWith(bucketBase)) {
-            return decodeURIComponent(img.image_url.slice(bucketBase.length));
-          }
-          return null;
-        })
-        .filter(Boolean) as string[];
+      const deleteResponse = await fetch("/api/marketplace/delete-images", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          listingId: listing.id,
+          imageUrls: images.map((img) => img.image_url),
+        }),
+      });
 
-      if (storagePaths.length > 0) {
-        await supabase.storage.from("listing-images").remove(storagePaths);
+      if (!deleteResponse.ok) {
+        setDeleting(false);
+        return;
       }
     }
 

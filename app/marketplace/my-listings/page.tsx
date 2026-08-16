@@ -200,29 +200,38 @@ export default function MyListingsPage() {
   const handleDelete = async (listingId: string) => {
     setActionInProgress(listingId);
 
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setActionInProgress(null);
+      router.push("/login");
+      return;
+    }
+
     // 1. Fetch all images for this listing so we can remove storage files
     const { data: imgRows } = await supabase
       .from("listing_images")
       .select("image_url")
       .eq("listing_id", listingId);
 
-    // 2. Derive storage paths from public URLs
     if (imgRows && imgRows.length > 0) {
-      const bucketBase = supabase.storage
-        .from("listing-images")
-        .getPublicUrl("").data.publicUrl;
+      const deleteResponse = await fetch("/api/marketplace/delete-images", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          listingId,
+          imageUrls: imgRows.map((row) => row.image_url),
+        }),
+      });
 
-      const storagePaths = imgRows
-        .map((row) => {
-          if (row.image_url.startsWith(bucketBase)) {
-            return decodeURIComponent(row.image_url.slice(bucketBase.length));
-          }
-          return null;
-        })
-        .filter(Boolean) as string[];
-
-      if (storagePaths.length > 0) {
-        await supabase.storage.from("listing-images").remove(storagePaths);
+      if (!deleteResponse.ok) {
+        setActionInProgress(null);
+        return;
       }
     }
 

@@ -247,21 +247,23 @@ export default function EditListingPage() {
         .in("id", removedImageIds);
 
       if (removedRows && removedRows.length > 0) {
-        const bucketBase = supabase.storage
-          .from("listing-images")
-          .getPublicUrl("").data.publicUrl;
+        const deleteResponse = await fetch("/api/marketplace/delete-images", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            listingId,
+            imageUrls: removedRows.map((row) => row.image_url),
+          }),
+        });
 
-        const storagePaths = removedRows
-          .map((row) => {
-            if (row.image_url.startsWith(bucketBase)) {
-              return decodeURIComponent(row.image_url.slice(bucketBase.length));
-            }
-            return null;
-          })
-          .filter(Boolean) as string[];
-
-        if (storagePaths.length > 0) {
-          await supabase.storage.from("listing-images").remove(storagePaths);
+        const deleteResult = await deleteResponse.json();
+        if (!deleteResponse.ok) {
+          setError(`Failed to delete removed images: ${deleteResult.error ?? "Unknown error"}`);
+          setSubmitting(false);
+          return;
         }
 
         await supabase
@@ -273,36 +275,34 @@ export default function EditListingPage() {
 
     // 3. Upload new images and insert listing_images rows
     if (newImages.length > 0) {
-      const timestamp = Date.now();
       const newImageRows: { listing_id: string; image_url: string; sort_order: number }[] = [];
 
       const currentSortOrder = existingImages.length;
 
       for (let i = 0; i < newImages.length; i++) {
         const img = newImages[i];
-        const safeName = img.file.name.replace(/\s+/g, "-");
-        const storagePath = `${userId}/${timestamp}-${i}-${safeName}`;
+        const formData = new FormData();
+        formData.append("file", img.file);
 
-        const { error: uploadError } = await supabase.storage
-          .from("listing-images")
-          .upload(storagePath, img.file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
+        const response = await fetch("/api/marketplace/upload-image", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        });
 
-        if (uploadError) {
-          setError(`Failed to upload image: ${uploadError.message}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.url) {
+          setError(`Failed to upload image: ${result.error ?? "Unable to upload image."}`);
           setSubmitting(false);
           return;
         }
 
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("listing-images").getPublicUrl(storagePath);
-
         newImageRows.push({
           listing_id: listingId,
-          image_url: publicUrl,
+          image_url: result.url,
           sort_order: currentSortOrder + i,
         });
       }
