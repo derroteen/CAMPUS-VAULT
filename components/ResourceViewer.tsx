@@ -21,6 +21,8 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
   const [loadingPdf, setLoadingPdf] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const refreshInFlightRef = useRef(false);
+  const pageContainerRef = useRef<HTMLDivElement | null>(null);
+  const [pageContainerWidth, setPageContainerWidth] = useState(0);
 
   const refreshSignedUrl = useCallback(
     async (silent = false) => {
@@ -83,6 +85,35 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
     void refreshSignedUrl();
   }, [refreshSignedUrl]);
 
+  useEffect(() => {
+    const measure = () => {
+      if (!pageContainerRef.current) {
+        return;
+      }
+
+      setPageContainerWidth(pageContainerRef.current.clientWidth);
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(() => {
+      measure();
+    });
+
+    if (pageContainerRef.current) {
+      observer.observe(pageContainerRef.current);
+    }
+
+    window.addEventListener("resize", measure);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [signedUrl]);
+
+  const fitWidth = Math.max(240, Math.floor(((pageContainerWidth > 0 ? pageContainerWidth : 360) - 24) * scale));
+
   const handleLoadSuccess = ({ numPages: nextNumPages }: { numPages: number }) => {
     setNumPages(nextNumPages);
     setPageNumber((current) => Math.min(Math.max(current, 1), nextNumPages));
@@ -126,7 +157,7 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
 
   return (
     <section
-      className="rounded-2xl border border-slate-200 bg-white shadow-sm"
+      className="flex max-h-[80vh] flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
       onContextMenu={(e) => e.preventDefault()}
       aria-label={`Viewer for ${resourceTitle}`}
     >
@@ -170,7 +201,7 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
         </div>
       </div>
 
-      <div className="min-h-[60vh] bg-slate-50 p-4 sm:p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6">
         {loadingUrl ? (
           <div className="mx-auto max-w-3xl space-y-3">
             <Skeleton className="h-10 w-full rounded-xl" />
@@ -182,7 +213,7 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
           </div>
         ) : signedUrl ? (
           <div className="overflow-x-auto">
-            <div className="mx-auto w-fit rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+            <div ref={pageContainerRef} className="mx-auto w-full max-w-full rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
               <Document
                 file={signedUrl}
                 loading={
@@ -196,7 +227,7 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
               >
                 <Page
                   pageNumber={pageNumber}
-                  scale={scale}
+                  width={fitWidth}
                   renderMode="canvas"
                   renderTextLayer={false}
                   renderAnnotationLayer={false}

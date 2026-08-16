@@ -699,7 +699,7 @@ function BrowsePageContent() {
 
       {viewingResource ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/70 p-4 sm:p-6">
-          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-5">
+          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-charcoal">View resource</h2>
               <button
