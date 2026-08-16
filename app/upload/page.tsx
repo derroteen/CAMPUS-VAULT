@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Upload } from "lucide-react";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 import SchoolCoursePicker, { SchoolCoursePickerValue } from "@/app/components/SchoolCoursePicker";
 
@@ -12,9 +13,15 @@ type University = {
   name: string;
 };
 
+type Course = {
+  id: string;
+  name: string;
+  code: string | null;
+};
+
 const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
-const MAX_RESOURCE_FILE_BYTES = 15 * 1024 * 1024;
-const MAX_RESOURCE_FILE_MB = 15;
+const MAX_RESOURCE_FILE_BYTES = 3 * 1024 * 1024;
+const MAX_RESOURCE_FILE_MB = 3;
 
 export default function UploadPage() {
   const router = useRouter();
@@ -22,6 +29,9 @@ export default function UploadPage() {
   const [selectedUniversityId, setSelectedUniversityId] = useState("");
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState("");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [coursesLoading, setCoursesLoading] = useState(false);
+  const [additionalCourseIds, setAdditionalCourseIds] = useState<string[]>([]);
   const [resourceType, setResourceType] = useState<(typeof resourceTypes)[number]>("notes");
   const [title, setTitle] = useState("");
   const [unitName, setUnitName] = useState("");
@@ -66,6 +76,50 @@ export default function UploadPage() {
     ensureSession();
   }, [router]);
 
+  useEffect(() => {
+    let isActive = true;
+
+    const loadCourses = async () => {
+      setCourses([]);
+      setAdditionalCourseIds([]);
+
+      if (!selectedUniversityId || !selectedSchoolId) {
+        setCoursesLoading(false);
+        return;
+      }
+
+      setCoursesLoading(true);
+
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id, name, code")
+        .eq("university_id", selectedUniversityId)
+        .eq("school_id", selectedSchoolId)
+        .order("name", { ascending: true });
+
+      if (!isActive) {
+        return;
+      }
+
+      setCourses(!error && data ? data : []);
+      setCoursesLoading(false);
+    };
+
+    loadCourses();
+
+    return () => {
+      isActive = false;
+    };
+  }, [selectedUniversityId, selectedSchoolId]);
+
+  useEffect(() => {
+    if (!selectedCourseId) {
+      return;
+    }
+
+    setAdditionalCourseIds((current) => current.filter((courseId) => courseId !== selectedCourseId));
+  }, [selectedCourseId]);
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
 
@@ -83,6 +137,15 @@ export default function UploadPage() {
   const handleSchoolCourseChange = (nextValue: SchoolCoursePickerValue) => {
     setSelectedSchoolId(nextValue.schoolId);
     setSelectedCourseId(nextValue.courseId ?? "");
+  };
+
+  const handleAdditionalCourseToggle = (courseId: string) => {
+    setAdditionalCourseIds((current) => {
+      if (current.includes(courseId)) {
+        return current.filter((id) => id !== courseId);
+      }
+      return [...current, courseId];
+    });
   };
 
   const getResourceBadgeClass = (type: string) => {
@@ -216,20 +279,41 @@ export default function UploadPage() {
       return;
     }
 
-    const { error: insertError } = await supabase.from("resources").insert({
-      title: title.trim(),
-      storage_path: storagePath,
-      resource_type: resourceType,
-      status: "pending",
-      uploader_id: session.user.id,
-      course_id: selectedCourseId,
-      unit_name: unitName.trim(),
-    });
+    const { data: insertedResource, error: insertError } = await supabase
+      .from("resources")
+      .insert({
+        title: title.trim(),
+        storage_path: storagePath,
+        resource_type: resourceType,
+        status: "pending",
+        uploader_id: session.user.id,
+        course_id: selectedCourseId,
+        unit_name: unitName.trim(),
+      })
+      .select("id")
+      .single();
 
-    if (insertError) {
-      setError(insertError.message);
+    if (insertError || !insertedResource) {
+      setError(insertError?.message ?? "Failed to create the resource.");
       setSubmitting(false);
       return;
+    }
+
+    const extraCourseIds = Array.from(new Set(additionalCourseIds.filter((courseId) => courseId !== selectedCourseId)));
+
+    if (extraCourseIds.length > 0) {
+      const { error: resourceCoursesError } = await supabase.from("resource_courses").insert(
+        extraCourseIds.map((courseId) => ({
+          resource_id: insertedResource.id,
+          course_id: courseId,
+        }))
+      );
+
+      if (resourceCoursesError) {
+        setError(resourceCoursesError.message);
+        setSubmitting(false);
+        return;
+      }
     }
 
     // Send admin notification (non-blocking)
@@ -260,14 +344,37 @@ export default function UploadPage() {
     setFile(null);
     setSelectedUniversityId("");
     setSelectedCourseId("");
+    setAdditionalCourseIds([]);
     setResourceType("notes");
     setSubmitting(false);
   };
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 text-charcoal">
-        <p className="text-slate-600">Loading...</p>
+      <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+          <Skeleton className="h-6 w-40 rounded-full" />
+          <Skeleton className="mt-4 h-9 w-72 rounded-xl" />
+          <Skeleton className="mt-2 h-5 w-80 rounded-lg" />
+
+          <div className="mt-8 space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Skeleton className="h-28 rounded-2xl" />
+              <Skeleton className="h-28 rounded-2xl" />
+            </div>
+            <Skeleton className="h-36 rounded-2xl" />
+            <div className="grid gap-4 md:grid-cols-2">
+              <Skeleton className="h-28 rounded-2xl" />
+              <Skeleton className="h-28 rounded-2xl" />
+            </div>
+            <Skeleton className="h-24 rounded-2xl" />
+            <Skeleton className="h-44 rounded-2xl" />
+            <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+              <Skeleton className="h-5 w-32 rounded-lg" />
+              <Skeleton className="h-10 w-28 rounded-xl" />
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
@@ -312,6 +419,39 @@ export default function UploadPage() {
                 value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
                 onChange={handleSchoolCourseChange}
               />
+
+              <div className="mt-4 rounded-xl border border-slate-200 bg-white/80 p-3">
+                <p className="text-sm font-medium text-charcoal">Also applies to these courses (optional)</p>
+                {!selectedSchoolId ? (
+                  <p className="mt-2 text-sm text-slate-500">Select a school first to pick additional courses.</p>
+                ) : coursesLoading ? (
+                  <p className="mt-2 text-sm text-slate-500">Loading courses...</p>
+                ) : (
+                  <div className="mt-3 max-h-40 space-y-2 overflow-y-auto pr-1">
+                    {courses.filter((course) => course.id !== selectedCourseId).length === 0 ? (
+                      <p className="text-sm text-slate-500">No additional courses available.</p>
+                    ) : (
+                      courses
+                        .filter((course) => course.id !== selectedCourseId)
+                        .map((course) => (
+                          <label
+                            key={course.id}
+                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={additionalCourseIds.includes(course.id)}
+                              onChange={() => handleAdditionalCourseToggle(course.id)}
+                              className="h-4 w-4 rounded border-slate-300 text-forest focus:ring-forest"
+                            />
+                            <span>{course.code ? `${course.code} - ${course.name}` : course.name}</span>
+                          </label>
+                        ))
+                    )}
+                  </div>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={() => setShowCourseRequest((current) => !current)}
