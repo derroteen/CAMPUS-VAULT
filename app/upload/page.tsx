@@ -13,6 +13,8 @@ type University = {
 };
 
 const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
+const MAX_RESOURCE_FILE_BYTES = 15 * 1024 * 1024;
+const MAX_RESOURCE_FILE_MB = 15;
 
 export default function UploadPage() {
   const router = useRouter();
@@ -32,6 +34,7 @@ export default function UploadPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   useEffect(() => {
     const ensureSession = async () => {
@@ -65,6 +68,15 @@ export default function UploadPage() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
+
+    if (selectedFile && selectedFile.size > MAX_RESOURCE_FILE_BYTES) {
+      setFile(null);
+      setFileError(`File is too large - please keep uploads under ${MAX_RESOURCE_FILE_MB}MB.`);
+      event.target.value = "";
+      return;
+    }
+
+    setFileError(null);
     setFile(selectedFile);
   };
 
@@ -177,6 +189,13 @@ export default function UploadPage() {
       setError("Please fill in all fields and choose a file.");
       return;
     }
+
+    if (file.size > MAX_RESOURCE_FILE_BYTES) {
+      setFileError(`File is too large - please keep uploads under ${MAX_RESOURCE_FILE_MB}MB.`);
+      return;
+    }
+
+    setFileError(null);
 
     setSubmitting(true);
 
@@ -430,6 +449,7 @@ export default function UploadPage() {
                 </button>
               </div>
             ) : null}
+            {fileError ? <p className="mt-3 text-sm text-coral">{fileError}</p> : null}
           </div>
 
           {error ? <p className="text-sm text-coral">{error}</p> : null}
