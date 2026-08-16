@@ -83,21 +83,6 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
     void refreshSignedUrl();
   }, [refreshSignedUrl]);
 
-  useEffect(() => {
-    if (!signedUrl) {
-      return;
-    }
-
-    // Refresh before expiry so the viewer can continue without interruption.
-    const intervalId = window.setInterval(() => {
-      void refreshSignedUrl(true);
-    }, 75 * 1000);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [signedUrl, refreshSignedUrl]);
-
   const handleLoadSuccess = ({ numPages: nextNumPages }: { numPages: number }) => {
     setNumPages(nextNumPages);
     setPageNumber((current) => Math.min(Math.max(current, 1), nextNumPages));

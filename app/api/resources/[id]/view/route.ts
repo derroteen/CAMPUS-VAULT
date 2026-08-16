@@ -56,7 +56,7 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     const { data: signedUrlData, error: signedUrlError } = await supabaseAdmin.storage
       .from("resources")
-      .createSignedUrl(resource.storage_path, 90);
+      .createSignedUrl(resource.storage_path, 900);
 
     if (signedUrlError || !signedUrlData?.signedUrl) {
       return NextResponse.json({ error: "Could not create view link" }, { status: 500 });
