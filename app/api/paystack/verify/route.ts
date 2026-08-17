@@ -87,6 +87,11 @@ export async function GET(request: Request) {
       JSON.stringify(verificationData)
     );
 
+    const failureReason =
+      verificationData?.data?.status === "failed" || verificationData?.data?.status === "abandoned"
+        ? verificationData?.data?.gateway_response || verificationData?.data?.message || null
+        : null;
+
     if (verificationData?.data?.status === "success" && transaction.status === "pending") {
       const { data: successUpdatedRows, error: successUpdateError } = await supabaseAdmin
         .from("transactions")
@@ -106,7 +111,12 @@ export async function GET(request: Request) {
           .eq("id", transaction.id)
           .maybeSingle();
 
-        return NextResponse.json({ status: latestTransaction?.status ?? transaction.status });
+        const latestStatus = latestTransaction?.status ?? transaction.status;
+        if (latestStatus === "failed") {
+          return NextResponse.json({ status: "failed", reason: failureReason });
+        }
+
+        return NextResponse.json({ status: latestStatus });
       }
 
       const newExpiresAt =
@@ -139,10 +149,15 @@ export async function GET(request: Request) {
           .eq("id", transaction.id)
           .maybeSingle();
 
-        return NextResponse.json({ status: latestTransaction?.status ?? transaction.status });
+        const latestStatus = latestTransaction?.status ?? transaction.status;
+        if (latestStatus === "failed") {
+          return NextResponse.json({ status: "failed", reason: failureReason });
+        }
+
+        return NextResponse.json({ status: latestStatus });
       }
 
-      return NextResponse.json({ status: "failed" });
+      return NextResponse.json({ status: "failed", reason: failureReason });
     }
 
     console.log("Verify: falling through to final return with local status:", transaction.status);
@@ -158,6 +173,10 @@ export async function GET(request: Request) {
         .maybeSingle();
 
       return NextResponse.json({ status: "success", expiresAt: currentSub?.expires_at ?? null });
+    }
+
+    if (transaction.status === "failed") {
+      return NextResponse.json({ status: "failed", reason: failureReason });
     }
 
     return NextResponse.json({ status: transaction.status });

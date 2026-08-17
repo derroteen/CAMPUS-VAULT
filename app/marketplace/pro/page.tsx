@@ -133,7 +133,10 @@ export default function ProUpgradePage() {
 
         if (result.status === "failed") {
           stopPolling();
-          setPaymentMessage("Payment was not completed. Please try again.");
+          const failureMessage = result.reason
+            ? `Payment failed: ${result.reason}. Please try again.`
+            : "Payment was not completed. Please try again.";
+          setPaymentMessage(failureMessage);
           setPaymentReference(null);
           setPaymentError(true);
           return;
