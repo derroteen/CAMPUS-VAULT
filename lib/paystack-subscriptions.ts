@@ -39,6 +39,10 @@ export async function activateProSubscriptionFromTransaction(
     paystack_ref: reference,
     paid_amount: transaction.amount_kes,
     was_launch_offer: Boolean(transaction.is_launch_offer),
+    // Renewing resets the expiry-email flags so the next cycle gets its
+    // own "expiring soon" / "expired" reminders instead of staying silent.
+    expiry_reminder_sent_at: null,
+    expired_notice_sent_at: null,
   };
 
   if (existingSub) {

@@ -207,6 +207,33 @@ export default function AdminPage() {
     loadAdminPage();
   }, [router]);
 
+  const notifyApproval = async (type: "course_request" | "resource", id: string) => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/approval-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ type, id }),
+      });
+
+      if (!response.ok) {
+        console.error("Approval email API returned error status:", response.status);
+      }
+    } catch (err) {
+      console.error("Failed to send approval email:", err);
+    }
+  };
+
   const handleApproveResource = async (resourceId: string, uploaderId: string) => {
     setProcessingId(resourceId);
 
@@ -239,6 +266,9 @@ export default function AdminPage() {
         unlock_expires_at: unlockAt,
       })
       .eq("id", uploaderId);
+
+    // Let the uploader know their document is live (non-blocking).
+    notifyApproval("resource", resourceId);
 
     setResources((current) => current.filter((resource) => resource.id !== resourceId));
     setProcessingId(null);
@@ -299,6 +329,9 @@ export default function AdminPage() {
       .from("course_requests")
       .update({ status: "approved" })
       .eq("id", requestId);
+
+    // Let the requester know their course is now available (non-blocking).
+    notifyApproval("course_request", requestId);
 
     setCourseRequests((current) => current.filter((request) => request.id !== requestId));
     setProcessingId(null);
