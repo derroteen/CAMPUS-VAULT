@@ -26,7 +26,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.campusvault.top"),
+  metadataBase: new URL("https://www.mvcorner.co.ke"),
   title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
   description:
     "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: "MVCorner | Maseno University Study Resources & Campus Marketplace",
     description:
       "Download Maseno University notes, past papers, and study guides. Buy and sell with the campus community on the MVCorner marketplace.",
-    url: "https://campus-vault-six.vercel.app",
+    url: "https://www.mvcorner.co.ke",
     siteName: "MVCorner",
     locale: "en_KE",
     type: "website",

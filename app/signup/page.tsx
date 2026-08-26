@@ -14,6 +14,9 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
 
   const handleGoogleSignIn = async () => {
     setError(null);
@@ -37,13 +40,14 @@ export default function SignUpPage() {
     setError(null);
     setLoading(true);
 
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/choose`,
       },
     });
 
@@ -53,8 +57,87 @@ export default function SignUpPage() {
       return;
     }
 
-    router.push("/choose");
+    // If Supabase already returned a session, "Confirm email" is off for
+    // this project and the account is active immediately — go straight in.
+    if (data.session) {
+      router.push("/choose");
+      return;
+    }
+
+    // No session yet means Supabase is waiting on the confirmation email
+    // to be clicked. Show that instead of silently sending the person
+    // into the app as if they were already verified.
+    setConfirmationSent(true);
+    setLoading(false);
   };
+
+  const handleResend = async () => {
+    setResendMessage(null);
+    setResending(true);
+
+    const { error: resendError } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/choose`,
+      },
+    });
+
+    setResending(false);
+    setResendMessage(
+      resendError
+        ? resendError.message
+        : "Confirmation email resent. Check your inbox (and spam folder)."
+    );
+  };
+
+  if (confirmationSent) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+          <div className="relative z-10">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
+              <svg
+                className="h-8 w-8 text-emerald-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="mt-6 text-2xl font-semibold font-space-grotesk">Confirm your email</h1>
+            <p className="mt-2 text-sm text-slate-600">
+              We sent a confirmation link to <strong>{email}</strong>. Click it to activate your
+              account, then come back and log in.
+            </p>
+            <p className="mt-4 text-sm text-slate-600">
+              Didn&apos;t get it? Check your spam folder, or{" "}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resending}
+                className="text-forest hover:text-leaf underline disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {resending ? "Resending..." : "resend the email"}
+              </button>
+              .
+            </p>
+            {resendMessage ? <p className="mt-2 text-sm text-slate-600">{resendMessage}</p> : null}
+            <div className="mt-6">
+              <Link
+                href="/login"
+                className="rounded-xl bg-forest px-4 py-2 font-medium text-white transition hover:bg-leaf"
+              >
+                Back to login
+              </Link>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">

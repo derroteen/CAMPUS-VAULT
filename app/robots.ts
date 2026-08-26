@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
         "/marketplace/*/edit",
       ],
     },
-    sitemap: "https://www.campusvault.top/sitemap.xml",
+    sitemap: "https://www.mvcorner.co.ke/sitemap.xml",
   };
 }

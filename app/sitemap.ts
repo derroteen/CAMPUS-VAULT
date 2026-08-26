@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.campusvault.top";
+  const baseUrl = "https://www.mvcorner.co.ke";
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
