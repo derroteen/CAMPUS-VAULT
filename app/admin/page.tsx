@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Skeleton } from "@/components/Skeleton";
+import { getAdminMfaGateStatus } from "@/lib/auth-mfa";
 
 type PendingResource = {
   id: string;
@@ -60,9 +61,14 @@ export default function AdminPage() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [currentAdminId, setCurrentAdminId] = useState<string | null>(null);
+  const [needsMfaChallenge, setNeedsMfaChallenge] = useState(false);
+  const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaVerifying, setMfaVerifying] = useState(false);
+  const [mfaError, setMfaError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadAdminPage = async () => {
+  const loadAdminPage = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -84,6 +90,24 @@ export default function AdminPage() {
         router.replace("/dashboard");
         return;
       }
+
+      // Approve/reject writes require a 2FA-verified (aal2) session. Google
+      // sign-in only reaches aal1, so admins need a fresh code here first.
+      const mfaGateStatus = await getAdminMfaGateStatus();
+
+      if (mfaGateStatus.status === "needs_enrollment") {
+        router.replace("/account?mfa_required=1");
+        return;
+      }
+
+      if (mfaGateStatus.status === "needs_challenge") {
+        setMfaFactorId(mfaGateStatus.factorId);
+        setNeedsMfaChallenge(true);
+        setLoading(false);
+        return;
+      }
+
+      setNeedsMfaChallenge(false);
 
       const { data: pendingResources, error: resourcesError } = await supabase
         .from("resources")
@@ -202,10 +226,46 @@ export default function AdminPage() {
       }
 
       setLoading(false);
-    };
+  };
 
+  useEffect(() => {
     loadAdminPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
+  const handleVerifyMfaChallenge = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMfaError(null);
+
+    if (!mfaFactorId) {
+      setMfaError("Could not find your authenticator app. Try refreshing the page.");
+      return;
+    }
+
+    const trimmedCode = mfaCode.trim();
+    if (!/^\d{6}$/.test(trimmedCode)) {
+      setMfaError("Enter the 6-digit code from your authenticator app.");
+      return;
+    }
+
+    setMfaVerifying(true);
+
+    const { error } = await supabase.auth.mfa.challengeAndVerify({
+      factorId: mfaFactorId,
+      code: trimmedCode,
+    });
+
+    if (error) {
+      setMfaError(error.message);
+      setMfaVerifying(false);
+      return;
+    }
+
+    setMfaCode("");
+    setMfaVerifying(false);
+    setLoading(true);
+    await loadAdminPage();
+  };
 
   const notifyApproval = async (type: "course_request" | "resource", id: string) => {
     const {
@@ -236,13 +296,20 @@ export default function AdminPage() {
 
   const handleApproveResource = async (resourceId: string, uploaderId: string) => {
     setProcessingId(resourceId);
+    setActionError(null);
 
-    const { error: updateError } = await supabase
+    const { data: updatedResource, error: updateError } = await supabase
       .from("resources")
       .update({ status: "approved" })
-      .eq("id", resourceId);
+      .eq("id", resourceId)
+      .select("id")
+      .maybeSingle();
 
-    if (updateError) {
+    if (updateError || !updatedResource) {
+      setActionError(
+        updateError?.message ??
+          "The approval didn't save — your admin session may need a fresh 2FA code. Reload the page and try again."
+      );
       setProcessingId(null);
       return;
     }
@@ -276,8 +343,23 @@ export default function AdminPage() {
 
   const handleRejectResource = async (resourceId: string) => {
     setProcessingId(resourceId);
+    setActionError(null);
 
-    await supabase.from("resources").update({ status: "rejected" }).eq("id", resourceId);
+    const { data: updatedResource, error: updateError } = await supabase
+      .from("resources")
+      .update({ status: "rejected" })
+      .eq("id", resourceId)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError || !updatedResource) {
+      setActionError(
+        updateError?.message ??
+          "The rejection didn't save — your admin session may need a fresh 2FA code. Reload the page and try again."
+      );
+      setProcessingId(null);
+      return;
+    }
 
     setResources((current) => current.filter((resource) => resource.id !== resourceId));
     setProcessingId(null);
@@ -305,6 +387,7 @@ export default function AdminPage() {
     requestedCode: string
   ) => {
     setProcessingId(requestId);
+    setActionError(null);
 
     const trimmedName = requestedName.trim();
     const trimmedCode = requestedCode.trim();
@@ -325,10 +408,21 @@ export default function AdminPage() {
       });
     }
 
-    await supabase
+    const { data: updatedRequest, error: updateError } = await supabase
       .from("course_requests")
       .update({ status: "approved" })
-      .eq("id", requestId);
+      .eq("id", requestId)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError || !updatedRequest) {
+      setActionError(
+        updateError?.message ??
+          "The approval didn't save — your admin session may need a fresh 2FA code. Reload the page and try again."
+      );
+      setProcessingId(null);
+      return;
+    }
 
     // Let the requester know their course is now available (non-blocking).
     notifyApproval("course_request", requestId);
@@ -339,11 +433,23 @@ export default function AdminPage() {
 
   const handleRejectCourseRequest = async (requestId: string) => {
     setProcessingId(requestId);
+    setActionError(null);
 
-    await supabase
+    const { data: updatedRequest, error: updateError } = await supabase
       .from("course_requests")
       .update({ status: "rejected" })
-      .eq("id", requestId);
+      .eq("id", requestId)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError || !updatedRequest) {
+      setActionError(
+        updateError?.message ??
+          "The rejection didn't save — your admin session may need a fresh 2FA code. Reload the page and try again."
+      );
+      setProcessingId(null);
+      return;
+    }
 
     setCourseRequests((current) => current.filter((request) => request.id !== requestId));
     setProcessingId(null);
@@ -351,11 +457,23 @@ export default function AdminPage() {
 
   const handleApproveProductRequest = async (requestId: string) => {
     setProcessingId(requestId);
+    setActionError(null);
 
-    await supabase
+    const { data: updatedRequest, error: updateError } = await supabase
       .from("product_requests")
       .update({ status: "approved" })
-      .eq("id", requestId);
+      .eq("id", requestId)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError || !updatedRequest) {
+      setActionError(
+        updateError?.message ??
+          "The approval didn't save — your admin session may need a fresh 2FA code. Reload the page and try again."
+      );
+      setProcessingId(null);
+      return;
+    }
 
     setProductRequests((current) => current.filter((request) => request.id !== requestId));
     setProcessingId(null);
@@ -363,11 +481,23 @@ export default function AdminPage() {
 
   const handleRejectProductRequest = async (requestId: string) => {
     setProcessingId(requestId);
+    setActionError(null);
 
-    await supabase
+    const { data: updatedRequest, error: updateError } = await supabase
       .from("product_requests")
       .update({ status: "rejected" })
-      .eq("id", requestId);
+      .eq("id", requestId)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError || !updatedRequest) {
+      setActionError(
+        updateError?.message ??
+          "The rejection didn't save — your admin session may need a fresh 2FA code. Reload the page and try again."
+      );
+      setProcessingId(null);
+      return;
+    }
 
     setProductRequests((current) => current.filter((request) => request.id !== requestId));
     setProcessingId(null);
@@ -496,6 +626,54 @@ export default function AdminPage() {
     );
   }
 
+  if (needsMfaChallenge) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/85 p-8 shadow-lg border-l-4 border-forest">
+          <h1 className="text-2xl font-semibold font-space-grotesk">Verify it&apos;s you</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Approving or rejecting anything here needs a fresh 2FA code, since you signed in with Google. Enter the 6-digit code from your authenticator app to continue.
+          </p>
+
+          <form onSubmit={handleVerifyMfaChallenge} className="mt-6 space-y-4">
+            <div>
+              <label htmlFor="adminMfaCode" className="mb-1 block text-sm text-slate-700">
+                6-digit code
+              </label>
+              <input
+                id="adminMfaCode"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                autoFocus
+                value={mfaCode}
+                onChange={(event) => setMfaCode(event.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                placeholder="123456"
+                required
+              />
+            </div>
+
+            {mfaError ? <p className="text-sm text-coral">{mfaError}</p> : null}
+
+            <button
+              type="submit"
+              disabled={mfaVerifying}
+              className="w-full rounded-xl bg-forest px-4 py-3 text-sm font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {mfaVerifying ? "Verifying..." : "Verify and continue"}
+            </button>
+          </form>
+
+          <Link href="/dashboard" className="mt-4 inline-block text-sm text-forest hover:text-leaf underline">
+            Back to dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const getResourceBadgeClass = (type: string) => {
     switch (type) {
       case "past_paper":
@@ -534,6 +712,12 @@ export default function AdminPage() {
             Back to dashboard
           </Link>
         </div>
+
+        {actionError ? (
+          <p className="rounded-2xl border border-coral/30 bg-coral/10 px-4 py-3 text-sm text-coral">
+            {actionError}
+          </p>
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">

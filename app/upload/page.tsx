@@ -22,6 +22,12 @@ type Course = {
 const resourceTypes = ["notes", "past_paper", "assignment", "summary"] as const;
 const MAX_RESOURCE_FILE_BYTES = 3 * 1024 * 1024;
 const MAX_RESOURCE_FILE_MB = 3;
+const ALLOWED_RESOURCE_EXTENSIONS = [".pdf", ".docx"];
+
+function hasAllowedResourceExtension(fileName: string) {
+  const lowerName = fileName.toLowerCase();
+  return ALLOWED_RESOURCE_EXTENSIONS.some((extension) => lowerName.endsWith(extension));
+}
 
 export default function UploadPage() {
   const router = useRouter();
@@ -123,7 +129,19 @@ export default function UploadPage() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
 
-    if (selectedFile && selectedFile.size > MAX_RESOURCE_FILE_BYTES) {
+    if (!selectedFile) {
+      setFile(null);
+      return;
+    }
+
+    if (!hasAllowedResourceExtension(selectedFile.name)) {
+      setFile(null);
+      setFileError("Only PDF and DOCX files are allowed. Please choose a document, not an image or other file type.");
+      event.target.value = "";
+      return;
+    }
+
+    if (selectedFile.size > MAX_RESOURCE_FILE_BYTES) {
       setFile(null);
       setFileError(`File is too large - please keep uploads under ${MAX_RESOURCE_FILE_MB}MB.`);
       event.target.value = "";
@@ -250,6 +268,11 @@ export default function UploadPage() {
 
     if (!selectedUniversityId || !selectedCourseId || !file || !title.trim() || !unitName.trim()) {
       setError("Please fill in all fields and choose a file.");
+      return;
+    }
+
+    if (!hasAllowedResourceExtension(file.name)) {
+      setFileError("Only PDF and DOCX files are allowed. Please choose a document, not an image or other file type.");
       return;
     }
 
@@ -571,9 +594,15 @@ export default function UploadPage() {
             <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white/70 px-4 py-8 text-center transition hover:border-forest/50">
               <Upload className="mb-3 h-8 w-8 text-forest" />
               <span className="text-sm font-medium text-slate-600">Click to browse or drag a file here</span>
-              <span className="mt-1 text-sm text-slate-500">PDF, DOCX, PPTX, TXT, and more</span>
+              <span className="mt-1 text-sm text-slate-500">PDF or DOCX only</span>
             </label>
-            <input id="file" type="file" onChange={handleFileChange} className="hidden" />
+            <input
+              id="file"
+              type="file"
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              onChange={handleFileChange}
+              className="hidden"
+            />
             {file ? (
               <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-600">
                 <div>
