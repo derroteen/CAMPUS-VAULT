@@ -40,7 +40,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-black/20 bg-[#122E23] shadow-md">
+    <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#050816]/90 backdrop-blur shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex flex-shrink-0 items-center gap-3 whitespace-nowrap text-lg font-semibold text-sunflower">
           <Image
@@ -135,7 +135,7 @@ export default function Navbar() {
 
       {/* Mobile Navigation Panel */}
       {isOpen && (
-        <div className="space-y-3 border-t border-forest/15 bg-[#122E23]/95 px-6 py-4 text-sm md:hidden">
+        <div className="space-y-3 border-t border-forest/15 bg-[#050816]/95 px-6 py-4 text-sm md:hidden">
           <Link
             href={email ? "/dashboard" : "/browse"}
             onClick={() => setIsOpen(false)}

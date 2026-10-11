@@ -3,14 +3,68 @@
 @tailwind utilities;
 
 :root {
-  --background: #020617;
-  --foreground: #f8fafc;
+  color-scheme: dark;
+  --background: #050816;
+  --foreground: #E8ECFF;
+}
+
+html,
+body {
+  background: var(--background);
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer components {
+  .btn-gradient {
+    @apply rounded-full font-medium text-white transition;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+  }
+
+  .btn-gradient:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 24px rgba(99, 102, 241, 0.45);
+  }
+
+  .btn-outline {
+    @apply rounded-full text-white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    background-clip: text;
+    color: transparent;
+  }
+
+  .eyebrow {
+    @apply text-xs uppercase tracking-[0.2em] text-blue-400;
+  }
+
+  .card-glass {
+    @apply rounded-2xl;
+    background: #0a1128;
+    border: 1px solid rgba(148, 163, 255, 0.10);
+  }
+
+  .card-glass:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+  }
+
+  .hero-glow {
+    position: relative;
+    background:
+      radial-gradient(ellipse at top left, rgba(37, 99, 235, 0.25), transparent 55%),
+      radial-gradient(ellipse at top right, rgba(124, 58, 237, 0.22), transparent 55%);
+  }
 }
 
 @layer utilities {
