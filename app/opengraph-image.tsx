@@ -19,12 +19,36 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #122E23 0%, #1B4332 50%, #2FA66A 100%)",
+          background: "#050816",
           fontFamily: "system-ui, -apple-system, sans-serif",
-          padding: "80px",
           position: "relative",
         }}
       >
+        {/* Blue glow, top-left */}
+        <div
+          style={{
+            position: "absolute",
+            top: "-260px",
+            left: "-220px",
+            width: "800px",
+            height: "800px",
+            background:
+              "radial-gradient(circle, rgba(37,86,232,0.45) 0%, rgba(37,86,232,0) 70%)",
+          }}
+        />
+        {/* Violet glow, bottom-right */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: "-300px",
+            right: "-220px",
+            width: "840px",
+            height: "840px",
+            background:
+              "radial-gradient(circle, rgba(124,58,237,0.42) 0%, rgba(124,58,237,0) 70%)",
+          }}
+        />
+        {/* Top accent bar */}
         <div
           style={{
             position: "absolute",
@@ -32,27 +56,31 @@ export default async function Image() {
             left: 0,
             right: 0,
             height: "8px",
-            background: "linear-gradient(90deg, #FFD23F, #FF6B5B, #FFD23F)",
+            background: "linear-gradient(90deg, #2556E8, #7C3AED, #22D3EE)",
           }}
         />
+        {/* Logo mark: gradient square, square top-right corner, cyan flag */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             marginBottom: "40px",
-            width: "96px",
-            height: "96px",
-            borderRadius: "24px",
-            background: "#1B4332",
+            width: "120px",
+            height: "120px",
+            borderTopLeftRadius: "26px",
+            borderTopRightRadius: "0px",
+            borderBottomRightRadius: "26px",
+            borderBottomLeftRadius: "26px",
+            background: "linear-gradient(135deg, #2556E8 0%, #7C3AED 100%)",
             position: "relative",
           }}
         >
-          <svg width="56" height="56" viewBox="0 0 32 32" fill="none">
+          <svg width="120" height="120" viewBox="0 0 64 64" fill="none">
             <path
-              d="M8 23V9L16 17L24 9V23"
-              stroke="#FFFBF5"
-              strokeWidth="2.6"
+              d="M15.83 45.67V17.83L31.83 33.83 47.83 17.83V45.67"
+              stroke="#F4F6FF"
+              strokeWidth="5.33"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -65,17 +93,16 @@ export default async function Image() {
               width: 0,
               height: 0,
               borderStyle: "solid",
-              borderWidth: "0 22px 22px 0",
-              borderColor: "transparent #FFD23F transparent transparent",
-              borderTopRightRadius: "24px",
+              borderWidth: "0 33px 33px 0",
+              borderColor: "transparent #22D3EE transparent transparent",
             }}
           />
         </div>
         <h1
           style={{
-            fontSize: "64px",
+            fontSize: "72px",
             fontWeight: "800",
-            color: "#FFFBF5",
+            color: "#F4F6FF",
             marginBottom: "16px",
             lineHeight: "1.1",
             textAlign: "center",
@@ -85,9 +112,9 @@ export default async function Image() {
         </h1>
         <p
           style={{
-            fontSize: "28px",
+            fontSize: "30px",
             fontWeight: "400",
-            color: "#FFD23F",
+            color: "#93C5FD",
             marginBottom: "32px",
             textAlign: "center",
             maxWidth: "900px",
@@ -99,19 +126,16 @@ export default async function Image() {
         <div
           style={{
             position: "absolute",
-            bottom: "32px",
+            bottom: "36px",
             left: "80px",
             right: "80px",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <p style={{ fontSize: "18px", color: "#EAF3DE" }}>
+          <p style={{ fontSize: "20px", color: "#94A3B8" }}>
             Download • Upload • Buy • Sell
-          </p>
-          <p style={{ fontSize: "18px", color: "#EAF3DE" }}>
-            campusvault.top
           </p>
         </div>
       </div>
