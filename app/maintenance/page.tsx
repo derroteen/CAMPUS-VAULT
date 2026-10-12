@@ -39,8 +39,8 @@ export default async function MaintenancePage() {
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-[80vh] w-full max-w-3xl items-center justify-center">
-        <section className="w-full rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 text-center shadow-sm sm:p-10">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-sunflower/35 bg-sunflower/15 text-forest">
+        <section className="w-full rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-8 text-center shadow-sm sm:p-10">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-sunflower/35 bg-sunflower/15 text-sky-300">
             <Wrench className="h-7 w-7" />
           </div>
           <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">We&apos;ll be right back</h1>

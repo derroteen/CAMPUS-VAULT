@@ -41,7 +41,7 @@ export default function MarketplacePage() {
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm"
+                  className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm"
                 >
                   <Skeleton className="aspect-[4/3] w-full rounded-xl" />
                   <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
@@ -386,9 +386,9 @@ function MarketplaceContent() {
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-8 shadow-sm sm:p-10">
+        <section className="relative overflow-hidden rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-8 shadow-sm sm:p-10">
           <div className="absolute right-0 top-0 h-7 w-7 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
-          <div className="inline-flex items-center rounded-full border border-leaf/30 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
+          <div className="inline-flex items-center rounded-full border border-leaf/30 bg-leaf/10 px-3 py-1 text-sm font-medium text-sky-300">
             <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
             Campus Marketplace
           </div>
@@ -402,7 +402,7 @@ function MarketplaceContent() {
                 the campus community.
               </p>
             </div>
-            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-4 shadow-sm">
               <label
                 htmlFor="marketplace-search"
                 className="mb-2 block text-sm font-medium text-charcoal/75"
@@ -417,7 +417,7 @@ function MarketplaceContent() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by title…"
-                  className="w-full rounded-xl border border-forest/15 bg-white py-3 pl-10 pr-4 text-sm text-charcoal outline-none ring-0 placeholder:text-charcoal/40"
+                  className="w-full rounded-xl border border-forest/15 bg-slate-900 py-3 pl-10 pr-4 text-sm text-charcoal outline-none ring-0 placeholder:text-charcoal/40"
                 />
               </div>
             </div>
@@ -432,7 +432,7 @@ function MarketplaceContent() {
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           {/* Sidebar */}
           <aside className="space-y-4">
-            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-5 shadow-sm">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-5 shadow-sm">
               <h2 className="text-lg font-semibold text-charcoal">Categories</h2>
               <div className="mt-4 space-y-1">
                 <button
@@ -440,7 +440,7 @@ function MarketplaceContent() {
                   onClick={() => setSelectedCategoryId("all")}
                   className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
                     selectedCategoryId === "all"
-                      ? "bg-leaf/15 font-medium text-forest"
+                      ? "bg-leaf/15 font-medium text-sky-300"
                       : "text-charcoal/70 hover:bg-sunflower/15 hover:text-forest"
                   }`}
                 >
@@ -453,7 +453,7 @@ function MarketplaceContent() {
                     onClick={() => setSelectedCategoryId(cat.id)}
                     className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
                       selectedCategoryId === cat.id
-                        ? "bg-leaf/15 font-medium text-forest"
+                        ? "bg-leaf/15 font-medium text-sky-300"
                         : "text-charcoal/70 hover:bg-sunflower/15 hover:text-forest"
                     }`}
                   >
@@ -465,26 +465,26 @@ function MarketplaceContent() {
 
             <Link
               href="/marketplace/new"
-              className="flex items-center justify-center gap-2 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 px-4 py-3 text-sm font-medium text-coral shadow-sm transition hover:bg-sunflower/15"
+              className="flex items-center justify-center gap-2 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 px-4 py-3 text-sm font-medium text-coral shadow-sm transition hover:bg-sunflower/15"
             >
               <ShoppingBag className="h-4 w-4" />
               Post a product
             </Link>
 
-            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-5 shadow-sm">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-5 shadow-sm">
               <button
                 type="button"
                 onClick={() => setShowProductRequest((current) => !current)}
-                className="text-left text-sm font-medium text-forest transition hover:text-leaf"
+                className="text-left text-sm font-medium text-sky-300 transition hover:text-leaf"
               >
                 Can&apos;t find a product? Request it
               </button>
 
               {showProductRequest ? (
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white/90 p-5">
+                <div className="mt-4 rounded-2xl border border-slate-700 bg-slate-900/90 p-5">
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="productRequestTitle" className="mb-2 block text-sm text-slate-700">
+                      <label htmlFor="productRequestTitle" className="mb-2 block text-sm text-slate-400">
                         Product title
                       </label>
                       <input
@@ -493,12 +493,12 @@ function MarketplaceContent() {
                         value={productRequestTitle}
                         onChange={(e) => setProductRequestTitle(e.target.value)}
                         placeholder="e.g. Engineering Drawing Set"
-                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="productRequestDescription" className="mb-2 block text-sm text-slate-700">
+                      <label htmlFor="productRequestDescription" className="mb-2 block text-sm text-slate-400">
                         Description (optional)
                       </label>
                       <textarea
@@ -506,13 +506,13 @@ function MarketplaceContent() {
                         value={productRequestDescription}
                         onChange={(e) => setProductRequestDescription(e.target.value)}
                         placeholder="Add preferred condition, model, size, or budget range."
-                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                         rows={3}
                       />
                     </div>
                   </div>
                   {productRequestError ? <p className="mt-3 text-sm text-coral">{productRequestError}</p> : null}
-                  {productRequestMessage ? <p className="mt-3 text-sm text-forest">{productRequestMessage}</p> : null}
+                  {productRequestMessage ? <p className="mt-3 text-sm text-sky-300">{productRequestMessage}</p> : null}
                   <div className="mt-4 flex justify-end">
                     <button
                       type="button"
@@ -526,7 +526,7 @@ function MarketplaceContent() {
               ) : null}
 
               {!showProductRequest && productRequestMessage ? (
-                <p className="mt-3 text-sm text-forest">{productRequestMessage}</p>
+                <p className="mt-3 text-sm text-sky-300">{productRequestMessage}</p>
               ) : null}
             </div>
           </aside>
@@ -542,7 +542,7 @@ function MarketplaceContent() {
                     </h2>
                     <p className="text-sm text-charcoal/60">{recommendedSection.description}</p>
                   </div>
-                  <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">
+                  <span className="rounded-full border border-forest/15 bg-slate-900/90 px-3 py-1 text-sm text-charcoal shadow-sm">
                     {recommendedSection.listings.length} pick{recommendedSection.listings.length !== 1 ? "s" : ""}
                   </span>
                 </div>
@@ -574,7 +574,7 @@ function MarketplaceContent() {
                     : "Browse what's being sold on campus right now."}
                 </p>
               </div>
-              <span className="rounded-full border border-forest/15 bg-white/90 px-3 py-1 text-sm text-charcoal shadow-sm">
+              <span className="rounded-full border border-forest/15 bg-slate-900/90 px-3 py-1 text-sm text-charcoal shadow-sm">
                 {listings.length} product{listings.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -584,7 +584,7 @@ function MarketplaceContent() {
                 {Array.from({ length: 6 }).map((_, index) => (
                   <div
                     key={index}
-                    className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm"
+                    className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm"
                   >
                     <Skeleton className="aspect-[4/3] w-full rounded-xl" />
                     <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
@@ -605,7 +605,7 @@ function MarketplaceContent() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
+              <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-8 text-center text-charcoal/60 shadow-sm">
                 No products match your current filters.
               </div>
             )}

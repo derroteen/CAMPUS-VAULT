@@ -250,7 +250,7 @@ export default function ProUpgradePage() {
           {Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}
-              className="rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm sm:p-8"
+              className="rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-6 shadow-sm sm:p-8"
             >
               <Skeleton className="h-6 w-32 rounded-lg" />
               <Skeleton className="mt-6 h-8 w-40 rounded-lg" />
@@ -301,7 +301,7 @@ export default function ProUpgradePage() {
         </div>
 
         {/* Current status banner */}
-        <div className="mb-8 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 text-center shadow-sm">
+        <div className="mb-8 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-4 text-center shadow-sm">
           <span className="text-sm text-charcoal/60">Your current plan: </span>
           <span
             className={`font-semibold ${
@@ -315,7 +315,7 @@ export default function ProUpgradePage() {
         {/* Pricing Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Free Tier Card */}
-          <div className="rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm sm:p-8 flex flex-col justify-between">
+          <div className="rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-6 shadow-sm sm:p-8 flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-semibold text-charcoal">Free Plan</h2>
               <p className="mt-1 text-sm text-charcoal/60">
@@ -353,7 +353,7 @@ export default function ProUpgradePage() {
           </div>
 
           {/* Pro Tier Card */}
-          <div className="relative rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm sm:p-8 flex flex-col justify-between">
+          <div className="relative rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-6 shadow-sm sm:p-8 flex flex-col justify-between">
             <div className="absolute -top-3 right-6 rounded-full bg-sunflower px-3 py-0.5 text-xs font-semibold text-charcoal">
               RECOMMENDED
             </div>
@@ -376,7 +376,7 @@ export default function ProUpgradePage() {
                   Launch offer pricing ends on Nov 5, 2026. Prices increase after that date.
                 </p>
               ) : null}
-              <div className="mt-6 text-3xl font-bold text-forest">
+              <div className="mt-6 text-3xl font-bold text-sky-300">
                 Pro Upgrade
               </div>
 
@@ -406,13 +406,13 @@ export default function ProUpgradePage() {
 
             <div className="mt-8 space-y-3">
               {isPro && !isTrialAccess ? (
-                <div className="rounded-xl border border-leaf/25 bg-leaf/10 py-3 text-center text-sm font-medium text-forest">
+                <div className="rounded-xl border border-leaf/25 bg-leaf/10 py-3 text-center text-sm font-medium text-sky-300">
                   Pro Plan Active
                 </div>
               ) : (
                 <>
                   {isTrialAccess ? (
-                    <p className="rounded-xl border border-leaf/25 bg-leaf/10 px-4 py-3 text-sm text-forest">
+                    <p className="rounded-xl border border-leaf/25 bg-leaf/10 px-4 py-3 text-sm text-sky-300">
                       You already have Pro access until {trialEndDateLabel ?? "your trial end date"} - need more time? You can renew below.
                     </p>
                   ) : null}
@@ -431,7 +431,7 @@ export default function ProUpgradePage() {
                               className={`w-full rounded-xl border px-3 py-2 text-left text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
                                 isSelected
                                   ? "border-forest bg-forest text-white"
-                                  : "border-forest/30 bg-forest/10 text-forest hover:bg-forest/20"
+                                  : "border-forest/30 bg-forest/10 text-sky-300 hover:bg-forest/20"
                               }`}
                             >
                               <span className="flex items-center justify-between gap-3">
@@ -462,7 +462,7 @@ export default function ProUpgradePage() {
                       </div>
 
                       <div>
-                        <label className="mb-1 block text-sm text-slate-700" htmlFor="pro-phone">
+                        <label className="mb-1 block text-sm text-slate-400" htmlFor="pro-phone">
                           M-Pesa phone number
                         </label>
                         <input
@@ -474,18 +474,18 @@ export default function ProUpgradePage() {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           disabled={isBusy}
-                          className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400 disabled:opacity-60"
+                          className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400 disabled:opacity-60"
                         />
                       </div>
 
                       {paymentMessage ? (
-                        <p className={`text-sm ${paymentError ? "text-coral" : "text-forest"}`}>
+                        <p className={`text-sm ${paymentError ? "text-coral" : "text-sky-300"}`}>
                           {paymentMessage}
                         </p>
                       ) : null}
 
                       {isPolling ? (
-                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <div className="flex items-center gap-2 text-sm text-slate-400">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-forest/40 border-t-transparent" />
                           <span>Waiting for M-Pesa confirmation...</span>
                         </div>

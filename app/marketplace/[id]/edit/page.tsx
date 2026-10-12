@@ -336,7 +336,7 @@ export default function EditListingPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 shadow-sm sm:p-10">
+        <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-8 shadow-sm sm:p-10">
           <Skeleton className="h-7 w-44 rounded-lg" />
           <Skeleton className="mt-3 h-4 w-64 rounded-lg" />
 
@@ -359,9 +359,9 @@ export default function EditListingPage() {
 
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 shadow-sm sm:p-10">
+      <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-8 shadow-sm sm:p-10">
         <div className="mb-8">
-          <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
+          <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-sky-300">
             Marketplace
           </div>
           <h1 className="mt-4 text-3xl font-semibold">Edit product</h1>
@@ -382,7 +382,7 @@ export default function EditListingPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. HP Laptop 15-inch, barely used"
-              className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+              className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
             />
           </div>
 
@@ -397,7 +397,7 @@ export default function EditListingPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the item — condition, age, why you're selling, etc."
               rows={4}
-              className="w-full resize-none rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+              className="w-full resize-none rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
             />
           </div>
 
@@ -415,7 +415,7 @@ export default function EditListingPage() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="e.g. 3500"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
 
@@ -431,7 +431,7 @@ export default function EditListingPage() {
                 value={originalPrice}
                 onChange={(e) => setOriginalPrice(e.target.value)}
                 placeholder="e.g. 4500"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
               <p className="mt-2 text-xs text-charcoal/60">Show buyers you&apos;re offering a discount</p>
             </div>
@@ -444,7 +444,7 @@ export default function EditListingPage() {
                 id="listing-category"
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -468,7 +468,7 @@ export default function EditListingPage() {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="e.g. 0712345678"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
 
@@ -483,13 +483,13 @@ export default function EditListingPage() {
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 placeholder="e.g. 0712345678"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
           </div>
 
           {/* Images Management */}
-          <div className="rounded-2xl border border-dashed border-forest/15 bg-white/90 p-5 shadow-sm">
+          <div className="rounded-2xl border border-dashed border-forest/15 bg-slate-900/90 p-5 shadow-sm">
             <label
               htmlFor="listing-images"
               className={`mb-3 flex flex-col items-center justify-center rounded-2xl border border-dashed border-forest/15 bg-warm-bg px-4 py-8 text-center transition ${
@@ -498,7 +498,7 @@ export default function EditListingPage() {
                   : "cursor-pointer hover:border-coral hover:bg-white"
               }`}
             >
-              <ImagePlus className="mb-3 h-8 w-8 text-forest" />
+              <ImagePlus className="mb-3 h-8 w-8 text-sky-300" />
               <span className="text-sm font-medium text-charcoal">
                 Click to add images
               </span>
@@ -524,7 +524,7 @@ export default function EditListingPage() {
                 {existingImages.map((img) => (
                   <div
                     key={img.id}
-                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm"
+                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -535,7 +535,7 @@ export default function EditListingPage() {
                     <button
                       type="button"
                       onClick={() => removeExistingImage(img.id)}
-                      className="absolute right-1.5 top-1.5 rounded-full bg-white/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
+                      className="absolute right-1.5 top-1.5 rounded-full bg-slate-900/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -546,7 +546,7 @@ export default function EditListingPage() {
                 {newImages.map((img, idx) => (
                   <div
                     key={idx}
-                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 shadow-sm"
+                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/90 shadow-sm"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -557,7 +557,7 @@ export default function EditListingPage() {
                     <button
                       type="button"
                       onClick={() => removeNewImage(idx)}
-                      className="absolute right-1.5 top-1.5 rounded-full bg-white/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
+                      className="absolute right-1.5 top-1.5 rounded-full bg-slate-900/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
                     >
                       <X className="h-4 w-4" />
                     </button>

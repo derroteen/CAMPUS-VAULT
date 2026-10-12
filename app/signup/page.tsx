@@ -94,7 +94,7 @@ export default function SignUpPage() {
   if (confirmationSent) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+        <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
           <div className="relative z-10">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
               <svg
@@ -108,23 +108,23 @@ export default function SignUpPage() {
               </svg>
             </div>
             <h1 className="mt-6 text-2xl font-semibold font-space-grotesk">Confirm your email</h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-slate-400">
               We sent a confirmation link to <strong>{email}</strong>. Click it to activate your
               account, then come back and log in.
             </p>
-            <p className="mt-4 text-sm text-slate-600">
+            <p className="mt-4 text-sm text-slate-400">
               Didn&apos;t get it? Check your spam folder, or{" "}
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
-                className="text-forest hover:text-leaf underline disabled:cursor-not-allowed disabled:opacity-70"
+                className="text-sky-300 hover:text-leaf underline disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {resending ? "Resending..." : "resend the email"}
               </button>
               .
             </p>
-            {resendMessage ? <p className="mt-2 text-sm text-slate-600">{resendMessage}</p> : null}
+            {resendMessage ? <p className="mt-2 text-sm text-slate-400">{resendMessage}</p> : null}
             <div className="mt-6">
               <Link
                 href="/login"
@@ -141,10 +141,10 @@ export default function SignUpPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+      <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
         <div className="relative z-10">
           <h1 className="text-2xl font-semibold font-space-grotesk">Create your account</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-slate-400">
             Sign up with your email and password.
           </p>
 
@@ -153,7 +153,7 @@ export default function SignUpPage() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={googleLoading || loading}
-              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-charcoal transition hover:border-forest/40 hover:bg-warm-bg disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm font-medium text-charcoal transition hover:border-forest/40 hover:bg-warm-bg disabled:cursor-not-allowed disabled:opacity-70"
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
                 <path
@@ -177,15 +177,15 @@ export default function SignUpPage() {
             </button>
 
             <div className="my-5 flex items-center gap-3">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-xs uppercase tracking-[0.15em] text-slate-500">or continue with email</span>
-              <div className="h-px flex-1 bg-slate-200" />
+              <div className="h-px flex-1 bg-slate-800" />
+              <span className="text-xs uppercase tracking-[0.15em] text-slate-400">or continue with email</span>
+              <div className="h-px flex-1 bg-slate-800" />
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="fullName">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="fullName">
                 Full Name
               </label>
               <input
@@ -194,12 +194,12 @@ export default function SignUpPage() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="email">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="email">
                 Email
               </label>
               <input
@@ -208,12 +208,12 @@ export default function SignUpPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="password">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="password">
                 Password
               </label>
               <PasswordInput
@@ -235,9 +235,9 @@ export default function SignUpPage() {
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-4 text-center text-sm text-slate-400">
             Already have an account?{" "}
-            <Link href="/login" className="text-forest hover:text-leaf underline">
+            <Link href="/login" className="text-sky-300 hover:text-leaf underline">
               Log in
             </Link>
           </p>

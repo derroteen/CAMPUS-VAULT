@@ -28,7 +28,7 @@ type CourseRegistry = Record<string, Course>;
 // ---------------------------------------------------------------------------
 
 const selectClassName =
-  "w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white disabled:cursor-not-allowed disabled:bg-slate-900 disabled:text-slate-500";
+  "w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white disabled:cursor-not-allowed disabled:bg-slate-900 disabled:text-slate-400";
 
 // ---------------------------------------------------------------------------
 // Props
@@ -210,12 +210,12 @@ export default function MultiCoursePicker({
           <p className="mb-2 text-sm text-slate-300">
             Courses
             {coursesLoading && (
-              <span className="ml-2 text-xs text-slate-500">Loading…</span>
+              <span className="ml-2 text-xs text-slate-400">Loading…</span>
             )}
           </p>
 
           {!coursesLoading && courses.length === 0 && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               No courses found for this school.
             </p>
           )}

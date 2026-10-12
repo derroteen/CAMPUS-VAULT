@@ -33,7 +33,7 @@ export function MarketplaceListingCard({
   return (
     <Link
       href={`/marketplace/${listing.id}`}
-      className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
+      className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
     >
       <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-warm-bg">
@@ -65,7 +65,7 @@ export function MarketplaceListingCard({
               onWishlistToggle(listing.id);
             }}
             disabled={wishlistLoading}
-            className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
+            className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
             aria-label={isWishlisted ? "Remove from wishlist" : "Save to wishlist"}
           >
             <Heart
@@ -77,7 +77,7 @@ export function MarketplaceListingCard({
 
       <div className="p-4">
         {listing.category_name && (
-          <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
+          <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-300">
             {listing.category_name}
           </span>
         )}
@@ -85,7 +85,7 @@ export function MarketplaceListingCard({
           {listing.title}
         </h3>
         <div className="mt-2 flex items-baseline gap-2">
-          <p className="text-lg font-bold text-forest">{formatPrice(listing.price)}</p>
+          <p className="text-lg font-bold text-sky-300">{formatPrice(listing.price)}</p>
           {hasOriginalPrice(listing) ? (
             <p className="text-sm line-through text-charcoal/40">
               {formatPrice(listing.original_price ?? listing.price)}

@@ -399,15 +399,15 @@ export default function Home() {
       {/* STATS STYLE SECTION */}
       <section className="py-12">
         <div className="container mx-auto px-4 grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Growing Library</h2>
             <p className="mt-2 text-base">Verified notes, past papers and study guides added regularly</p>
           </div>
-          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">New Resources Weekly</h2>
             <p className="mt-2 text-base">Fresh uploads from the Maseno University community every week</p>
           </div>
-          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/80 p-6 text-center shadow-sm">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Organized by Course</h2>
             <p className="mt-2 text-base">Find exactly what you need, filtered by school and course</p>
           </div>
@@ -417,14 +417,14 @@ export default function Home() {
       {popularCourses.length > 0 && (
         <section className="bg-forest/5 pb-8 pt-8">
           <div className="container mx-auto px-4">
-            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/80 px-4 py-4 shadow-sm">
+            <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/80 px-4 py-4 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-medium text-charcoal/75">Browse popular subjects</span>
                 {popularCourses.map((course) => (
                   <Link
                     key={course.id}
                     href={`/browse?q=${encodeURIComponent(course.name)}`}
-                    className="rounded-full border border-forest/30 bg-warm-bg px-3 py-1.5 text-sm text-forest transition hover:border-coral hover:text-coral"
+                    className="rounded-full border border-forest/30 bg-warm-bg px-3 py-1.5 text-sm text-sky-300 transition hover:border-coral hover:text-coral"
                   >
                     {course.name}
                   </Link>
@@ -438,15 +438,15 @@ export default function Home() {
       {/* MARKETPLACE STATS SECTION */}
       <section className="py-12">
         <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
-          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-white/80 p-6 text-center shadow-sm">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-slate-900/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Live Products</h2>
             <p className="mt-2 text-base">Browse what&apos;s being sold on campus right now.</p>
           </div>
-          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/80 p-6 text-center shadow-sm">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Free to List</h2>
             <p className="mt-2 text-base">Post up to 3 items at no cost - no fees to get started.</p>
           </div>
-          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-white/80 p-6 text-center shadow-sm">
+          <div className="rounded-lg border-r-[0.5px] border-y-[0.5px] border-r-sunflower/20 border-y-sunflower/20 border-l-4 border-l-sunflower bg-slate-900/80 p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold">Direct Contact</h2>
             <p className="mt-2 text-base">Reach sellers instantly via call or WhatsApp - no middleman.</p>
           </div>
@@ -468,7 +468,7 @@ export default function Home() {
                 <Link
                   key={product.id}
                   href={`/marketplace/${product.id}`}
-                  className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
+                  className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
                 >
                   <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
 
@@ -490,14 +490,14 @@ export default function Home() {
 
                   <div className="p-4">
                     {product.category_name && (
-                      <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
+                      <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-300">
                         {product.category_name}
                       </span>
                     )}
                     <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
                       {product.title}
                     </h3>
-                    <p className="mt-2 text-lg font-bold text-forest">
+                    <p className="mt-2 text-lg font-bold text-sky-300">
                       {formatProductPrice(product.price)}
                     </p>
                   </div>
@@ -522,7 +522,7 @@ export default function Home() {
               {approvedProductRequests.map((request) => (
                 <article
                   key={request.id}
-                  className="relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-5 shadow-sm"
+                  className="relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-5 shadow-sm"
                 >
                   <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
                   <h3 className="text-base font-semibold text-charcoal">{request.title}</h3>
@@ -531,7 +531,7 @@ export default function Home() {
                   ) : null}
                   <Link
                     href="/marketplace/new"
-                    className="mt-4 inline-flex text-sm font-medium text-forest transition hover:text-coral"
+                    className="mt-4 inline-flex text-sm font-medium text-sky-300 transition hover:text-coral"
                   >
                     Post this product →
                   </Link>
@@ -548,10 +548,10 @@ export default function Home() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/85 p-6 shadow-md"
+              className="relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/85 p-6 shadow-md"
             >
               <div className="absolute right-0 top-0 h-6 w-6 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
-              <h3 className="text-lg font-semibold text-forest">{feature.title}</h3>
+              <h3 className="text-lg font-semibold text-sky-300">{feature.title}</h3>
               <p className="mt-2 text-sm text-charcoal/80">{feature.description}</p>
             </div>
           ))}
@@ -561,9 +561,9 @@ export default function Home() {
       {/* FAQ */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-semibold text-center text-forest">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-semibold text-center text-sky-300">Frequently Asked Questions</h2>
           <div className="mx-auto mt-8 max-w-3xl space-y-3">
-            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">
                 How do I download notes?
               </summary>
@@ -571,13 +571,13 @@ export default function Home() {
                 Upload 4 approved resources to unlock unlimited downloads for 24 hours.
               </p>
             </details>
-            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">Are the notes free?</summary>
               <p className="mt-3 text-sm leading-6 text-charcoal/80">
                 Yes - upload your own notes to earn access. Once 4 of your uploads are approved, you unlock 24 hours of unlimited downloads.
               </p>
             </details>
-            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">
                 Which university is supported?
               </summary>
@@ -585,7 +585,7 @@ export default function Home() {
                 MVCorner currently supports Maseno University, with more universities coming soon.
               </p>
             </details>
-            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">
                 How do I request a course that isn&apos;t listed?
               </summary>
@@ -594,7 +594,7 @@ export default function Home() {
                 everyone once approved.
               </p>
             </details>
-            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">
                 How do I sell something on the marketplace?
               </summary>
@@ -603,7 +603,7 @@ export default function Home() {
                 directly by call or WhatsApp.
               </p>
             </details>
-            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/85 p-5 shadow-sm">
+            <details className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/85 p-5 shadow-sm">
               <summary className="cursor-pointer font-medium text-charcoal">
                 Is there a cost to sell?
               </summary>
@@ -636,7 +636,7 @@ export default function Home() {
             <br />
             <Link
               href="/login"
-              className="mt-4 inline-flex rounded-md border border-forest/30 bg-white/70 px-6 py-3 font-medium text-forest transition hover:bg-white"
+              className="mt-4 inline-flex rounded-md border border-forest/30 bg-slate-900/70 px-6 py-3 font-medium text-sky-300 transition hover:bg-white"
             >
               Log in
             </Link>
@@ -644,11 +644,11 @@ export default function Home() {
         )}
       </section>
 
-      <footer className="border-t border-forest/20 bg-white/60 py-12">
+      <footer className="border-t border-forest/20 bg-slate-900/60 py-12">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
-              <h2 className="font-semibold text-forest">Resources</h2>
+              <h2 className="font-semibold text-sky-300">Resources</h2>
               <div className="mt-4 space-y-2 text-charcoal/80">
                 <Link href="/browse" className="block transition hover:text-coral">Past Papers</Link>
                 <Link href="/browse" className="block transition hover:text-coral">Lecture Notes</Link>
@@ -657,7 +657,7 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <h2 className="font-semibold text-forest">Marketplace</h2>
+              <h2 className="font-semibold text-sky-300">Marketplace</h2>
               <div className="mt-4 space-y-2 text-charcoal/80">
                 <Link href="/marketplace" className="block transition hover:text-coral">Browse products</Link>
                 <Link href="/marketplace/new" className="block transition hover:text-coral">Sell an item</Link>
@@ -665,13 +665,13 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <h2 className="font-semibold text-forest">University</h2>
+              <h2 className="font-semibold text-sky-300">University</h2>
               <div className="mt-4 space-y-2 text-charcoal/80">
                 <Link href="/browse" className="block transition hover:text-coral">Maseno University</Link>
               </div>
             </div>
             <div>
-              <h2 className="font-semibold text-forest">Support</h2>
+              <h2 className="font-semibold text-sky-300">Support</h2>
               <div className="mt-4 space-y-2 text-charcoal/80">
                 <Link href="/contact" className="block transition hover:text-coral">Contact</Link>
                 <Link href="/privacy" className="block transition hover:text-coral">Privacy Policy</Link>

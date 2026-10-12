@@ -157,63 +157,63 @@ export default function ResourceViewer({ resourceId, resourceTitle }: ResourceVi
 
   return (
     <section
-      className="flex max-h-[80vh] flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
+      className="flex max-h-[80vh] flex-col rounded-2xl border border-slate-700 bg-slate-900 shadow-sm"
       onContextMenu={(e) => e.preventDefault()}
       aria-label={`Viewer for ${resourceTitle}`}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 px-4 py-3">
         <p className="text-sm font-medium text-charcoal">{resourceTitle}</p>
         <div className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
           <button
             type="button"
             onClick={goPrev}
             disabled={pageNumber <= 1 || loadingPdf || !numPages}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-charcoal transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-charcoal transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Prev
           </button>
-          <span className="min-w-24 text-center text-slate-700">
+          <span className="min-w-24 text-center text-slate-400">
             {numPages > 0 ? `Page ${pageNumber} of ${numPages}` : "Page -"}
           </span>
           <button
             type="button"
             onClick={goNext}
             disabled={pageNumber >= numPages || loadingPdf || !numPages}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-charcoal transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-charcoal transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next
           </button>
           <button
             type="button"
             onClick={zoomOut}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-charcoal transition hover:bg-slate-50"
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-charcoal transition hover:bg-slate-800"
           >
             -
           </button>
-          <span className="min-w-16 text-center text-slate-700">{Math.round(scale * 100)}%</span>
+          <span className="min-w-16 text-center text-slate-400">{Math.round(scale * 100)}%</span>
           <button
             type="button"
             onClick={zoomIn}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-charcoal transition hover:bg-slate-50"
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-charcoal transition hover:bg-slate-800"
           >
             +
           </button>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-800 p-4 sm:p-6">
         {loadingUrl ? (
           <div className="mx-auto max-w-3xl space-y-3">
             <Skeleton className="h-10 w-full rounded-xl" />
             <Skeleton className="h-[65vh] w-full rounded-2xl" />
           </div>
         ) : error ? (
-          <div className="mx-auto max-w-xl rounded-xl border border-coral/20 bg-white p-6 text-center">
+          <div className="mx-auto max-w-xl rounded-xl border border-coral/20 bg-slate-900 p-6 text-center">
             <p className="text-sm text-coral">{error}</p>
           </div>
         ) : signedUrl ? (
           <div className="overflow-x-auto">
-            <div ref={pageContainerRef} className="mx-auto w-full max-w-full rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+            <div ref={pageContainerRef} className="mx-auto w-full max-w-full rounded-xl border border-slate-700 bg-slate-900 p-3 shadow-sm">
               <Document
                 file={signedUrl}
                 loading={

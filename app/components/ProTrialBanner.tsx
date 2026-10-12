@@ -82,9 +82,9 @@ export default function ProTrialBanner() {
   }
 
   return (
-    <div className="relative rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 px-4 py-3 shadow-sm">
+    <div className="relative rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-slate-900/90 px-4 py-3 shadow-sm">
       <div className="flex items-start gap-3 pr-8 sm:items-center">
-        <span className="mt-0.5 inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-sunflower/20 text-forest sm:mt-0">
+        <span className="mt-0.5 inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-sunflower/20 text-sky-300 sm:mt-0">
           <Sparkles className="h-4 w-4" />
         </span>
         <div className="min-w-0 text-sm text-charcoal/80">
@@ -93,7 +93,7 @@ export default function ProTrialBanner() {
               You&apos;re on a free Pro trial - {daysRemaining} {daysRemaining === 1 ? "day" : "days"} left.
             </span>{" "}
             Enjoy boosted visibility and unlimited listings.{" "}
-            <Link href="/marketplace/pro" className="font-medium text-forest transition hover:text-coral">
+            <Link href="/marketplace/pro" className="font-medium text-sky-300 transition hover:text-coral">
               Learn more
             </Link>
           </p>

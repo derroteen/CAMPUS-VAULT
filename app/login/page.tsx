@@ -144,17 +144,17 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+      <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
         <div className="relative z-10">
           <h1 className="text-2xl font-semibold font-space-grotesk">Log in to MVCorner</h1>
-          <p className="mt-2 text-sm text-slate-600">Welcome back. Enter your details to continue.</p>
+          <p className="mt-2 text-sm text-slate-400">Welcome back. Enter your details to continue.</p>
 
           <div className="mt-6">
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={googleLoading || loading}
-              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-charcoal transition hover:border-forest/40 hover:bg-warm-bg disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm font-medium text-charcoal transition hover:border-forest/40 hover:bg-warm-bg disabled:cursor-not-allowed disabled:opacity-70"
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
                 <path
@@ -178,9 +178,9 @@ export default function LoginPage() {
             </button>
 
             <div className="my-5 flex items-center gap-3">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-xs uppercase tracking-[0.15em] text-slate-500">or continue with email</span>
-              <div className="h-px flex-1 bg-slate-200" />
+              <div className="h-px flex-1 bg-slate-800" />
+              <span className="text-xs uppercase tracking-[0.15em] text-slate-400">or continue with email</span>
+              <div className="h-px flex-1 bg-slate-800" />
             </div>
           </div>
 
@@ -188,7 +188,7 @@ export default function LoginPage() {
             {!requiresMfaChallenge ? (
               <>
                 <div>
-                  <label className="mb-1 block text-sm text-slate-700" htmlFor="email">
+                  <label className="mb-1 block text-sm text-slate-400" htmlFor="email">
                     Email
                   </label>
                   <input
@@ -197,12 +197,12 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm text-slate-700" htmlFor="password">
+                  <label className="mb-1 block text-sm text-slate-400" htmlFor="password">
                     Password
                   </label>
                   <PasswordInput
@@ -214,14 +214,14 @@ export default function LoginPage() {
                 </div>
 
                 <p className="mt-1 text-right">
-                  <Link href="/forgot-password" className="text-xs text-forest hover:text-leaf underline">
+                  <Link href="/forgot-password" className="text-xs text-sky-300 hover:text-leaf underline">
                     Forgot password?
                   </Link>
                 </p>
               </>
             ) : (
               <div>
-                <label className="mb-1 block text-sm text-slate-700" htmlFor="mfaCode">
+                <label className="mb-1 block text-sm text-slate-400" htmlFor="mfaCode">
                   6-digit authentication code
                 </label>
                 <input
@@ -233,13 +233,13 @@ export default function LoginPage() {
                   required
                   value={mfaCode}
                   onChange={(e) => setMfaCode(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
                   placeholder="123456"
                 />
               </div>
             )}
 
-            {infoMessage ? <p className="text-sm text-forest">{infoMessage}</p> : null}
+            {infoMessage ? <p className="text-sm text-sky-300">{infoMessage}</p> : null}
 
             {error ? <p className="text-sm text-coral">{error}</p> : null}
 
@@ -256,9 +256,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-4 text-center text-sm text-slate-400">
             Need an account?{" "}
-            <Link href="/signup" className="text-forest hover:text-leaf underline">
+            <Link href="/signup" className="text-sky-300 hover:text-leaf underline">
               Sign up
             </Link>
           </p>

@@ -184,7 +184,7 @@ function AccountPageContent() {
   if (!authChecked) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-        <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest">
+        <div className="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest">
           <Skeleton className="h-8 w-48 rounded-lg" />
           <Skeleton className="mt-3 h-4 w-80 rounded-lg" />
           <Skeleton className="mt-8 h-20 w-full rounded-xl" />
@@ -198,9 +198,9 @@ function AccountPageContent() {
 
   return (
     <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
-      <div className="mx-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white/85 p-8 shadow-lg border-l-4 border-forest">
+      <div className="mx-auto w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/85 p-8 shadow-lg border-l-4 border-forest">
         <h1 className="text-2xl font-semibold font-space-grotesk">Account security</h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-slate-400">
           Manage two-factor authentication for your account.
         </p>
 
@@ -210,12 +210,12 @@ function AccountPageContent() {
           </p>
         ) : null}
 
-        <section className="mt-8 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-5 shadow-sm">
+        <section className="mt-8 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-charcoal">Two-factor authentication</h2>
 
           {isEnrolled ? (
             <div className="mt-4 space-y-4">
-              <p className="text-sm text-forest">Two-factor authentication is enabled.</p>
+              <p className="text-sm text-sky-300">Two-factor authentication is enabled.</p>
 
               {isAdmin ? (
                 <p className="text-sm text-coral">
@@ -256,7 +256,7 @@ function AccountPageContent() {
                       width={176}
                       height={176}
                       unoptimized
-                      className="h-44 w-44 rounded-lg border border-slate-200 bg-white p-2"
+                      className="h-44 w-44 rounded-lg border border-slate-700 bg-slate-900 p-2"
                     />
                   ) : null}
 
@@ -268,7 +268,7 @@ function AccountPageContent() {
 
                   <form onSubmit={handleVerifyEnrollment} className="space-y-3">
                     <div>
-                      <label htmlFor="mfaCode" className="mb-1 block text-sm text-slate-700">
+                      <label htmlFor="mfaCode" className="mb-1 block text-sm text-slate-400">
                         6-digit code from your authenticator app
                       </label>
                       <input
@@ -279,7 +279,7 @@ function AccountPageContent() {
                         maxLength={6}
                         value={verificationCode}
                         onChange={(event) => setVerificationCode(event.target.value)}
-                        className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                        className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
                         placeholder="123456"
                         required
                       />
@@ -299,7 +299,7 @@ function AccountPageContent() {
           )}
 
           {message ? (
-            <p className={`mt-4 text-sm ${messageIsError ? "text-coral" : "text-forest"}`}>
+            <p className={`mt-4 text-sm ${messageIsError ? "text-coral" : "text-sky-300"}`}>
               {message}
             </p>
           ) : null}
@@ -314,7 +314,7 @@ export default function AccountPage() {
     <Suspense
       fallback={
         <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest">
+          <div className="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest">
             <Skeleton className="h-8 w-48 rounded-lg" />
             <Skeleton className="mt-3 h-4 w-80 rounded-lg" />
             <Skeleton className="mt-8 h-20 w-full rounded-xl" />

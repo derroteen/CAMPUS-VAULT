@@ -210,7 +210,7 @@ export default function WishlistPage() {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm"
+                className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm"
               >
                 <Skeleton className="aspect-[4/3] w-full rounded-xl" />
                 <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
@@ -234,9 +234,9 @@ export default function WishlistPage() {
         </div>
 
         {listings.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-forest/15 bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
+          <div className="rounded-2xl border border-dashed border-forest/15 bg-slate-900/90 p-8 text-center text-charcoal/60 shadow-sm">
             You haven&apos;t saved any products yet.{" "}
-            <Link href="/marketplace" className="text-forest transition hover:text-coral">
+            <Link href="/marketplace" className="text-sky-300 transition hover:text-coral">
               Browse marketplace →
             </Link>
           </div>
@@ -246,7 +246,7 @@ export default function WishlistPage() {
               <Link
                 key={listing.id}
                 href={`/marketplace/${listing.id}`}
-                className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
+                className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
               >
                 <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
 
@@ -269,7 +269,7 @@ export default function WishlistPage() {
                     type="button"
                     onClick={(event) => handleRemoveFromWishlist(event, listing.id)}
                     disabled={removingIds.has(listing.id)}
-                    className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
+                    className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
                     aria-label="Remove from wishlist"
                   >
                     <Heart className="h-4 w-4 fill-coral text-coral" />
@@ -278,7 +278,7 @@ export default function WishlistPage() {
 
                 <div className="p-4">
                   {listing.category_name && (
-                    <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-forest">
+                    <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-300">
                       {listing.category_name}
                     </span>
                   )}
@@ -286,7 +286,7 @@ export default function WishlistPage() {
                     {listing.title}
                   </h3>
                   <div className="mt-2 flex items-baseline gap-2">
-                    <p className="text-lg font-bold text-forest">
+                    <p className="text-lg font-bold text-sky-300">
                       {formatPrice(listing.price)}
                     </p>
                     {hasOriginalPrice(listing) ? (

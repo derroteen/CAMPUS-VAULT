@@ -44,7 +44,7 @@ export default function ResetPasswordPage() {
   if (success) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+        <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
           <div className="relative z-10">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 mx-auto">
               <svg className="h-9 w-9 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
               </svg>
             </div>
             <h1 className="mt-6 text-center text-2xl font-semibold font-space-grotesk">Password updated</h1>
-            <p className="mt-2 text-center text-sm text-slate-600">
+            <p className="mt-2 text-center text-sm text-slate-400">
               Your password has been successfully reset.
             </p>
             <div className="mt-6">
@@ -71,16 +71,16 @@ export default function ResetPasswordPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+      <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
         <div className="relative z-10">
           <h1 className="text-2xl font-semibold font-space-grotesk">Set a new password</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-slate-400">
             Your new password must be different from previous passwords.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="newPassword">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="newPassword">
                 New password
               </label>
               <input
@@ -89,13 +89,13 @@ export default function ResetPasswordPage() {
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-               className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+               className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
                 autoComplete="new-password"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="confirmPassword">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="confirmPassword">
                 Confirm new password
               </label>
               <input
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
                 autoComplete="new-password"
               />
             </div>
@@ -120,8 +120,8 @@ export default function ResetPasswordPage() {
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-slate-600">
-            <Link href="/login" className="text-forest hover:text-leaf underline">
+          <p className="mt-4 text-center text-sm text-slate-400">
+            <Link href="/login" className="text-sky-300 hover:text-leaf underline">
               Back to login
             </Link>
           </p>

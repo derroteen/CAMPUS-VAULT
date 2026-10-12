@@ -268,7 +268,7 @@ export default function NewListingPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 shadow-sm sm:p-10">
+        <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-8 shadow-sm sm:p-10">
           <Skeleton className="h-7 w-48 rounded-lg" />
           <Skeleton className="mt-3 h-4 w-64 rounded-lg" />
 
@@ -291,9 +291,9 @@ export default function NewListingPage() {
 
   return (
     <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-8 shadow-sm sm:p-10">
+      <div className="mx-auto max-w-3xl rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-8 shadow-sm sm:p-10">
         <div className="mb-8">
-          <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-forest">
+          <div className="inline-flex items-center rounded-full border border-leaf/25 bg-leaf/10 px-3 py-1 text-sm font-medium text-sky-300">
             Marketplace
           </div>
           <h1 className="mt-4 text-3xl font-semibold">Create a product</h1>
@@ -304,13 +304,13 @@ export default function NewListingPage() {
 
         {/* Free-tier listing cap warning */}
         {isAtListingCap && (
-          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
+          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-slate-900/90 p-4 shadow-sm">
             <p className="text-sm text-charcoal">
               Free plan allows up to 3 active products. Upgrade to Pro for more.
             </p>
             <Link
               href="/marketplace/pro"
-              className="mt-2 inline-block text-sm font-medium text-forest transition hover:text-coral"
+              className="mt-2 inline-block text-sm font-medium text-sky-300 transition hover:text-coral"
             >
               Upgrade →
             </Link>
@@ -329,7 +329,7 @@ export default function NewListingPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. HP Laptop 15-inch, barely used"
-              className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+              className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
             />
           </div>
 
@@ -344,7 +344,7 @@ export default function NewListingPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the item — condition, age, why you're selling, etc."
               rows={4}
-              className="w-full resize-none rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+              className="w-full resize-none rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
             />
           </div>
 
@@ -362,7 +362,7 @@ export default function NewListingPage() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="e.g. 3500"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
 
@@ -378,7 +378,7 @@ export default function NewListingPage() {
                 value={originalPrice}
                 onChange={(e) => setOriginalPrice(e.target.value)}
                 placeholder="e.g. 4500"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
               <p className="mt-2 text-xs text-charcoal/60">Show buyers you&apos;re offering a discount</p>
             </div>
@@ -391,7 +391,7 @@ export default function NewListingPage() {
                 id="listing-category"
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -415,7 +415,7 @@ export default function NewListingPage() {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="e.g. 0712345678"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
 
@@ -430,18 +430,18 @@ export default function NewListingPage() {
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 placeholder="e.g. 0712345678"
-                className="w-full rounded-xl border border-forest/15 bg-white px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
               />
             </div>
           </div>
 
           {/* Image upload */}
-          <div className="rounded-2xl border border-dashed border-forest/15 bg-white/90 p-5 shadow-sm">
+          <div className="rounded-2xl border border-dashed border-forest/15 bg-slate-900/90 p-5 shadow-sm">
             <label
               htmlFor="listing-images"
               className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-forest/15 bg-warm-bg px-4 py-8 text-center transition hover:border-coral hover:bg-white"
             >
-              <ImagePlus className="mb-3 h-8 w-8 text-forest" />
+              <ImagePlus className="mb-3 h-8 w-8 text-sky-300" />
               <span className="text-sm font-medium text-charcoal">
                 Click to add images
               </span>
@@ -466,7 +466,7 @@ export default function NewListingPage() {
                 {images.map((img, idx) => (
                   <div
                     key={idx}
-                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 shadow-sm"
+                    className="group relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -477,7 +477,7 @@ export default function NewListingPage() {
                     <button
                       type="button"
                       onClick={() => removeImage(idx)}
-                      className="absolute right-1.5 top-1.5 rounded-full bg-white/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
+                      className="absolute right-1.5 top-1.5 rounded-full bg-slate-900/90 p-1 text-charcoal/60 opacity-0 shadow-sm transition group-hover:opacity-100 hover:text-coral"
                     >
                       <X className="h-4 w-4" />
                     </button>

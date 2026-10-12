@@ -375,7 +375,7 @@ export default function UploadPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-700 bg-slate-900/80 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
           <Skeleton className="h-6 w-40 rounded-full" />
           <Skeleton className="mt-4 h-9 w-72 rounded-xl" />
           <Skeleton className="mt-2 h-5 w-80 rounded-lg" />
@@ -392,7 +392,7 @@ export default function UploadPage() {
             </div>
             <Skeleton className="h-24 rounded-2xl" />
             <Skeleton className="h-44 rounded-2xl" />
-            <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+            <div className="flex items-center justify-between border-t border-slate-700 pt-4">
               <Skeleton className="h-5 w-32 rounded-lg" />
               <Skeleton className="h-10 w-28 rounded-xl" />
             </div>
@@ -404,28 +404,28 @@ export default function UploadPage() {
 
   return (
     <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-700 bg-slate-900/80 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
         <div className="mb-8">
-          <div className="inline-flex items-center rounded-full border border-forest/30 bg-forest/10 px-3 py-1 text-xs font-medium text-forest">
+          <div className="inline-flex items-center rounded-full border border-forest/30 bg-forest/10 px-3 py-1 text-xs font-medium text-sky-300">
             Contribute a Resource
           </div>
           <h1 className="mt-4 text-3xl font-semibold">Upload a resource</h1>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-slate-400">
             Share notes, past papers, assignments, or summaries for review.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
-              <label htmlFor="university" className="mb-2 block text-sm text-slate-700">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-4">
+              <label htmlFor="university" className="mb-2 block text-sm text-slate-400">
                 University
               </label>
               <select
                 id="university"
                 value={selectedUniversityId}
                 onChange={(e) => setSelectedUniversityId(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
               >
                 <option value="">Select a university</option>
                 {universities.map((university) => (
@@ -436,36 +436,36 @@ export default function UploadPage() {
               </select>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-4">
               <SchoolCoursePicker
                 universityId={selectedUniversityId}
                 value={{ schoolId: selectedSchoolId, courseId: selectedCourseId || null }}
                 onChange={handleSchoolCourseChange}
               />
 
-              <div className="mt-4 rounded-xl border border-slate-200 bg-white/80 p-3">
+              <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900/80 p-3">
                 <p className="text-sm font-medium text-charcoal">Also applies to these courses (optional)</p>
                 {!selectedSchoolId ? (
-                  <p className="mt-2 text-sm text-slate-500">Select a school first to pick additional courses.</p>
+                  <p className="mt-2 text-sm text-slate-400">Select a school first to pick additional courses.</p>
                 ) : coursesLoading ? (
-                  <p className="mt-2 text-sm text-slate-500">Loading courses...</p>
+                  <p className="mt-2 text-sm text-slate-400">Loading courses...</p>
                 ) : (
                   <div className="mt-3 max-h-40 space-y-2 overflow-y-auto pr-1">
                     {courses.filter((course) => course.id !== selectedCourseId).length === 0 ? (
-                      <p className="text-sm text-slate-500">No additional courses available.</p>
+                      <p className="text-sm text-slate-400">No additional courses available.</p>
                     ) : (
                       courses
                         .filter((course) => course.id !== selectedCourseId)
                         .map((course) => (
                           <label
                             key={course.id}
-                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700"
+                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-400"
                           >
                             <input
                               type="checkbox"
                               checked={additionalCourseIds.includes(course.id)}
                               onChange={() => handleAdditionalCourseToggle(course.id)}
-                              className="h-4 w-4 rounded border-slate-300 text-forest focus:ring-forest"
+                              className="h-4 w-4 rounded border-slate-700 text-sky-300 focus:ring-forest"
                             />
                             <span>{course.code ? `${course.code} - ${course.name}` : course.name}</span>
                           </label>
@@ -478,7 +478,7 @@ export default function UploadPage() {
               <button
                 type="button"
                 onClick={() => setShowCourseRequest((current) => !current)}
-                className="mt-3 text-sm text-forest transition hover:text-leaf"
+                className="mt-3 text-sm text-sky-300 transition hover:text-leaf"
               >
                 Can&apos;t find your course? Request it
               </button>
@@ -486,10 +486,10 @@ export default function UploadPage() {
           </div>
 
           {showCourseRequest ? (
-            <div className="rounded-2xl border border-slate-200 bg-white/90 p-5">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-5">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-700">
+                  <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-400">
                     Course name
                   </label>
                   <input
@@ -498,12 +498,12 @@ export default function UploadPage() {
                     value={courseRequestName}
                     onChange={(e) => setCourseRequestName(e.target.value)}
                     placeholder="e.g. Introduction to Algorithms"
-                    className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-700">
+                  <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-400">
                     Course Code
                   </label>
                   <input
@@ -512,7 +512,7 @@ export default function UploadPage() {
                     value={courseRequestCode}
                     onChange={(e) => setCourseRequestCode(e.target.value)}
                     placeholder="e.g. BAC101"
-                    className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                     required
                   />
                 </div>
@@ -538,8 +538,8 @@ export default function UploadPage() {
           ) : null}
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
-              <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-700">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-4">
+              <label htmlFor="resourceType" className="mb-2 block text-sm text-slate-400">
                 Resource type
               </label>
               <div className="flex items-center gap-3">
@@ -547,7 +547,7 @@ export default function UploadPage() {
                   id="resourceType"
                   value={resourceType}
                   onChange={(e) => setResourceType(e.target.value as (typeof resourceTypes)[number])}
-                  className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                 >
                   {resourceTypes.map((type) => (
                     <option key={type} value={type}>
@@ -561,8 +561,8 @@ export default function UploadPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
-              <label htmlFor="unitName" className="mb-2 block text-sm text-slate-700">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-4">
+              <label htmlFor="unitName" className="mb-2 block text-sm text-slate-400">
                 Unit / Topic
               </label>
               <input
@@ -571,13 +571,13 @@ export default function UploadPage() {
                 value={unitName}
                 onChange={(e) => setUnitName(e.target.value)}
                 placeholder="e.g. Financial Accounting I"
-                className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
               />
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
-            <label htmlFor="title" className="mb-2 block text-sm text-slate-700">
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-4">
+            <label htmlFor="title" className="mb-2 block text-sm text-slate-400">
               Title
             </label>
             <input
@@ -586,15 +586,15 @@ export default function UploadPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Calculus Midterm Notes"
-              className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+              className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
             />
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white/90 p-4">
-            <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white/70 px-4 py-8 text-center transition hover:border-forest/50">
-              <Upload className="mb-3 h-8 w-8 text-forest" />
-              <span className="text-sm font-medium text-slate-600">Click to browse or drag a file here</span>
-              <span className="mt-1 text-sm text-slate-500">PDF or DOCX only</span>
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/90 p-4">
+            <label htmlFor="file" className="mb-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-slate-700 bg-slate-900/70 px-4 py-8 text-center transition hover:border-forest/50">
+              <Upload className="mb-3 h-8 w-8 text-sky-300" />
+              <span className="text-sm font-medium text-slate-400">Click to browse or drag a file here</span>
+              <span className="mt-1 text-sm text-slate-400">PDF or DOCX only</span>
             </label>
             <input
               id="file"
@@ -604,15 +604,15 @@ export default function UploadPage() {
               className="hidden"
             />
             {file ? (
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-600">
+              <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-slate-400">
                 <div>
                   <p className="font-medium text-charcoal">{file.name}</p>
-                  <p className="text-xs text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xs text-slate-400">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setFile(null)}
-                  className="text-sm text-forest transition hover:text-leaf"
+                  className="text-sm text-sky-300 transition hover:text-leaf"
                 >
                   Remove
                 </button>
@@ -622,10 +622,10 @@ export default function UploadPage() {
           </div>
 
           {error ? <p className="text-sm text-coral">{error}</p> : null}
-          {message ? <p className="text-sm text-forest">{message}</p> : null}
+          {message ? <p className="text-sm text-sky-300">{message}</p> : null}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
-            <Link href="/dashboard" className="text-sm text-forest hover:text-leaf underline">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-700 pt-4">
+            <Link href="/dashboard" className="text-sm text-sky-300 hover:text-leaf underline">
               Back to dashboard
             </Link>
             <button

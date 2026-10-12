@@ -151,13 +151,13 @@ export default function MyListingsPage() {
       case "active":
         return {
           label: "Active",
-          classes: "bg-leaf/15 text-forest border-leaf/30",
+          classes: "bg-leaf/15 text-sky-300 border-leaf/30",
           icon: <CheckCircle className="h-3 w-3" />,
         };
       case "sold":
         return {
           label: "Sold",
-          classes: "bg-forest/10 text-forest border-forest/20",
+          classes: "bg-forest/10 text-sky-300 border-forest/20",
           icon: <ShoppingBag className="h-3 w-3" />,
         };
       case "expired":
@@ -259,7 +259,7 @@ export default function MyListingsPage() {
     return (
       <main className="min-h-screen bg-warm-bg px-4 py-10 text-charcoal sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl space-y-4">
-          <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+          <div className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-4 shadow-sm">
             <Skeleton className="h-4 w-56 rounded-lg" />
             <Skeleton className="mt-3 h-2 w-36 rounded-full" />
           </div>
@@ -267,7 +267,7 @@ export default function MyListingsPage() {
           {Array.from({ length: 3 }).map((_, index) => (
             <article
               key={index}
-              className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm sm:p-5"
+              className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm sm:p-5"
             >
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Skeleton className="aspect-square w-full rounded-xl sm:w-36" />
@@ -313,7 +313,7 @@ export default function MyListingsPage() {
         </div>
 
         {isOverFreeLimit ? (
-          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/25 border-y-coral/25 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
+          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-coral/25 border-y-coral/25 border-l-4 border-l-sunflower bg-slate-900/90 p-4 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <p className="text-sm text-charcoal/80">
                 You have <span className="font-semibold text-charcoal">{activeCount}</span> active products, but the Free plan allows only 3. You won&apos;t be able to add new products until you&apos;re back at 3 or fewer - delete some listings, or upgrade to Pro again to continue enjoying unlimited listings and boosted visibility.
@@ -329,9 +329,9 @@ export default function MyListingsPage() {
         ) : null}
 
         {/* Quota summary */}
-        <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+        <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900/90 p-4 shadow-sm">
           {isPro ? (
-            <p className="flex items-center gap-2 text-sm text-forest">
+            <p className="flex items-center gap-2 text-sm text-sky-300">
               <Sparkles className="h-4 w-4 text-sunflower" />
               Unlimited products (Pro)
             </p>
@@ -351,7 +351,7 @@ export default function MyListingsPage() {
                 </div>
                 <Link
                   href="/marketplace/pro"
-                  className="text-sm font-medium text-forest transition hover:text-coral"
+                  className="text-sm font-medium text-sky-300 transition hover:text-coral"
                 >
                   Upgrade
                 </Link>
@@ -361,7 +361,7 @@ export default function MyListingsPage() {
         </div>
 
         {soldCount > 0 ? (
-          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-sunflower bg-white/90 p-4 shadow-sm">
+          <div className="mb-6 rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-sunflower bg-slate-900/90 p-4 shadow-sm">
             <p className="text-sm text-charcoal/80">
               You have {soldCount} sold product(s). Consider deleting them to keep your dashboard tidy.
             </p>
@@ -370,11 +370,11 @@ export default function MyListingsPage() {
 
         {/* Listings */}
         {listings.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-forest/15 bg-white/90 p-8 text-center text-charcoal/60 shadow-sm">
+          <div className="rounded-2xl border border-dashed border-forest/15 bg-slate-900/90 p-8 text-center text-charcoal/60 shadow-sm">
             You haven&apos;t posted any products yet.{" "}
             <Link
               href="/marketplace/new"
-              className="text-forest transition hover:text-coral"
+              className="text-sky-300 transition hover:text-coral"
             >
               Create your first product →
             </Link>
@@ -390,7 +390,7 @@ export default function MyListingsPage() {
               return (
                 <article
                   key={listing.id}
-                  className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm transition hover:border-coral/30 sm:p-5"
+                  className="rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm transition hover:border-coral/30 sm:p-5"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row">
                     {/* Thumbnail */}
@@ -439,7 +439,7 @@ export default function MyListingsPage() {
                         </Link>
 
                         <div className="mt-1 flex flex-wrap items-baseline gap-2">
-                          <p className="text-lg font-bold text-forest">
+                          <p className="text-lg font-bold text-sky-300">
                             {formatPrice(listing.price)}
                           </p>
                           {hasOriginalPrice(listing) ? (
@@ -473,7 +473,7 @@ export default function MyListingsPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <Link
                           href={`/marketplace/${listing.id}/edit`}
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-forest/15 px-3 py-1.5 text-sm text-forest transition hover:bg-sunflower/15 hover:text-coral"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-forest/15 px-3 py-1.5 text-sm text-sky-300 transition hover:bg-sunflower/15 hover:text-coral"
                         >
                           <Pencil className="h-3.5 w-3.5" />
                           Edit
@@ -484,7 +484,7 @@ export default function MyListingsPage() {
                             type="button"
                             onClick={() => handleMarkSold(listing.id)}
                             disabled={actionInProgress === listing.id}
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-leaf/25 bg-leaf/10 px-3 py-1.5 text-sm text-forest transition hover:bg-sunflower/15 disabled:opacity-70"
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-leaf/25 bg-leaf/10 px-3 py-1.5 text-sm text-sky-300 transition hover:bg-sunflower/15 disabled:opacity-70"
                           >
                             <CheckCircle className="h-3.5 w-3.5" />
                             {actionInProgress === listing.id
@@ -506,7 +506,7 @@ export default function MyListingsPage() {
                             <button
                               type="button"
                               onClick={() => setDeleteConfirmId(null)}
-                              className="rounded-xl border border-forest/15 px-3 py-1.5 text-sm text-forest transition hover:bg-sunflower/15"
+                              className="rounded-xl border border-forest/15 px-3 py-1.5 text-sm text-sky-300 transition hover:bg-sunflower/15"
                             >
                               Cancel
                             </button>

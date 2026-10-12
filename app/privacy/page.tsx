@@ -9,13 +9,13 @@ export default function PrivacyPolicyPage() {
 
   return (
     <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk">
-      <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
+      <div className="mx-auto max-w-4xl rounded-3xl border border-slate-700 bg-slate-900/80 p-8 shadow-2xl shadow-slate-950/40 sm:p-10">
         <div className="mb-10 text-center">
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl font-space-grotesk">Privacy Policy</h1>
-          <p className="mt-4 text-slate-600">Last updated: {currentDate}</p>
+          <p className="mt-4 text-slate-400">Last updated: {currentDate}</p>
         </div>
 
-        <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-700">
+        <div className="prose prose-invert prose-slate max-w-none space-y-8 text-slate-400">
           <section>
             <p>
               MVCorner is an independently operated platform (not a registered company) built to help the Maseno University community share and access academic resources. This policy explains what data we collect and how it&apos;s used.
@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-forest">Information We Collect</h2>
+            <h2 className="text-xl font-semibold text-sky-300">Information We Collect</h2>
             <ul className="mt-4 list-disc space-y-2 pl-6">
               <li>Full name and email address</li>
               <li>University and course selection</li>
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-forest">How We Use Your Information</h2>
+            <h2 className="text-xl font-semibold text-sky-300">How We Use Your Information</h2>
             <p className="mt-4">
               We use your information strictly to operate your account, moderate uploaded content, process unlock payments, and improve the platform. We do not sell your personal data to third parties.
             </p>
@@ -52,7 +52,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-forest">Data Storage</h2>
+            <h2 className="text-xl font-semibold text-sky-300">Data Storage</h2>
             <p className="mt-4">
               Data is stored securely using Supabase (a backend infrastructure provider). Uploaded files are kept in private storage and only made accessible per the platform&apos;s access rules.
             </p>
@@ -62,14 +62,14 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-xl font-semibold text-coral">Your Rights</h2>
             <p className="mt-4">
               You can request account deletion or data removal at any time by contacting us at{" "}
-              <a href="mailto:infodteqsolutions@gmail.com" className="text-forest hover:text-leaf underline">
+              <a href="mailto:infodteqsolutions@gmail.com" className="text-sky-300 hover:text-leaf underline">
                 infodteqsolutions@gmail.com
               </a>.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-forest">Changes to This Policy</h2>
+            <h2 className="text-xl font-semibold text-sky-300">Changes to This Policy</h2>
             <p className="mt-4">
               This policy may be updated as the platform grows. Continued use of MVCorner after changes means you accept the updated policy.
             </p>
@@ -79,7 +79,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-xl font-semibold text-coral">Contact</h2>
             <p className="mt-4">
               If you have any questions about this Privacy Policy, please contact us at{" "}
-              <a href="mailto:infodteqsolutions@gmail.com" className="text-forest hover:text-leaf underline">
+              <a href="mailto:infodteqsolutions@gmail.com" className="text-sky-300 hover:text-leaf underline">
                 infodteqsolutions@gmail.com
               </a>.
             </p>
@@ -87,7 +87,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/" className="text-sm text-forest hover:text-leaf underline">
+          <Link href="/" className="text-sm text-sky-300 hover:text-leaf underline">
             &larr; Back to home
           </Link>
         </div>

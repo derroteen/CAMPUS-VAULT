@@ -193,7 +193,7 @@ export default function SupportPage() {
   if (!authChecked) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal font-space-grotesk">
-        <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest">
+        <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest">
           <Skeleton className="h-7 w-52 rounded-lg" />
           <Skeleton className="mt-3 h-4 w-full rounded-lg" />
           <Skeleton className="mt-6 h-12 w-full rounded-xl" />
@@ -213,10 +213,10 @@ export default function SupportPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal font-space-grotesk">
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-lg border-l-4 border-forest before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-900/80 p-8 shadow-lg border-l-4 border-forest before:absolute before:inset-0 before:bg-gradient-to-br before:from-forest/5 before:to-sunflower/5 before:rounded-2xl">
         <div className="relative z-10">
           <h1 className="text-2xl font-semibold">Support MVCorner</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-slate-400">
             If MVCorner has been useful to you, consider leaving a tip to support
             development. This is completely optional and doesn&apos;t unlock any extra
             features.
@@ -224,7 +224,7 @@ export default function SupportPage() {
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="phone">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="phone">
                 M-Pesa phone number
               </label>
               <input
@@ -236,12 +236,12 @@ export default function SupportPage() {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 disabled={isBusy}
-                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400 disabled:opacity-60"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400 disabled:opacity-60"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-slate-700" htmlFor="amount">
+              <label className="mb-1 block text-sm text-slate-400" htmlFor="amount">
                 Tip amount (KES)
               </label>
               <div className="grid grid-cols-4 gap-2">
@@ -256,7 +256,7 @@ export default function SupportPage() {
                       className={`rounded-xl border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
                         isSelected
                           ? "border-forest bg-forest text-white"
-                          : "border-forest/30 bg-forest/10 text-forest hover:bg-forest/20"
+                          : "border-forest/30 bg-forest/10 text-sky-300 hover:bg-forest/20"
                       }`}
                     >
                       {preset}
@@ -274,18 +274,18 @@ export default function SupportPage() {
                 value={amountKes}
                 onChange={(e) => setAmountKes(e.target.value)}
                 disabled={isBusy}
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400 disabled:opacity-60"
+                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400 disabled:opacity-60"
               />
             </div>
 
             {paymentMessage ? (
-              <p className={`text-sm ${paymentError ? "text-coral" : "text-forest"}`}>
+              <p className={`text-sm ${paymentError ? "text-coral" : "text-sky-300"}`}>
                 {paymentMessage}
               </p>
             ) : null}
 
             {isPolling ? (
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-slate-400">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-forest/40 border-t-transparent" />
                 <span>Waiting for M-Pesa confirmation...</span>
               </div>
@@ -304,10 +304,10 @@ export default function SupportPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-slate-400">
             <Link
               href="/dashboard"
-              className="text-forest hover:text-leaf underline"
+              className="text-sky-300 hover:text-leaf underline"
             >
               Back to dashboard
             </Link>

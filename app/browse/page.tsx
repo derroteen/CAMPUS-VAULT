@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabase";
 const ResourceViewer = dynamic(() => import("@/components/ResourceViewer"), {
   ssr: false,
   loading: () => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-slate-700 bg-slate-900 p-4 shadow-sm">
       <Skeleton className="h-10 w-full rounded-xl" />
       <Skeleton className="mt-3 h-[65vh] w-full rounded-2xl" />
     </div>
@@ -34,17 +34,17 @@ export default function BrowsePage() {
       fallback={
         <main className="min-h-screen bg-warm-bg px-6 py-12 text-charcoal">
           <div className="mx-auto max-w-7xl space-y-8">
-            <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-warm-bg/50 to-warm-bg/30 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+            <section className="rounded-3xl border border-slate-700 bg-gradient-to-br from-warm-bg/50 to-warm-bg/30 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
               <Skeleton className="h-10 w-3/5 rounded-xl" />
               <Skeleton className="mt-4 h-5 w-4/5 rounded-xl" />
             </section>
             <div className="grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
-              <aside className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+              <aside className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
                 <Skeleton className="h-6 w-28 rounded-lg" />
                 <Skeleton className="mt-4 h-10 w-full rounded-xl" />
                 <Skeleton className="mt-3 h-10 w-full rounded-xl" />
               </aside>
-              <section className="rounded-2xl border border-slate-200 bg-white/70 p-5">
+              <section className="rounded-2xl border border-slate-700 bg-slate-900/70 p-5">
                 <Skeleton className="h-6 w-48 rounded-lg" />
                 <Skeleton className="mt-4 h-32 w-full rounded-2xl" />
               </section>
@@ -456,8 +456,8 @@ function BrowsePageContent() {
   return (
     <main className="min-h-screen bg-warm-bg text-charcoal font-space-grotesk px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-warm-bg/50 to-warm-bg/30 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
-          <div className="inline-flex items-center rounded-full border border-forest/30 bg-forest/10 px-3 py-1 text-xs font-medium text-forest">
+        <section className="overflow-hidden rounded-3xl border border-slate-700 bg-gradient-to-br from-warm-bg/50 to-warm-bg/30 p-8 shadow-2xl shadow-charcoal/20 sm:p-10">
+          <div className="inline-flex items-center rounded-full border border-forest/30 bg-forest/10 px-3 py-1 text-xs font-medium text-sky-300">
             Verified Study Resource Hub
           </div>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
@@ -465,12 +465,12 @@ function BrowsePageContent() {
               <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-charcoal sm:text-5xl">
                 Find notes, past papers, and study guides
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-slate-600">
+              <p className="mt-4 max-w-2xl text-lg text-slate-400">
                 Discover trusted resources curated for your university and course in one streamlined hub.
               </p>
             </div>
-            <form onSubmit={handleSearchSubmit} className="rounded-2xl border border-slate-200 bg-white/80 p-4">
-              <label htmlFor="resource-search" className="mb-2 block text-sm text-slate-700">
+            <form onSubmit={handleSearchSubmit} className="rounded-2xl border border-slate-700 bg-slate-900/80 p-4">
+              <label htmlFor="resource-search" className="mb-2 block text-sm text-slate-400">
                 Search resources
               </label>
               <input
@@ -479,7 +479,7 @@ function BrowsePageContent() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by title or unit"
-                className="w-full rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50 placeholder:text-slate-400"
               />
             </form>
           </div>
@@ -487,18 +487,18 @@ function BrowsePageContent() {
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
               <h2 className="text-lg font-semibold text-charcoal">Filters</h2>
               <div className="mt-4 space-y-4">
                 <div>
-                  <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-700">
+                  <label htmlFor="resource-type" className="mb-2 block text-sm text-slate-400">
                     Resource Type
                   </label>
                   <select
                     id="resource-type"
                     value={resourceTypeFilter}
                     onChange={(e) => setResourceTypeFilter(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                   >
                     <option value="all">All Types</option>
                     <option value="notes">notes</option>
@@ -510,20 +510,20 @@ function BrowsePageContent() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
               <button
                 type="button"
                 onClick={() => setShowCourseRequest((current) => !current)}
-                className="text-left text-sm font-medium text-forest transition hover:text-leaf"
+                className="text-left text-sm font-medium text-sky-300 transition hover:text-leaf"
               >
                 Can&apos;t find your course? Request it
               </button>
 
               {showCourseRequest ? (
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white/90 p-5">
+                <div className="mt-4 rounded-2xl border border-slate-700 bg-slate-900/90 p-5">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-700">
+                      <label htmlFor="courseRequestName" className="mb-2 block text-sm text-slate-400">
                         Course name
                       </label>
                       <input
@@ -532,12 +532,12 @@ function BrowsePageContent() {
                         value={courseRequestName}
                         onChange={(e) => setCourseRequestName(e.target.value)}
                         placeholder="e.g. Introduction to Algorithms"
-                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-700">
+                      <label htmlFor="courseRequestCode" className="mb-2 block text-sm text-slate-400">
                         Course Code
                       </label>
                       <input
@@ -546,7 +546,7 @@ function BrowsePageContent() {
                         value={courseRequestCode}
                         onChange={(e) => setCourseRequestCode(e.target.value)}
                         placeholder="e.g. BAC101"
-                        className="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-charcoal"
+                        className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2.5 text-sm text-charcoal"
                         required
                       />
                     </div>
@@ -554,7 +554,7 @@ function BrowsePageContent() {
                   <div className="mt-4">
                   </div>
                   {courseRequestError ? <p className="mt-3 text-sm text-coral">{courseRequestError}</p> : null}
-                  {courseRequestMessage ? <p className="mt-3 text-sm text-forest">{courseRequestMessage}</p> : null}
+                  {courseRequestMessage ? <p className="mt-3 text-sm text-sky-300">{courseRequestMessage}</p> : null}
                   <div className="mt-4 flex justify-end">
                     <button
                       type="button"
@@ -569,14 +569,14 @@ function BrowsePageContent() {
             </div>
 
             {profileLoaded && !hasUnlockedAccess() ? (
-              <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
-                <h3 className="text-base font-semibold text-forest">Need unlimited access?</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
+              <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
+                <h3 className="text-base font-semibold text-sky-300">Need unlimited access?</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
                   Upload 4 approved resources and unlock 24 hours of downloads with the 4-for-24 model.
                 </p>
                 <Link
                   href="/upload"
-                  className="mt-4 block w-full rounded-xl border border-forest bg-forest/10 px-4 py-2 text-center text-sm font-medium text-forest transition hover:bg-forest/20"
+                  className="mt-4 block w-full rounded-xl border border-forest bg-forest/10 px-4 py-2 text-center text-sm font-medium text-sky-300 transition hover:bg-forest/20"
                 >
                   Upload resource
                 </Link>
@@ -590,14 +590,14 @@ function BrowsePageContent() {
                 <h2 className="text-xl font-semibold text-charcoal">
                   {searchMode ? `Search results for "${searchQuery.trim()}"` : "Approved resources"}
                 </h2>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-400">
                   {searchMode
                     ? "Showing matching approved resources from across MVCorner."
                     : "Search by title, unit, or course name to find resources."}
                 </p>
               </div>
               {searchMode ? (
-                <span className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-sm text-slate-600">
+                <span className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-sm text-slate-400">
                   {filteredResources.length} results
                 </span>
               ) : null}
@@ -608,7 +608,7 @@ function BrowsePageContent() {
                 {Array.from({ length: 4 }).map((_, index) => (
                   <article
                     key={index}
-                    className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm"
+                    className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-sm"
                   >
                     <Skeleton className="h-5 w-24 rounded-full" />
                     <Skeleton className="mt-4 h-6 w-4/5 rounded-lg" />
@@ -622,24 +622,24 @@ function BrowsePageContent() {
                 {filteredResources.map((resource) => (
                   <article
                     key={resource.id}
-                    className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm transition hover:border-forest/50 hover:shadow-lg"
+                    className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-sm transition hover:border-forest/50 hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${getResourceBadge(resource.resource_type)}`}>
                         {getResourceLabel(resource.resource_type)}
                       </span>
-                      <div className="flex items-center gap-1 text-sm text-slate-600">
+                      <div className="flex items-center gap-1 text-sm text-slate-400">
                         <span>⬇</span>
                         <span>{resource.download_count}</span>
                       </div>
                     </div>
 
                     <h3 className="mt-4 text-lg font-semibold text-charcoal">{resource.title}</h3>
-                    <p className="mt-2 text-sm text-slate-600">
+                    <p className="mt-2 text-sm text-slate-400">
                       {resource.unit_name ?? "No unit listed"}
                     </p>
                     {resource.course_name || resource.university_name ? (
-                      <p className="mt-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+                      <p className="mt-2 text-xs uppercase tracking-[0.2em] text-slate-400">
                         {resource.course_name}
                         {resource.course_name && resource.university_name ? " • " : ""}
                         {resource.university_name}
@@ -651,7 +651,7 @@ function BrowsePageContent() {
                         <p className="text-sm text-coral">{unlockNotice}</p>
                         <Link
                           href="/upload"
-                          className="mt-2 inline-flex text-sm font-medium text-forest hover:text-leaf underline"
+                          className="mt-2 inline-flex text-sm font-medium text-sky-300 hover:text-leaf underline"
                         >
                           Upload a resource to unlock →
                         </Link>
@@ -661,7 +661,7 @@ function BrowsePageContent() {
                         type="button"
                         onClick={() => handleDownload(resource)}
                         disabled={downloadingId === resource.id}
-                        className="mt-5 w-full rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:bg-slate-200/50"
+                        className="mt-5 w-full rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:bg-slate-800/50"
                       >
                         {downloadingId === resource.id ? "Preparing..." : "Download"}
                       </button>
@@ -670,7 +670,7 @@ function BrowsePageContent() {
                     <button
                       type="button"
                       onClick={() => setViewingResource(resource)}
-                      className="mt-3 w-full rounded-xl border border-forest/35 bg-white px-4 py-2 text-sm font-medium text-forest transition hover:bg-forest/10"
+                      className="mt-3 w-full rounded-xl border border-forest/35 bg-slate-900 px-4 py-2 text-sm font-medium text-sky-300 transition hover:bg-forest/10"
                     >
                       View
                     </button>
@@ -678,18 +678,18 @@ function BrowsePageContent() {
                 ))}
               </div>
             ) : searchMode ? (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
                 <p>No approved resources match your search yet.</p>
                 <p className="mt-2">
                   Have this resource?{" "}
-                  <Link href="/upload" className="font-medium text-forest transition hover:text-leaf underline">
+                  <Link href="/upload" className="font-medium text-sky-300 transition hover:text-leaf underline">
                     Upload it
                   </Link>{" "}
                   and help others in the community.
                 </p>
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-600">
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-center text-slate-400">
                 Search by title, unit, or course name to find resources.
               </div>
             )}
@@ -699,13 +699,13 @@ function BrowsePageContent() {
 
       {viewingResource ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/70 p-4 sm:p-6">
-          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-5">
+          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 p-4 shadow-2xl sm:p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-charcoal">View resource</h2>
               <button
                 type="button"
                 onClick={() => setViewingResource(null)}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-charcoal transition hover:bg-slate-50"
+                className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-charcoal transition hover:bg-slate-800"
               >
                 Close
               </button>

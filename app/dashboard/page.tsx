@@ -123,7 +123,7 @@ export default function DashboardPage() {
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
       return (
-        <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-leaf/20 border-y-leaf/20 border-l-4 border-l-leaf bg-white/90 p-4 text-left shadow-sm">
+        <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-leaf/20 border-y-leaf/20 border-l-4 border-l-leaf bg-slate-900/90 p-4 text-left shadow-sm">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-leaf">
             Unlocked
           </p>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
     }
 
     return (
-      <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-white/90 p-4 text-left shadow-sm">
+      <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-sunflower/25 border-y-sunflower/25 border-l-4 border-l-sunflower bg-slate-900/90 p-4 text-left shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-charcoal/70">
           Unlock status
         </p>
@@ -152,11 +152,11 @@ export default function DashboardPage() {
   const getStatusBadge = (status: string) => {
     const colors = {
       pending: "bg-sunflower/20 text-charcoal border-sunflower/40",
-      approved: "bg-leaf/15 text-forest border-leaf/30",
+      approved: "bg-leaf/15 text-sky-300 border-leaf/30",
       rejected: "bg-coral/15 text-coral border-coral/30",
     };
     return (
-      <span className={`text-xs px-2 py-1 rounded-full border ${colors[status as keyof typeof colors] || "bg-white/80 text-charcoal/70 border-forest/15"}`}>
+      <span className={`text-xs px-2 py-1 rounded-full border ${colors[status as keyof typeof colors] || "bg-slate-900/80 text-charcoal/70 border-forest/15"}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
@@ -180,7 +180,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="lg:col-span-2">
-              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm">
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <Skeleton className="h-6 w-32" />
                   <Skeleton className="h-5 w-24" />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm">
+          <div className="mt-6 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/90 p-6 shadow-sm">
             <Skeleton className="h-5 w-32 mb-3" />
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -220,15 +220,15 @@ export default function DashboardPage() {
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-1 space-y-4">
             <div className="grid gap-3">
-              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm">
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm">
                 <p className="text-xs uppercase tracking-[0.2em] text-charcoal/60">Approved uploads</p>
                 <p className="mt-1 text-2xl font-semibold text-charcoal">{approvedUploadsCount ?? 0}</p>
               </div>
-              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-4 shadow-sm">
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/90 p-4 shadow-sm">
                 <p className="text-xs uppercase tracking-[0.2em] text-charcoal/60">Pending review</p>
                 <p className="mt-1 text-2xl font-semibold text-charcoal">{pendingCount}</p>
               </div>
-              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-4 shadow-sm">
+              <div className="rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm">
                 <p className="text-xs uppercase tracking-[0.2em] text-charcoal/60">Total downloads</p>
                 <p className="mt-1 text-2xl font-semibold text-charcoal">{totalDownloads}</p>
               </div>
@@ -237,13 +237,13 @@ export default function DashboardPage() {
           </div>
 
           <div className="lg:col-span-2">
-            <div className="relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-white/90 p-6 shadow-sm">
+            <div className="relative overflow-hidden rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-6 shadow-sm">
               <div className="absolute right-0 top-0 h-6 w-6 bg-sunflower/35 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-charcoal">My uploads</h2>
                 <Link
                   href="/upload"
-                  className="text-sm text-forest hover:text-coral"
+                  className="text-sm text-sky-300 hover:text-coral"
                 >
                   Upload new
                 </Link>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                         <p className="text-xs text-charcoal/60">{resource.unit_name}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="rounded-full border border-forest/15 bg-white/80 px-2 py-1 text-xs text-charcoal">
+                        <span className="rounded-full border border-forest/15 bg-slate-900/80 px-2 py-1 text-xs text-charcoal">
                           {resource.resource_type}
                         </span>
                         {getStatusBadge(resource.status)}
@@ -281,7 +281,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-white/90 p-6 shadow-sm">
+        <div className="mt-6 rounded-xl border-r-[0.5px] border-y-[0.5px] border-r-coral/20 border-y-coral/20 border-l-4 border-l-coral bg-slate-900/90 p-6 shadow-sm">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-charcoal/60">
             Quick access
           </h2>
@@ -298,7 +298,7 @@ export default function DashboardPage() {
           </div>
           <p className="mt-3 text-sm text-charcoal/60">
             Don&apos;t see your university? Use the full list on the{' '}
-            <Link href="/browse" className="text-forest hover:text-coral">
+            <Link href="/browse" className="text-sky-300 hover:text-coral">
               Browse page
             </Link>
             .
@@ -314,7 +314,7 @@ export default function DashboardPage() {
           </Link>
           <Link
             href="/upload"
-            className="inline-flex rounded-md border border-forest/25 px-4 py-2 font-medium text-forest transition hover:bg-sunflower/20"
+            className="inline-flex rounded-md border border-forest/25 px-4 py-2 font-medium text-sky-300 transition hover:bg-sunflower/20"
           >
             Upload resource
           </Link>

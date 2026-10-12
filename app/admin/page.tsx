@@ -582,11 +582,11 @@ export default function AdminPage() {
             <Skeleton className="h-28 rounded-2xl" />
           </div>
 
-          <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
             <Skeleton className="h-8 w-48 mb-4" />
             <div className="mt-4 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between">
+                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between">
                   <div className="flex-1">
                     <Skeleton className="h-6 w-64 mb-2" />
                     <Skeleton className="h-5 w-96" />
@@ -601,13 +601,13 @@ export default function AdminPage() {
             </div>
           </section>
 
-          <div className="border-t border-slate-200" />
+          <div className="border-t border-slate-700" />
 
-          <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
             <Skeleton className="h-8 w-48 mb-4" />
             <div className="mt-4 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between">
+                <div key={i} className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between">
                   <div className="flex-1">
                     <Skeleton className="h-6 w-64 mb-2" />
                     <Skeleton className="h-5 w-96" />
@@ -629,15 +629,15 @@ export default function AdminPage() {
   if (needsMfaChallenge) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-warm-bg px-6 py-12 text-charcoal">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/85 p-8 shadow-lg border-l-4 border-forest">
+        <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/85 p-8 shadow-lg border-l-4 border-forest">
           <h1 className="text-2xl font-semibold font-space-grotesk">Verify it&apos;s you</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-slate-400">
             Approving or rejecting anything here needs a fresh 2FA code, since you signed in with Google. Enter the 6-digit code from your authenticator app to continue.
           </p>
 
           <form onSubmit={handleVerifyMfaChallenge} className="mt-6 space-y-4">
             <div>
-              <label htmlFor="adminMfaCode" className="mb-1 block text-sm text-slate-700">
+              <label htmlFor="adminMfaCode" className="mb-1 block text-sm text-slate-400">
                 6-digit code
               </label>
               <input
@@ -649,7 +649,7 @@ export default function AdminPage() {
                 autoFocus
                 value={mfaCode}
                 onChange={(event) => setMfaCode(event.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-charcoal outline-none ring-1 ring-inset ring-transparent focus:ring-2 focus:ring-forest/50"
                 placeholder="123456"
                 required
               />
@@ -666,7 +666,7 @@ export default function AdminPage() {
             </button>
           </form>
 
-          <Link href="/dashboard" className="mt-4 inline-block text-sm text-forest hover:text-leaf underline">
+          <Link href="/dashboard" className="mt-4 inline-block text-sm text-sky-300 hover:text-leaf underline">
             Back to dashboard
           </Link>
         </div>
@@ -706,9 +706,9 @@ export default function AdminPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl font-semibold font-space-grotesk">Admin dashboard</h1>
-            <p className="mt-2 text-slate-600">Review uploads and course requests.</p>
+            <p className="mt-2 text-slate-400">Review uploads and course requests.</p>
           </div>
-          <Link href="/dashboard" className="text-sm text-forest hover:text-leaf underline">
+          <Link href="/dashboard" className="text-sm text-sky-300 hover:text-leaf underline">
             Back to dashboard
           </Link>
         </div>
@@ -720,33 +720,33 @@ export default function AdminPage() {
         ) : null}
 
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
-            <p className="text-sm text-slate-600">Pending resources</p>
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
+            <p className="text-sm text-slate-400">Pending resources</p>
             <p className="mt-2 text-3xl font-semibold text-charcoal">{resources.length}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
-            <p className="text-sm text-slate-600">Pending course requests</p>
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
+            <p className="text-sm text-slate-400">Pending course requests</p>
             <p className="mt-2 text-3xl font-semibold text-charcoal">{courseRequests.length}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-lg">
-            <p className="text-sm text-slate-600">Pending product requests</p>
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 shadow-lg">
+            <p className="text-sm text-slate-400">Pending product requests</p>
             <p className="mt-2 text-3xl font-semibold text-charcoal">{productRequests.length}</p>
           </div>
         </div>
 
-        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
           <h2 className="text-xl font-semibold font-space-grotesk">Pending resources</h2>
           {previewError ? (
             <p className="mt-3 text-sm text-coral">{previewError}</p>
           ) : null}
           <div className="mt-4 space-y-3">
             {resources.length === 0 ? (
-              <p className="text-slate-600">No pending resources.</p>
+              <p className="text-slate-400">No pending resources.</p>
             ) : (
               resources.map((resource) => (
                 <div
                   key={resource.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -755,7 +755,7 @@ export default function AdminPage() {
                         {getResourceLabel(resource.resource_type)}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-slate-600">
+                    <p className="mt-2 text-sm text-slate-400">
                       {resource.unit_name ? `${resource.unit_name} • ` : ""}
                       uploader: {profiles[resource.uploader_id] ?? "Unknown"} • course: {courses[resource.course_id] ?? "Unknown"}
                     </p>
@@ -763,7 +763,7 @@ export default function AdminPage() {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handlePreviewResource(resource.storage_path)}
-                      className="rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-sm font-medium text-charcoal transition hover:bg-slate-200/90"
+                      className="rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm font-medium text-charcoal transition hover:bg-slate-800/90"
                     >
                       Preview
                     </button>
@@ -788,18 +788,18 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <div className="border-t border-slate-200" />
+        <div className="border-t border-slate-700" />
 
-        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
           <h2 className="text-xl font-semibold font-space-grotesk">Top Contributors</h2>
           <div className="mt-4 space-y-3">
             {topContributors.length === 0 ? (
-              <p className="text-slate-600">No contributors yet.</p>
+              <p className="text-slate-400">No contributors yet.</p>
             ) : (
               topContributors.map((contributor) => (
                 <div
                   key={contributor.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div className="flex items-center gap-3">
                     <div>
@@ -811,7 +811,7 @@ export default function AdminPage() {
                           </span>
                         )}
                       </h3>
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-slate-400">
                         Approved uploads: <span className="font-medium text-charcoal">{contributor.approved_uploads_count}</span>
                       </p>
                     </div>
@@ -841,24 +841,24 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <div className="border-t border-slate-200" />
+        <div className="border-t border-slate-700" />
 
-        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
           <h2 className="text-xl font-semibold font-space-grotesk">Pending course requests</h2>
           <div className="mt-4 space-y-3">
             {courseRequests.length === 0 ? (
-              <p className="text-slate-600">No pending course requests.</p>
+              <p className="text-slate-400">No pending course requests.</p>
             ) : (
               courseRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <h3 className="font-medium text-charcoal">
                       {request.requested_code} — {request.requested_name}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-400">
                       University: {universities[request.university_id] ?? "Unknown"} • requester: {requesters[request.requested_by] ?? "Unknown"}
                     </p>
                   </div>
@@ -891,25 +891,25 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <div className="border-t border-slate-200" />
+        <div className="border-t border-slate-700" />
 
-        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
           <h2 className="text-xl font-semibold font-space-grotesk">Pending product requests</h2>
           <div className="mt-4 space-y-3">
             {productRequests.length === 0 ? (
-              <p className="text-slate-600">No pending product requests.</p>
+              <p className="text-slate-400">No pending product requests.</p>
             ) : (
               productRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <h3 className="font-medium text-charcoal">{request.title}</h3>
                     {request.description ? (
-                      <p className="mt-1 text-sm text-slate-600">{request.description}</p>
+                      <p className="mt-1 text-sm text-slate-400">{request.description}</p>
                     ) : null}
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-400">
                       requester: {requesters[request.requested_by] ?? "Unknown"}
                     </p>
                   </div>
@@ -935,25 +935,25 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <div className="border-t border-slate-200" />
+        <div className="border-t border-slate-700" />
 
-        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg">
           <h2 className="text-xl font-semibold font-space-grotesk">Approved product requests</h2>
           <div className="mt-4 space-y-3">
             {approvedProductRequests.length === 0 ? (
-              <p className="text-slate-600">No approved product requests.</p>
+              <p className="text-slate-400">No approved product requests.</p>
             ) : (
               approvedProductRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <h3 className="font-medium text-charcoal">{request.title}</h3>
                     {request.description ? (
-                      <p className="mt-1 text-sm text-slate-600">{request.description}</p>
+                      <p className="mt-1 text-sm text-slate-400">{request.description}</p>
                     ) : null}
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-400">
                       requester: {requesters[request.requested_by] ?? "Unknown"}
                     </p>
                   </div>

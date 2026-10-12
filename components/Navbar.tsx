@@ -57,19 +57,19 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3 text-sm">
           <Link
             href={email ? "/dashboard" : "/browse"}
-            className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Study Resources
           </Link>
           <Link
             href="/marketplace"
-            className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Marketplace
           </Link>
           <Link
             href="/support"
-            className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Support
           </Link>
@@ -77,23 +77,23 @@ export default function Navbar() {
             <>
               <Link
                 href="/marketplace/my-listings"
-                className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 My Products
               </Link>
               <Link
                 href="/marketplace/wishlist"
-                className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Wishlist
               </Link>
               <Link
                 href="/account"
-                className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Account
               </Link>
-              <span className="hidden max-w-32 truncate text-warm-bg/80 sm:inline-block">
+              <span className="hidden max-w-32 truncate text-white/80 sm:inline-block">
                 {email}
               </span>
               <button
@@ -107,7 +107,7 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="whitespace-nowrap rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Log in
               </Link>
@@ -139,21 +139,21 @@ export default function Navbar() {
           <Link
             href={email ? "/dashboard" : "/browse"}
             onClick={() => setIsOpen(false)}
-            className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Study Resources
           </Link>
           <Link
             href="/marketplace"
             onClick={() => setIsOpen(false)}
-            className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Marketplace
           </Link>
           <Link
             href="/support"
             onClick={() => setIsOpen(false)}
-            className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Support
           </Link>
@@ -162,25 +162,25 @@ export default function Navbar() {
               <Link
                 href="/marketplace/my-listings"
                 onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 My Products
               </Link>
               <Link
                 href="/marketplace/wishlist"
                 onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Wishlist
               </Link>
               <Link
                 href="/account"
                 onClick={() => setIsOpen(false)}
-                className="block rounded-md px-3 py-2 text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Account
               </Link>
-              <div className="truncate px-3 py-1 text-xs text-warm-bg/70">
+              <div className="truncate px-3 py-1 text-xs text-white/70">
                 Signed in as: <span className="text-sunflower">{email}</span>
               </div>
               <button
@@ -198,7 +198,7 @@ export default function Navbar() {
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="block rounded-md border border-sunflower/40 px-3 py-2 text-center text-warm-bg transition hover:bg-sunflower/20 hover:text-sunflower"
+                className="block rounded-md border border-sunflower/40 px-3 py-2 text-center text-white transition hover:bg-sunflower/20 hover:text-sunflower"
               >
                 Log in
               </Link>
