@@ -291,7 +291,7 @@ export default function Home() {
           priority
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-forest/75" />
+        <div className="absolute inset-0 bg-gradient-to-br from-warm-bg/90 via-warm-bg/80 to-sunflower/35" />
         <div className="relative z-10 mx-auto max-w-6xl text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
             Everything you need on campus
@@ -304,7 +304,7 @@ export default function Home() {
             <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/90">
               Upload 4 Notes to Unlock Unlimited Downloads for 24 Hours
             </p>
-            <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-sunflower/20 px-4 py-2 text-sm font-medium text-sunflower">
+            <p className="inline-flex max-w-2xl items-center justify-center rounded-full bg-sunflower/20 px-4 py-2 text-sm font-medium text-white">
               New sellers get 10 days of Pro free
             </p>
             <InstallPWAButton />
@@ -355,7 +355,7 @@ export default function Home() {
               height={900}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-forest/75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-warm-bg/95 via-warm-bg/70 to-forest/45" />
             <div className="absolute inset-0 flex flex-col items-center justify-end p-8 text-center text-white">
               <h2 className="text-3xl font-semibold">Study Resources</h2>
               <p className="mt-3 max-w-md text-sm text-white/90">
@@ -379,7 +379,7 @@ export default function Home() {
               height={900}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-sunflower/75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-warm-bg/95 via-warm-bg/70 to-sunflower/45" />
             <div className="absolute inset-0 flex flex-col items-center justify-end p-8 text-center text-charcoal">
               <h2 className="text-3xl font-semibold">Marketplace</h2>
               <p className="mt-3 max-w-md text-sm text-charcoal/90">

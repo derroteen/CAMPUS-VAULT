@@ -42,7 +42,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#050816]/90 backdrop-blur shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex flex-shrink-0 items-center gap-3 whitespace-nowrap text-lg font-semibold text-sunflower">
+        <Link href="/" className="flex flex-shrink-0 items-center gap-3 whitespace-nowrap text-lg font-semibold text-white">
           <Image
             src="/logo.svg"
             alt="MVCorner Logo"
