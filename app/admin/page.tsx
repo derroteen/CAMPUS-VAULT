@@ -267,7 +267,12 @@ export default function AdminPage() {
     await loadAdminPage();
   };
 
-  const notifyApproval = async (type: "course_request" | "resource", id: string) => {
+  const notifyApproval = async (
+    type: "course_request" | "resource",
+    id: string,
+    decision: "approved" | "rejected" = "approved",
+    reason?: string
+  ) => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -283,14 +288,18 @@ export default function AdminPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ type, id }),
+        body: JSON.stringify({ type, id, decision, reason }),
       });
 
       if (!response.ok) {
-        console.error("Approval email API returned error status:", response.status);
+        const errorText = `Approval email API returned error status: ${response.status}`;
+        console.error(errorText);
+        window.alert("The decision was saved, but the email to the user could not be sent.");
       }
     } catch (err) {
-      console.error("Failed to send approval email:", err);
+      const errorText = err instanceof Error ? err.message : String(err);
+      console.error(errorText);
+      window.alert("The decision was saved, but the email to the user could not be sent.");
     }
   };
 
@@ -342,6 +351,9 @@ export default function AdminPage() {
   };
 
   const handleRejectResource = async (resourceId: string) => {
+    const reason = window.prompt("Reason for rejecting (optional — it will be emailed to the user). Press Cancel to leave it pending.");
+    if (reason === null) return;
+
     setProcessingId(resourceId);
     setActionError(null);
 
@@ -360,6 +372,8 @@ export default function AdminPage() {
       setProcessingId(null);
       return;
     }
+
+    notifyApproval("resource", resourceId, "rejected", reason.trim());
 
     setResources((current) => current.filter((resource) => resource.id !== resourceId));
     setProcessingId(null);
@@ -432,6 +446,9 @@ export default function AdminPage() {
   };
 
   const handleRejectCourseRequest = async (requestId: string) => {
+    const reason = window.prompt("Reason for rejecting (optional — it will be emailed to the user). Press Cancel to leave it pending.");
+    if (reason === null) return;
+
     setProcessingId(requestId);
     setActionError(null);
 
@@ -450,6 +467,8 @@ export default function AdminPage() {
       setProcessingId(null);
       return;
     }
+
+    notifyApproval("course_request", requestId, "rejected", reason.trim());
 
     setCourseRequests((current) => current.filter((request) => request.id !== requestId));
     setProcessingId(null);
