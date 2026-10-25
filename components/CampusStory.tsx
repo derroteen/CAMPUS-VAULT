@@ -105,11 +105,11 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
 
         let nextStage: -1 | 0 | 1 | 2 | 3 = -1;
         if (rect.top < 0.55 * innerHeight) {
-          if (p > 0.7) {
+          if (p > 0.66) {
             nextStage = 3;
-          } else if (p > 0.45) {
+          } else if (p > 0.42) {
             nextStage = 2;
-          } else if (p > 0.22) {
+          } else if (p > 0.20) {
             nextStage = 1;
           } else {
             nextStage = 0;
@@ -138,7 +138,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
       <section
         id="how-it-works"
         ref={sectionRef}
-        className="relative h-[360vh] motion-reduce:hidden"
+        className="relative h-[260vh] motion-reduce:hidden"
       >
         <div
           className="story sticky top-0 h-svh w-full overflow-hidden pt-24"
@@ -150,6 +150,34 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
 
           {/* Faint 48px grid & blue/violet radial glows */}
           <div className="story-bg pointer-events-none absolute inset-0" aria-hidden="true" />
+
+          {/* 12 ambient drifting particles */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+            {([
+              { left: "8%",  delay: "0s",    dur: "7s"  },
+              { left: "16%", delay: "1.2s",  dur: "9s"  },
+              { left: "27%", delay: "0.4s",  dur: "6.5s"},
+              { left: "35%", delay: "2.1s",  dur: "8s"  },
+              { left: "44%", delay: "0.8s",  dur: "10s" },
+              { left: "53%", delay: "3.4s",  dur: "7.5s"},
+              { left: "62%", delay: "1.7s",  dur: "9.5s"},
+              { left: "70%", delay: "0.2s",  dur: "6s"  },
+              { left: "78%", delay: "2.8s",  dur: "8.5s"},
+              { left: "85%", delay: "1.1s",  dur: "7s"  },
+              { left: "91%", delay: "3.9s",  dur: "11s" },
+              { left: "96%", delay: "0.6s",  dur: "9s"  },
+            ] as { left: string; delay: string; dur: string }[]).map((p, i) => (
+              <div
+                key={i}
+                className="story-particle"
+                style={{
+                  left: p.left,
+                  animationDelay: p.delay,
+                  animationDuration: p.dur,
+                }}
+              />
+            ))}
+          </div>
 
           {/* Container */}
           <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-center px-6 pb-8 md:grid md:grid-cols-12 md:items-center md:gap-12 md:pb-0">
@@ -391,7 +419,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
                   return (
                     <div
                       key={name}
-                      className={`story-node ${cls} absolute flex flex-col items-center pointer-events-none`}
+                      className={`story-node story-node-float ${cls} absolute flex flex-col items-center pointer-events-none`}
                       style={{ left: x, top: y }}
                     >
                       <div

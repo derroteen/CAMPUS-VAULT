@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import InstallPWAButton from "@/components/InstallPWAButton";
 import CampusStory from "@/components/CampusStory";
+import MarketplaceStory from "@/components/MarketplaceStory";
 import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
 import { SITE_NAME, COMPANY_NAME, SUPPORT_EMAIL } from "@/lib/site-config";
@@ -439,6 +440,8 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      <MarketplaceStory />
 
       {/* MARKETPLACE STATS SECTION */}
       <section className="py-12">

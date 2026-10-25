@@ -373,9 +373,384 @@ body {
 /* Accessibility: prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .story,
-  .story * {
+  .story *,
+  .story-particle,
+  .story-node-float {
     animation: none !important;
     transition: none !important;
   }
 }
 
+/* ── Ambient: shimmer sweep on doc card ─────────────────────────── */
+.story-doc-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.06) 48%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.06) 52%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: story-shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 40;
+}
+
+@keyframes story-shimmer {
+  0%   { background-position: 200% 0; }
+  60%  { background-position: -50% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* ── Ambient: upward drifting particles ─────────────────────────── */
+.story-particle {
+  position: absolute;
+  bottom: -6px;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.8) 0%, rgba(124, 58, 237, 0.4) 100%);
+  box-shadow: 0 0 6px 1px rgba(96, 165, 250, 0.5);
+  animation: story-particle-drift 7s ease-in infinite;
+  opacity: 0;
+}
+
+@keyframes story-particle-drift {
+  0%   { transform: translateY(0)   scale(1);    opacity: 0;   }
+  8%   { opacity: 0.7; }
+  80%  { opacity: 0.4; }
+  100% { transform: translateY(-105vh) scale(0.4); opacity: 0; }
+}
+
+/* ── Ambient: slow float on campus nodes (stages 2 & 3) ─────────── */
+.story[data-stage="2"] .story-node-float,
+.story[data-stage="3"] .story-node-float {
+  animation: story-node-float 3.8s ease-in-out infinite alternate;
+}
+
+.story[data-stage="2"] .story-node-1.story-node-float,
+.story[data-stage="3"] .story-node-1.story-node-float { animation-delay: 0s;    }
+.story[data-stage="2"] .story-node-2.story-node-float,
+.story[data-stage="3"] .story-node-2.story-node-float { animation-delay: 0.6s;  }
+.story[data-stage="2"] .story-node-3.story-node-float,
+.story[data-stage="3"] .story-node-3.story-node-float { animation-delay: 1.2s;  }
+.story[data-stage="2"] .story-node-4.story-node-float,
+.story[data-stage="3"] .story-node-4.story-node-float { animation-delay: 1.8s;  }
+.story[data-stage="2"] .story-node-5.story-node-float,
+.story[data-stage="3"] .story-node-5.story-node-float { animation-delay: 2.4s;  }
+.story[data-stage="2"] .story-node-6.story-node-float,
+.story[data-stage="3"] .story-node-6.story-node-float { animation-delay: 0.9s;  }
+
+@keyframes story-node-float {
+  0%   { transform: translate(-50%, -50%) translateY(0px)   scale(1);    }
+  100% { transform: translate(-50%, -50%) translateY(-7px)  scale(1.04); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   MarketplaceStory — self-playing loop (--mloop: 12s)
+   All animations are gated on [data-playing="true"] via animation-play-state
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Master timing variable ── */
+.mkt-root {
+  --mloop: 12s;
+  position: relative;
+}
+
+/* ── Background (same radial glows + 48px grid as story) ── */
+.mkt-bg {
+  background-image:
+    radial-gradient(circle at 20% 35%, rgba(37, 99, 235, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 65%, rgba(124, 58, 237, 0.12), transparent 45%),
+    linear-gradient(to right,  rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+}
+
+/* ── Play / pause gate ────────────────────────────────────── */
+/* Default: paused */
+.mkt-root *[class^="mkt-"],
+.mkt-root *[class*=" mkt-"] {
+  animation-play-state: paused;
+}
+.mkt-root[data-playing="true"] *[class^="mkt-"],
+.mkt-root[data-playing="true"] *[class*=" mkt-"] {
+  animation-play-state: running;
+}
+
+/* ══ SCREEN VISIBILITY ══════════════════════════════════════ */
+.mkt-screen-listing {
+  animation: mkt-listing-show var(--mloop) ease-in-out infinite;
+}
+.mkt-screen-feed {
+  animation: mkt-feed-show var(--mloop) ease-in-out infinite;
+}
+
+/* listing visible 0-3s, fades out around 2.8s  (3/12 = 25%) */
+@keyframes mkt-listing-show {
+  0%      { opacity: 1; }
+  22%     { opacity: 1; }
+  25%     { opacity: 0; }
+  96%     { opacity: 0; }
+  100%    { opacity: 1; }
+}
+
+/* feed visible 3-12s (25%-100%) */
+@keyframes mkt-feed-show {
+  0%      { opacity: 0; }
+  24%     { opacity: 0; }
+  27%     { opacity: 1; }
+  98%     { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+/* ══ LISTING SCREEN ELEMENTS ════════════════════════════════ */
+
+/* Photo fill: fade in 0.3-1s  (0.3/12=2.5%, 1/12=8.3%) */
+.mkt-photo-fill {
+  animation: mkt-photo-fill var(--mloop) ease-out infinite;
+}
+@keyframes mkt-photo-fill {
+  0%      { opacity: 0; }
+  2%      { opacity: 0; }
+  10%     { opacity: 1; }
+  24%     { opacity: 1; }
+  26%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Camera icon: visible 0-0.4s then fades out */
+.mkt-photo-icon {
+  animation: mkt-photo-icon var(--mloop) ease-out infinite;
+}
+@keyframes mkt-photo-icon {
+  0%      { opacity: 1; }
+  3%      { opacity: 1; }
+  9%      { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Typewriter title: 0s -> reveal over 2s using width steps */
+.mkt-typewriter {
+  width: 0;
+  animation: mkt-typewriter var(--mloop) steps(20, end) infinite;
+}
+@keyframes mkt-typewriter {
+  0%      { width: 0; }
+  2%      { width: 0; }
+  18%     { width: 100%; }
+  24%     { width: 100%; }
+  26%     { width: 0; }
+  100%    { width: 0; }
+}
+
+/* Price: fades in at 1.6s (13%) */
+.mkt-price {
+  animation: mkt-price-fade var(--mloop) ease-in infinite;
+}
+@keyframes mkt-price-fade {
+  0%      { opacity: 0; }
+  13%     { opacity: 0; }
+  17%     { opacity: 1; }
+  24%     { opacity: 1; }
+  26%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Post button press: at ~2.1s (17.5%) scale down then up */
+.mkt-post-btn {
+  animation: mkt-btn-press var(--mloop) ease-in-out infinite;
+}
+@keyframes mkt-btn-press {
+  0%      { transform: scale(1); }
+  17.5%   { transform: scale(1); }
+  20%     { transform: scale(0.93); }
+  22%     { transform: scale(1.03); }
+  24%     { transform: scale(1); }
+  100%    { transform: scale(1); }
+}
+
+/* ══ FEED SCREEN ELEMENTS ═══════════════════════════════════ */
+
+/* Feed cards initial positions (before new card slides in) */
+.mkt-feed-card {
+  transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* New card: starts off-screen top, slides to top */
+.mkt-feed-new {
+  animation: mkt-card-new var(--mloop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes mkt-card-new {
+  0%      { top: -80px; }
+  25%     { top: -80px; }
+  33%     { top: 4px; }
+  100%    { top: 4px; }
+}
+
+/* Old card 1: starts at top, pushed down */
+.mkt-feed-old-1 {
+  animation: mkt-card-old-1 var(--mloop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes mkt-card-old-1 {
+  0%      { top: 4px; }
+  25%     { top: 4px; }
+  33%     { top: 72px; }
+  100%    { top: 72px; }
+}
+
+/* Old card 2: starts below, pushed further */
+.mkt-feed-old-2 {
+  animation: mkt-card-old-2 var(--mloop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes mkt-card-old-2 {
+  0%      { top: 72px; }
+  25%     { top: 72px; }
+  33%     { top: 140px; }
+  100%    { top: 140px; }
+}
+
+/* Chat panel: fades in at 5s (41.7%) */
+.mkt-chat {
+  animation: mkt-chat-show var(--mloop) ease-in-out infinite;
+}
+@keyframes mkt-chat-show {
+  0%      { opacity: 0; }
+  41%     { opacity: 0; }
+  44%     { opacity: 1; }
+  83%     { opacity: 1; }
+  86%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Buyer bubble: pops in at 5s */
+.mkt-bubble-buyer {
+  animation: mkt-bubble-in var(--mloop) cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  animation-delay: 0s;
+}
+/* Seller bubble: pops in at 6.5s (54%) */
+.mkt-bubble-seller {
+  animation: mkt-bubble-in var(--mloop) cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  animation-delay: calc(var(--mloop) * 0.125); /* +1.5s */
+}
+@keyframes mkt-bubble-in {
+  0%      { opacity: 0; transform: translateY(8px) scale(0.9); }
+  41%     { opacity: 0; transform: translateY(8px) scale(0.9); }
+  44%     { opacity: 1; transform: translateY(0)   scale(1);   }
+  83%     { opacity: 1; }
+  86%     { opacity: 0; }
+  100%    { opacity: 0; transform: translateY(8px) scale(0.9); }
+}
+
+/* ══ SOLD stamp + burst ══════════════════════════════════════ */
+
+/* Wrap: visible 8-10s (66.7%-83.3%) */
+.mkt-sold-wrap {
+  animation: mkt-sold-wrap var(--mloop) ease-in-out infinite;
+}
+@keyframes mkt-sold-wrap {
+  0%      { opacity: 0; }
+  65%     { opacity: 0; }
+  68%     { opacity: 1; }
+  83%     { opacity: 1; }
+  86%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Stamp slams: scale 2.6 -> 1 at 8s */
+.mkt-sold-stamp {
+  animation: mkt-sold-stamp var(--mloop) cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+}
+@keyframes mkt-sold-stamp {
+  0%      { transform: scale(2.6) rotate(-14deg); opacity: 0; }
+  65%     { transform: scale(2.6) rotate(-14deg); opacity: 0; }
+  66%     { opacity: 1; }
+  68.5%   { transform: scale(1) rotate(-14deg); opacity: 1; }
+  83%     { transform: scale(1) rotate(-14deg); opacity: 1; }
+  86%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Burst dots — 8 dots at 45-degree steps, fly outward at 8s */
+.mkt-burst-dot {
+  animation: mkt-burst var(--mloop) ease-out infinite;
+}
+.mkt-burst-dot-1 { background: #f87171; animation-delay: 0s; }
+.mkt-burst-dot-2 { background: #fb923c; animation-delay: calc(var(--mloop) * 0.007); }
+.mkt-burst-dot-3 { background: #facc15; animation-delay: calc(var(--mloop) * 0.014); }
+.mkt-burst-dot-4 { background: #34d399; animation-delay: calc(var(--mloop) * 0.021); }
+.mkt-burst-dot-5 { background: #38bdf8; animation-delay: calc(var(--mloop) * 0.028); }
+.mkt-burst-dot-6 { background: #818cf8; animation-delay: calc(var(--mloop) * 0.035); }
+.mkt-burst-dot-7 { background: #e879f9; animation-delay: calc(var(--mloop) * 0.042); }
+.mkt-burst-dot-8 { background: #f472b6; animation-delay: calc(var(--mloop) * 0.049); }
+
+@keyframes mkt-burst {
+  0%      { transform: translate(0, 0) scale(0); opacity: 0; }
+  65%     { transform: translate(0, 0) scale(0); opacity: 0; }
+  66%     { transform: translate(0, 0) scale(1); opacity: 1; }
+  75%     { opacity: 0.6; }
+  80%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+/* Give each dot a unique direction via translateX/Y in the keyframe — we simulate with rotate + translateX */
+.mkt-burst-dot-1 { transform-origin: center; }
+.mkt-burst-dot-2 { transform-origin: center; }
+/* Override with directional motion keyframes */
+.mkt-burst-dot-1 { animation-name: mkt-burst-1; }
+.mkt-burst-dot-2 { animation-name: mkt-burst-2; }
+.mkt-burst-dot-3 { animation-name: mkt-burst-3; }
+.mkt-burst-dot-4 { animation-name: mkt-burst-4; }
+.mkt-burst-dot-5 { animation-name: mkt-burst-5; }
+.mkt-burst-dot-6 { animation-name: mkt-burst-6; }
+.mkt-burst-dot-7 { animation-name: mkt-burst-7; }
+.mkt-burst-dot-8 { animation-name: mkt-burst-8; }
+
+@keyframes mkt-burst-1 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(32px,-32px) scale(0.6);opacity:0} 100%{transform:translate(32px,-32px) scale(0);opacity:0} }
+@keyframes mkt-burst-2 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(44px,0px)  scale(0.6);opacity:0} 100%{transform:translate(44px,0px)  scale(0);opacity:0} }
+@keyframes mkt-burst-3 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(32px,32px)  scale(0.6);opacity:0} 100%{transform:translate(32px,32px)  scale(0);opacity:0} }
+@keyframes mkt-burst-4 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(0px,44px)   scale(0.6);opacity:0} 100%{transform:translate(0px,44px)   scale(0);opacity:0} }
+@keyframes mkt-burst-5 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(-32px,32px) scale(0.6);opacity:0} 100%{transform:translate(-32px,32px) scale(0);opacity:0} }
+@keyframes mkt-burst-6 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(-44px,0px) scale(0.6);opacity:0} 100%{transform:translate(-44px,0px) scale(0);opacity:0} }
+@keyframes mkt-burst-7 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(-32px,-32px) scale(0.6);opacity:0} 100%{transform:translate(-32px,-32px) scale(0);opacity:0} }
+@keyframes mkt-burst-8 { 0%,65%{transform:translate(0,0) scale(0);opacity:0} 66%{transform:translate(0,0) scale(1);opacity:1} 80%{transform:translate(0px,-44px) scale(0.6);opacity:0} 100%{transform:translate(0px,-44px) scale(0);opacity:0} }
+
+/* ══ FLOATING ACCENT CARDS ══════════════════════════════════ */
+.mkt-float {
+  animation: mkt-float-drift 4s ease-in-out infinite alternate;
+}
+.mkt-float-1 { top: 8%;  right: -18%; animation-delay: 0s;   animation-duration: 4s;   }
+.mkt-float-2 { bottom: 18%; left: -20%; animation-delay: 1.4s; animation-duration: 5s; }
+.mkt-float-3 { top: 52%; right: -18%; animation-delay: 2.8s; animation-duration: 4.5s; }
+
+@keyframes mkt-float-drift {
+  0%   { transform: translateY(0px); }
+  100% { transform: translateY(-10px); }
+}
+
+/* ══ ACCESSIBILITY: prefers-reduced-motion ══════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .mkt-root,
+  .mkt-root * {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Show final SOLD frame as static state */
+  .mkt-screen-listing { opacity: 0; }
+  .mkt-screen-feed    { opacity: 1; }
+  .mkt-feed-new       { top: 4px;  }
+  .mkt-feed-old-1     { top: 72px; }
+  .mkt-feed-old-2     { top: 140px; }
+  .mkt-sold-wrap      { opacity: 1; }
+  .mkt-sold-stamp     { transform: scale(1) rotate(-14deg); opacity: 1; }
+  .mkt-chat           { opacity: 0; }
+  .mkt-float          { opacity: 0; }
+  .mkt-typewriter     { width: 100%; }
+  .mkt-photo-fill     { opacity: 1; }
+  .mkt-photo-icon     { opacity: 0; }
+  .mkt-price          { opacity: 1; }
+}

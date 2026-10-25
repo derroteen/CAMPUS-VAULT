@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Menu, X } from "lucide-react";
+import { Coffee, Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
@@ -75,9 +75,10 @@ export default function Navbar() {
           </Link>
           <Link
             href="/coffee"
-            className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
-            ☕ Coffee
+            <Coffee className="h-4 w-4" />
+            Coffee
           </Link>
           {email ? (
             <>
@@ -166,9 +167,10 @@ export default function Navbar() {
           <Link
             href="/coffee"
             onClick={() => setIsOpen(false)}
-            className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
+            className="flex items-center gap-1.5 rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
-            ☕ Coffee
+            <Coffee className="h-4 w-4" />
+            Coffee
           </Link>
           {email ? (
             <>
