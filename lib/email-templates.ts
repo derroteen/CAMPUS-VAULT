@@ -1,6 +1,8 @@
 // Shared HTML wrapper for transactional emails sent via lib/email.ts (Brevo),
 // so subscription and approval emails look like they belong to the same app.
 
+import { SUPPORT_EMAIL } from "@/lib/site-config";
+
 const BRAND_BLUE = "#2556E8";
 const BRAND_VIOLET = "#7C3AED";
 
@@ -39,6 +41,7 @@ export function renderEmailCard({
       ${cta}
       <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0 16px;" />
       <p style="font-size: 12px; color: #a0aec0; text-align: center; margin: 0;">This is an automated message from MVCorner.</p>
+      <p style="font-size: 12px; color: #a0aec0; text-align: center; margin: 6px 0 0;">Need help? Write to <a href="mailto:${SUPPORT_EMAIL}" style="color: ${BRAND_BLUE}; text-decoration: underline;">${SUPPORT_EMAIL}</a></p>
     </div>
   `;
 }

@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import InstallPWAButton from "@/components/InstallPWAButton";
+import CampusStory from "@/components/CampusStory";
 import { isSubscriptionCurrentlyActive } from "@/lib/subscription-status";
 import { supabase } from "@/lib/supabase";
+import { SITE_NAME, COMPANY_NAME, SUPPORT_EMAIL } from "@/lib/site-config";
 
 type PopularCourse = {
   id: string;
@@ -336,6 +338,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* HOW IT WORKS STORYTELLING SECTION */}
+      <CampusStory isLoggedIn={isLoggedIn} />
 
       {/* TWO‑PANEL SECTION */}
       <section className="relative mx-auto mt-10 max-w-7xl overflow-hidden rounded-3xl border border-forest/15 shadow-xl shadow-forest/10">
@@ -673,14 +678,19 @@ export default function Home() {
             <div>
               <h2 className="font-semibold text-sky-300">Support</h2>
               <div className="mt-4 space-y-2 text-charcoal/80">
+                <Link href="/support" className="block transition hover:text-coral">Help & Support</Link>
                 <Link href="/contact" className="block transition hover:text-coral">Contact</Link>
+                <a href={`mailto:${SUPPORT_EMAIL}`} className="block transition hover:text-coral">
+                  {SUPPORT_EMAIL}
+                </a>
+                <Link href="/coffee" className="block transition hover:text-coral">☕ Buy us a coffee</Link>
                 <Link href="/privacy" className="block transition hover:text-coral">Privacy Policy</Link>
                 <Link href="/terms" className="block transition hover:text-coral">Terms</Link>
               </div>
             </div>
           </div>
           <div className="mt-10 border-t border-forest/10 pt-6 text-center text-xs text-charcoal/50">
-            Powered by DTEQ Solutions
+            © {new Date().getFullYear()} {SITE_NAME}. Powered by {COMPANY_NAME}
           </div>
         </div>
       </footer>

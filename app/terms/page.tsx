@@ -82,8 +82,8 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-sky-300">Contact</h2>
             <p className="mt-4">
               For any questions or concerns regarding these terms, contact us at{" "}
-              <a href="mailto:infodteqsolutions@gmail.com" className="text-sky-300 hover:text-leaf underline">
-                infodteqsolutions@gmail.com
+              <a href="mailto:support@mvcorner.co.ke" className="text-sky-300 hover:text-leaf underline">
+                support@mvcorner.co.ke
               </a>.
             </p>
           </section>

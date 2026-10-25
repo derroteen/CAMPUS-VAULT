@@ -23,10 +23,10 @@ export default function ContactPage() {
             <div>
               <p className="text-sm font-medium text-slate-400">Email Us</p>
               <a
-                href="mailto:infodteqsolutions@gmail.com"
+                href="mailto:support@mvcorner.co.ke"
                 className="text-lg font-medium text-charcoal transition hover:text-forest"
               >
-                infodteqsolutions@gmail.com
+                support@mvcorner.co.ke
               </a>
             </div>
           </div>

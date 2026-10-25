@@ -62,8 +62,8 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-xl font-semibold text-coral">Your Rights</h2>
             <p className="mt-4">
               You can request account deletion or data removal at any time by contacting us at{" "}
-              <a href="mailto:infodteqsolutions@gmail.com" className="text-sky-300 hover:text-leaf underline">
-                infodteqsolutions@gmail.com
+              <a href="mailto:support@mvcorner.co.ke" className="text-sky-300 hover:text-leaf underline">
+                support@mvcorner.co.ke
               </a>.
             </p>
           </section>
@@ -79,8 +79,8 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-xl font-semibold text-coral">Contact</h2>
             <p className="mt-4">
               If you have any questions about this Privacy Policy, please contact us at{" "}
-              <a href="mailto:infodteqsolutions@gmail.com" className="text-sky-300 hover:text-leaf underline">
-                infodteqsolutions@gmail.com
+              <a href="mailto:support@mvcorner.co.ke" className="text-sky-300 hover:text-leaf underline">
+                support@mvcorner.co.ke
               </a>.
             </p>
           </section>

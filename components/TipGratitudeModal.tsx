@@ -82,7 +82,7 @@ export default function TipGratitudeModal({ amountPaid, onClose }: TipGratitudeM
       }}
       role="dialog"
       aria-modal="true"
-      aria-label="Tip gratitude"
+      aria-label="Coffee gratitude"
     >
       <div className="w-full max-w-md rounded-3xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-coral bg-slate-900 p-6 shadow-2xl sm:p-7">
         <div className="relative mx-auto flex w-fit items-center justify-center rounded-full border border-sunflower/35 bg-sunflower/15 p-2">
@@ -112,12 +112,12 @@ export default function TipGratitudeModal({ amountPaid, onClose }: TipGratitudeM
 
         <h2 className="mt-5 text-center text-2xl font-bold text-charcoal">Thank you</h2>
         <p className="mt-2 text-center text-sm text-charcoal/65">
-          Your tip helps keep MVCorner running for the whole campus.
+          Your coffee helps keep MVCorner running for the whole campus.
         </p>
 
         <div className="mt-5 rounded-2xl border border-forest/20 bg-forest/10 p-4 text-sm text-charcoal">
           <p>
-            <span className="font-medium text-charcoal/70">Tip sent:</span> KES {amountPaid.toLocaleString("en-KE")}
+            <span className="font-medium text-charcoal/70">Coffee sent:</span> KES {amountPaid.toLocaleString("en-KE")}
           </p>
         </div>
 

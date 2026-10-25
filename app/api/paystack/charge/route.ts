@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     const tipAmount = Number(amountKes);
     if (!Number.isFinite(tipAmount) || tipAmount < 5 || tipAmount > 10000) {
       return NextResponse.json(
-        { success: false, error: "Please enter a tip amount between KES 5 and KES 10,000" },
+        { success: false, error: "Please enter an amount between KES 5 and KES 10,000" },
         { status: 400 }
       );
     }

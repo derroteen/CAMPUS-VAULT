@@ -73,6 +73,12 @@ export default function Navbar() {
           >
             Support
           </Link>
+          <Link
+            href="/coffee"
+            className="whitespace-nowrap rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
+          >
+            ☕ Coffee
+          </Link>
           {email ? (
             <>
               <Link
@@ -156,6 +162,13 @@ export default function Navbar() {
             className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
           >
             Support
+          </Link>
+          <Link
+            href="/coffee"
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 text-white transition hover:bg-sunflower/20 hover:text-sunflower"
+          >
+            ☕ Coffee
           </Link>
           {email ? (
             <>

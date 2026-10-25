@@ -3,10 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { sendEmail } from "@/lib/email";
 import { escapeHtml, renderEmailCard } from "@/lib/email-templates";
+import { SITE_URL, SUPPORT_EMAIL } from "@/lib/site-config";
 
 export const runtime = "nodejs";
-
-const SITE_URL = "https://www.mvcorner.co.ke";
 
 export async function POST(request: Request) {
   try {
@@ -129,10 +128,10 @@ export async function POST(request: Request) {
         bodyHtml = `
           <p>We couldn't add the course you requested, <strong>${label}</strong>, to MVCorner this time.</p>
           ${reasonHtml}
-          <p>If you think this is a mistake, get in touch and we'll take another look.</p>
+          <p>If you think this is a mistake or have questions, you can use the button below or email us at <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> to contact support.</p>
         `;
         ctaLabel = "Contact support";
-        ctaUrl = `${SITE_URL}/support`;
+        ctaUrl = `${SITE_URL}/support?topic=course`;
       }
     } else {
       const { data: resource, error: resourceError } = await supabaseAdmin
@@ -174,9 +173,10 @@ export async function POST(request: Request) {
           <p>Your upload <strong>${title}</strong> wasn't approved this time.</p>
           ${reasonHtml}
           <p>You're welcome to fix it and upload it again.</p>
+          <p>If you have any questions or need help, you can use the button below or email us at <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> to contact support.</p>
         `;
-        ctaLabel = "Upload again";
-        ctaUrl = `${SITE_URL}/upload`;
+        ctaLabel = "Contact support";
+        ctaUrl = `${SITE_URL}/support?topic=upload`;
       }
     }
 
