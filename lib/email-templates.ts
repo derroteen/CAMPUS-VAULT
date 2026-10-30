@@ -20,11 +20,13 @@ export function renderEmailCard({
   bodyHtml,
   ctaLabel,
   ctaUrl,
+  unsubscribeUrl,
 }: {
   heading: string;
   bodyHtml: string;
   ctaLabel?: string;
   ctaUrl?: string;
+  unsubscribeUrl?: string;
 }) {
   const cta =
     ctaLabel && ctaUrl
@@ -32,6 +34,9 @@ export function renderEmailCard({
           <a href="${ctaUrl}" style="display: inline-block; background-color: ${BRAND_BLUE}; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600; font-size: 14px;">${ctaLabel}</a>
         </div>`
       : "";
+  const unsubscribeLink = unsubscribeUrl
+    ? `<p style="font-size: 12px; text-align: center; margin: 10px 0 0;"><a href="${escapeHtml(unsubscribeUrl)}" style="color: ${BRAND_BLUE}; text-decoration: underline;">Unsubscribe from reminder emails</a></p>`
+    : "";
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1a202c;">
@@ -42,6 +47,7 @@ export function renderEmailCard({
       <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0 16px;" />
       <p style="font-size: 12px; color: #a0aec0; text-align: center; margin: 0;">This is an automated message from MVCorner.</p>
       <p style="font-size: 12px; color: #a0aec0; text-align: center; margin: 6px 0 0;">Need help? Write to <a href="mailto:${SUPPORT_EMAIL}" style="color: ${BRAND_BLUE}; text-decoration: underline;">${SUPPORT_EMAIL}</a></p>
+      ${unsubscribeLink}
     </div>
   `;
 }
