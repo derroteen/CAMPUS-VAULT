@@ -82,6 +82,42 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const testEmail = request.nextUrl.searchParams.get("testEmail");
+  if (testEmail !== null) {
+    const exactEmailPattern = testEmail.replace(/[\\%_]/g, "\\$&");
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .ilike("email", exactEmailPattern)
+      .maybeSingle();
+
+    if (profileError) {
+      return NextResponse.json({ error: profileError.message }, { status: 500 });
+    }
+    if (!profile) {
+      return NextResponse.json({ error: "No profile with that email" }, { status: 404 });
+    }
+
+    try {
+      await sendEmail({
+        to: testEmail,
+        subject: "[TEST] New study resources are up on MVCorner",
+        htmlContent: renderEmailCard({
+          heading: "New study resources are up",
+          bodyHtml: "<p>There are new study resources waiting for you on MVCorner. Come back and see what's available.</p>",
+          ctaLabel: "Browse resources",
+          ctaUrl: `${SITE_URL}/browse`,
+          unsubscribeUrl: buildUnsubscribeUrl(profile.id),
+        }),
+      });
+
+      return NextResponse.json({ testSent: true, to: maskEmail(testEmail) });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
+
   const dryRun = request.nextUrl.searchParams.get("dryRun") === "1";
   const now = new Date();
   const timestamp = now.toISOString();
