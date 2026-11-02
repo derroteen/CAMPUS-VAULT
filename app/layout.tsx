@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { Inter, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
@@ -84,6 +85,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Analytics /> 
       </body>
     </html>
   );
