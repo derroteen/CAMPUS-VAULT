@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag, Sparkles } from "lucide-react";
+import { ShareListingButton } from "@/components/ShareListingButton";
 
 export type MarketplaceListingCardData = {
   id: string;
   title: string;
+  description: string | null;
   price: number;
   original_price: number | null;
   is_boosted: boolean;
@@ -73,6 +75,12 @@ export function MarketplaceListingCard({
             />
           </button>
         ) : null}
+        <ShareListingButton
+          listingId={listing.id}
+          title={listing.title}
+          description={listing.description}
+          imageUrl={listing.thumbnail_url}
+        />
       </div>
 
       <div className="p-4">

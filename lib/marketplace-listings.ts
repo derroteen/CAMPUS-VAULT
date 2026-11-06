@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 type RawListing = {
   id: string;
   title: string;
+  description: string | null;
   price: number;
   original_price: number | null;
   seller_id: string;
@@ -14,6 +15,7 @@ type RawListing = {
 export type MarketplaceListing = {
   id: string;
   title: string;
+  description: string | null;
   price: number;
   original_price: number | null;
   is_boosted: boolean;
@@ -90,6 +92,7 @@ export async function hydrateMarketplaceListings(listingsData: RawListing[]) {
     .map((listing) => ({
       id: listing.id,
       title: listing.title,
+      description: listing.description,
       price: listing.price,
       original_price: listing.original_price,
       is_boosted: activeProSellers.has(listing.seller_id),

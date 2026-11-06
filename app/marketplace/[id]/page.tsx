@@ -121,7 +121,7 @@ export default function ListingDetailPage() {
       if (listingData.category_id) {
         const { data: relatedListingsData, error: relatedListingsError } = await supabase
           .from("listings")
-          .select("id, title, price, original_price, seller_id, created_at, category_id")
+          .select("id, title, description, price, original_price, seller_id, created_at, category_id")
           .eq("status", "active")
           .eq("category_id", listingData.category_id)
           .neq("id", listingId)

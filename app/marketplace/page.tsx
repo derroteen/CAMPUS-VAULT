@@ -113,7 +113,7 @@ function MarketplaceContent() {
 
       let query = supabase
         .from("listings")
-        .select("id, title, price, original_price, seller_id, created_at, category_id")
+        .select("id, title, description, price, original_price, seller_id, created_at, category_id")
         .eq("status", "active")
         .order("created_at", { ascending: false });
 
@@ -182,7 +182,7 @@ function MarketplaceContent() {
       if (categoryIds.size > 0) {
         const { data: recommendedListingsData, error } = await supabase
           .from("listings")
-          .select("id, title, price, original_price, seller_id, created_at, category_id")
+          .select("id, title, description, price, original_price, seller_id, created_at, category_id")
           .in("category_id", Array.from(categoryIds))
           .eq("status", "active")
           .not("id", "in", `(${Array.from(wishlistListingIds).map((id) => `\"${id}\"`).join(",")})`)
@@ -212,7 +212,7 @@ function MarketplaceContent() {
 
       const { data: fallbackListingsData, error: fallbackError } = await supabase
         .from("listings")
-        .select("id, title, price, original_price, seller_id, created_at, category_id")
+        .select("id, title, description, price, original_price, seller_id, created_at, category_id")
         .in("seller_id", proSellerIds)
         .eq("status", "active")
         .order("created_at", { ascending: false })
