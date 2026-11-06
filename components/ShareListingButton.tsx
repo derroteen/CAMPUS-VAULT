@@ -36,7 +36,7 @@ export function ShareListingButton({
       let shareData: ShareData = { title, text };
 
       if (imageUrl) {
-        const response = await fetch(imageUrl);
+        const response = await fetch(`/api/marketplace/${listingId}/share-image`);
         if (!response.ok) {
           throw new Error(`Unable to load listing image (${response.status}).`);
         }
