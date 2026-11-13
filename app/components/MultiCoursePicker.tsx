@@ -232,7 +232,7 @@ export default function MultiCoursePicker({
                     type="checkbox"
                     checked={checked}
                     onChange={(e) => toggleCourse(course.id, e.target.checked)}
-                    className="h-4 w-4 rounded accent-indigo-500"
+                    className="h-4 w-4 rounded accent-blue-500"
                   />
                   <span>
                     {course.code ? (
@@ -261,14 +261,14 @@ export default function MultiCoursePicker({
             {selectedCourseIds.map((id) => (
               <span
                 key={id}
-                className="inline-flex items-center gap-1.5 rounded-full border border-indigo-700 bg-indigo-950 px-2.5 py-1 text-xs text-indigo-300"
+                className="inline-flex items-center gap-1.5 rounded-full border border-blue-700 bg-blue-950 px-2.5 py-1 text-xs text-blue-300"
               >
                 {courseLabel(id)}
                 <button
                   type="button"
                   onClick={() => removeCourse(id)}
                   aria-label={`Remove ${courseLabel(id)}`}
-                  className="ml-0.5 rounded-full p-0.5 text-indigo-400 transition-colors hover:bg-indigo-800 hover:text-white"
+                  className="ml-0.5 rounded-full p-0.5 text-blue-400 transition-colors hover:bg-blue-800 hover:text-white"
                 >
                   {/* × icon */}
                   <svg

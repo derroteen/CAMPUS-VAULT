@@ -37,9 +37,9 @@ const NODES = [
     x: "82%",
     y: "17.5%",
     Icon: School,
-    color: "text-indigo-400",
-    border: "border-indigo-500/30",
-    bg: "bg-indigo-500/10",
+    color: "text-blue-400",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/10",
     cls: "story-node-2",
   },
   {
@@ -77,9 +77,9 @@ const NODES = [
     x: "82%",
     y: "82.5%",
     Icon: Home,
-    color: "text-purple-400",
-    border: "border-purple-500/30",
-    bg: "bg-purple-500/10",
+    color: "text-blue-400",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/10",
     cls: "story-node-6",
   },
 ];
@@ -148,7 +148,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
           {/* Thin gradient progress line at top */}
           <div className="story-progress-bar" />
 
-          {/* Faint 48px grid & blue/violet radial glows */}
+          {/* Faint 48px grid & blue/orange radial glows */}
           <div className="story-bg pointer-events-none absolute inset-0" aria-hidden="true" />
 
           {/* 12 ambient drifting particles */}
@@ -190,7 +190,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
                     key={stepIdx}
                     className={`h-1.5 rounded-full transition-all duration-500 ${
                       stage >= stepIdx
-                        ? "w-8 bg-gradient-to-r from-blue-500 to-purple-500"
+                        ? "w-8 bg-gradient-to-r from-blue-500 to-blue-400"
                         : "w-4 bg-slate-700/60"
                     }`}
                   />
@@ -303,7 +303,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
                 aria-hidden="true"
               >
                 {/* Soft inside glow */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-blue-600/10 via-transparent to-purple-600/10" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-blue-600/10 via-transparent to-blue-400/10" />
 
                 {/* SVG Layer: 500x400 Coordinate Space */}
                 <svg
@@ -508,7 +508,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
                         key={slotNum}
                         className={`story-slot story-slot-${slotNum} relative flex aspect-square flex-col items-center justify-center overflow-hidden rounded-xl border border-slate-700 bg-slate-800/40 p-1.5`}
                       >
-                        <div className="story-slot-fill absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-emerald-500 opacity-0" />
+                        <div className="story-slot-fill absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-600 to-emerald-500 opacity-0" />
                         <div className="relative z-10 flex flex-col items-center justify-center">
                           <FileCheck className="story-slot-icon h-5 w-5 text-slate-400" />
                           <span className="mt-1 font-mono text-[9px] font-medium text-slate-300">

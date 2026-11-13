@@ -4,7 +4,6 @@
 import { SUPPORT_EMAIL } from "@/lib/site-config";
 
 const BRAND_BLUE = "#2556E8";
-const BRAND_VIOLET = "#7C3AED";
 
 export function escapeHtml(value: string) {
   return value
@@ -40,7 +39,7 @@ export function renderEmailCard({
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1a202c;">
-      <p style="margin: 0 0 20px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: ${BRAND_VIOLET};">MVCorner</p>
+      <p style="margin: 0 0 20px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: ${BRAND_BLUE};">MVCorner</p>
       <h2 style="color: #0a1128; margin: 0 0 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 20px;">${heading}</h2>
       <div style="font-size: 15px; line-height: 1.6; color: #4a5568;">${bodyHtml}</div>
       ${cta}

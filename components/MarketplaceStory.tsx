@@ -17,9 +17,9 @@ const FLOATS = [
   {
     Icon: Laptop,
     label: "Electronics",
-    color: "text-indigo-400",
-    border: "border-indigo-500/30",
-    bg: "bg-indigo-500/10",
+    color: "text-blue-400",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/10",
     cls: "mkt-float-2",
   },
   {
@@ -145,7 +145,7 @@ export default function MarketplaceStory() {
                   <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">New listing</p>
                   {/* photo placeholder */}
                   <div className="mkt-photo relative mb-3 h-28 w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
-                    <div className="mkt-photo-fill absolute inset-0 bg-gradient-to-br from-indigo-600 via-blue-500 to-emerald-500 opacity-0" />
+                    <div className="mkt-photo-fill absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-400 opacity-0" />
                     <div className="mkt-photo-icon absolute inset-0 flex items-center justify-center opacity-0">
                       <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -162,7 +162,7 @@ export default function MarketplaceStory() {
                   {/* post button */}
                   <button
                     type="button"
-                    className="mkt-post-btn mt-auto w-full rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 py-2.5 text-xs font-bold text-white shadow-lg"
+                    className="mkt-post-btn mt-auto w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-400 py-2.5 text-xs font-bold text-white shadow-lg"
                   >
                     Post listing
                   </button>
@@ -172,12 +172,18 @@ export default function MarketplaceStory() {
                 <div className="mkt-screen mkt-screen-feed absolute inset-0 flex flex-col px-3 pb-3 pt-12 opacity-0">
                   <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Marketplace</p>
                   <div className="relative flex-1 overflow-hidden">
-                    {FEED_CARDS.map(({ title, price, badge, badgeCls, cls }) => (
+                    {FEED_CARDS.map(({ title, price, badge, badgeCls, cls }, index) => (
                       <div
                         key={title}
                         className={`mkt-feed-card ${cls} absolute left-0 right-0 flex items-center gap-2.5 rounded-xl border border-slate-700 bg-slate-800/70 p-2.5`}
                       >
-                        <div className="h-10 w-10 shrink-0 rounded-lg bg-gradient-to-br from-indigo-600/60 to-blue-500/60" />
+                        <div
+                          className={`h-10 w-10 shrink-0 rounded-lg bg-gradient-to-br ${
+                            index % 2 === 0
+                              ? "from-blue-600/60 to-blue-400/60"
+                              : "from-orange-500/60 to-orange-300/60"
+                          }`}
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-[11px] font-semibold text-slate-100">{title}</p>
                           <p className="text-[10px] font-medium text-emerald-400">{price}</p>
@@ -194,7 +200,7 @@ export default function MarketplaceStory() {
                         </span>
                       </div>
                       <div className="mkt-bubble-seller flex justify-end opacity-0">
-                        <span className="max-w-[70%] rounded-2xl rounded-br-sm bg-violet-700/80 px-3 py-1.5 text-[10px] text-white shadow">
+                        <span className="max-w-[70%] rounded-2xl rounded-br-sm bg-blue-700/80 px-3 py-1.5 text-[10px] text-white shadow">
                           Yes! Meet at the library
                         </span>
                       </div>
