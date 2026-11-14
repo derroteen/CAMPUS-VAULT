@@ -472,22 +472,20 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
               {featuredProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/marketplace/${product.id}`}
-                  className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
+                  className="group relative flex flex-col overflow-hidden rounded-lg border border-slate-800 bg-slate-900/80 transition hover:border-forest/50 hover:shadow-lg"
                 >
-                  <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
-
-                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-warm-bg">
+                  <div className="relative aspect-square w-full overflow-hidden bg-warm-bg">
                     {product.thumbnail_url ? (
                       <Image
                         src={product.thumbnail_url}
                         alt={product.title}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
                         className="object-cover transition group-hover:scale-105"
                       />
                     ) : (
@@ -497,16 +495,11 @@ export default function Home() {
                     )}
                   </div>
 
-                  <div className="p-4">
-                    {product.category_name && (
-                      <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-300">
-                        {product.category_name}
-                      </span>
-                    )}
-                    <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
+                  <div className="p-2 sm:p-2.5">
+                    <h3 className="line-clamp-2 min-h-[2rem] text-xs leading-snug text-charcoal group-hover:text-forest sm:text-[13px]">
                       {product.title}
                     </h3>
-                    <p className="mt-2 text-lg font-bold text-sky-300">
+                    <p className="mt-1 text-sm font-bold text-sunflower sm:text-base">
                       {formatProductPrice(product.price)}
                     </p>
                   </div>
