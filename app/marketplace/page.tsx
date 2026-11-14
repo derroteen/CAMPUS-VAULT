@@ -37,15 +37,17 @@ export default function MarketplacePage() {
           <div className="mx-auto max-w-6xl space-y-4">
             <Skeleton className="h-9 w-56 rounded-xl" />
             <Skeleton className="h-5 w-80 rounded-xl" />
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm"
+                  className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900/80"
                 >
-                  <Skeleton className="aspect-[4/3] w-full rounded-xl" />
-                  <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
-                  <Skeleton className="mt-3 h-4 w-1/3 rounded-lg" />
+                  <Skeleton className="aspect-square w-full" />
+                  <div className="p-2 sm:p-2.5">
+                    <Skeleton className="h-8 w-3/4 rounded-lg" />
+                    <Skeleton className="mt-2 h-4 w-1/2 rounded-lg" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -547,7 +549,7 @@ function MarketplaceContent() {
                   </span>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4">
                   {recommendedSection.listings.map((listing) => (
                     <MarketplaceListingCard
                       key={listing.id}
@@ -580,20 +582,22 @@ function MarketplaceContent() {
             </div>
 
             {loading || searching ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4">
                 {Array.from({ length: 6 }).map((_, index) => (
                   <div
                     key={index}
-                    className="overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 p-4 shadow-sm"
+                    className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900/80"
                   >
-                    <Skeleton className="aspect-[4/3] w-full rounded-xl" />
-                    <Skeleton className="mt-4 h-4 w-3/4 rounded-lg" />
-                    <Skeleton className="mt-3 h-4 w-1/3 rounded-lg" />
+                    <Skeleton className="aspect-square w-full" />
+                    <div className="p-2 sm:p-2.5">
+                      <Skeleton className="h-8 w-3/4 rounded-lg" />
+                      <Skeleton className="mt-2 h-4 w-1/2 rounded-lg" />
+                    </div>
                   </div>
                 ))}
               </div>
             ) : listings.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4">
                 {listings.map((listing) => (
                   <MarketplaceListingCard
                     key={listing.id}

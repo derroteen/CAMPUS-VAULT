@@ -35,16 +35,15 @@ export function MarketplaceListingCard({
   return (
     <Link
       href={`/marketplace/${listing.id}`}
-      className="group relative overflow-hidden rounded-2xl border-r-[0.5px] border-y-[0.5px] border-r-forest/15 border-y-forest/15 border-l-4 border-l-forest bg-slate-900/90 shadow-sm transition hover:border-coral/30 hover:shadow-md"
+      className="group relative flex flex-col overflow-hidden rounded-lg border border-slate-800 bg-slate-900/80 transition hover:border-forest/50 hover:shadow-lg"
     >
-      <div className="absolute right-0 top-0 h-5 w-5 bg-sunflower/30 [clip-path:polygon(100%_0,0_0,100%_100%)]" />
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-warm-bg">
+      <div className="relative aspect-square w-full overflow-hidden bg-warm-bg">
         {listing.thumbnail_url ? (
           <Image
             src={listing.thumbnail_url}
             alt={listing.title}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
             className="object-cover transition group-hover:scale-105"
           />
         ) : (
@@ -53,11 +52,18 @@ export function MarketplaceListingCard({
           </div>
         )}
         {listing.is_boosted && (
-          <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-sunflower/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-charcoal">
-            <Sparkles className="h-3 w-3" />
+          <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-sunflower/90 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-charcoal">
+            <Sparkles className="h-2.5 w-2.5" />
             Boosted
           </span>
         )}
+        {hasOriginalPrice(listing) ? (
+          <span className="absolute bottom-2 left-2 rounded-sm bg-sunflower px-1.5 py-0.5 text-[10px] font-bold text-charcoal">
+            -{Math.round(
+              ((listing.original_price! - listing.price) / listing.original_price!) * 100
+            )}%
+          </span>
+        ) : null}
         {onWishlistToggle ? (
           <button
             type="button"
@@ -67,11 +73,11 @@ export function MarketplaceListingCard({
               onWishlistToggle(listing.id);
             }}
             disabled={wishlistLoading}
-            className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
+            className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/90 text-charcoal shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
             aria-label={isWishlisted ? "Remove from wishlist" : "Save to wishlist"}
           >
             <Heart
-              className={`h-4 w-4 ${isWishlisted ? "fill-coral text-coral" : "text-charcoal/60"}`}
+              className={`h-3.5 w-3.5 ${isWishlisted ? "fill-coral text-coral" : "text-charcoal/60"}`}
             />
           </button>
         ) : null}
@@ -83,19 +89,14 @@ export function MarketplaceListingCard({
         />
       </div>
 
-      <div className="p-4">
-        {listing.category_name && (
-          <span className="mb-2 inline-block rounded-full border border-leaf/25 bg-leaf/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-300">
-            {listing.category_name}
-          </span>
-        )}
-        <h3 className="line-clamp-2 text-sm font-semibold text-charcoal group-hover:text-forest">
+      <div className="p-2 sm:p-2.5">
+        <h3 className="line-clamp-2 min-h-[2rem] text-xs leading-snug text-charcoal group-hover:text-forest sm:text-[13px]">
           {listing.title}
         </h3>
-        <div className="mt-2 flex items-baseline gap-2">
-          <p className="text-lg font-bold text-sky-300">{formatPrice(listing.price)}</p>
+        <div className="mt-1 flex items-baseline gap-1.5">
+          <p className="text-sm font-bold text-sunflower sm:text-base">{formatPrice(listing.price)}</p>
           {hasOriginalPrice(listing) ? (
-            <p className="text-sm line-through text-charcoal/40">
+            <p className="text-[11px] text-slate-500 line-through">
               {formatPrice(listing.original_price ?? listing.price)}
             </p>
           ) : null}

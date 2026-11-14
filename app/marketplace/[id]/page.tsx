@@ -28,6 +28,8 @@ type ListingDetail = {
   original_price: number | null;
   phone_number: string;
   whatsapp_number: string | null;
+  is_official: boolean;
+  whatsapp_url: string | null;
   status: string;
   is_boosted: boolean;
   created_at: string;
@@ -73,7 +75,7 @@ export default function ListingDetailPage() {
       // Fetch listing
       const { data: listingData, error: listingError } = await supabase
         .from("listings")
-        .select("id, seller_id, title, description, price, original_price, phone_number, whatsapp_number, status, is_boosted, created_at, expires_at, category_id")
+        .select("id, seller_id, title, description, price, original_price, phone_number, whatsapp_number, is_official, whatsapp_url, status, is_boosted, created_at, expires_at, category_id")
         .eq("id", listingId)
         .single();
 
@@ -110,6 +112,8 @@ export default function ListingDetailPage() {
         original_price: listingData.original_price,
         phone_number: listingData.phone_number,
         whatsapp_number: listingData.whatsapp_number,
+        is_official: listingData.is_official,
+        whatsapp_url: listingData.whatsapp_url,
         status: listingData.status,
         is_boosted: listingData.is_boosted,
         created_at: listingData.created_at,
@@ -606,15 +610,31 @@ export default function ListingDetailPage() {
                         : "Save to wishlist"}
                   </button>
 
-                  <a
-                    href={`tel:${listing.phone_number}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-sm font-medium text-white transition hover:bg-forest"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Call / SMS
-                  </a>
+                  {listing.phone_number.trim() !== "" && (
+                    <a
+                      href={`tel:${listing.phone_number}`}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-leaf px-4 py-3 text-sm font-medium text-white transition hover:bg-forest"
+                    >
+                      <Phone className="h-4 w-4" />
+                      Call / SMS
+                    </a>
+                  )}
 
-                  {listing.whatsapp_number && (
+                  {listing.is_official &&
+                  listing.whatsapp_url &&
+                  /^https:\/\/((www\.)?whatsapp\.com\/channel\/|chat\.whatsapp\.com\/|wa\.me\/)[A-Za-z0-9_\/?=&%.-]+$/i.test(
+                    listing.whatsapp_url
+                  ) ? (
+                    <a
+                      href={listing.whatsapp_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-leaf/25 bg-leaf/10 px-4 py-3 text-sm font-medium text-sky-300 transition hover:bg-sunflower/15"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      WhatsApp
+                    </a>
+                  ) : listing.whatsapp_number ? (
                     <a
                       href={formatWhatsAppUrl(
                         listing.whatsapp_number,
@@ -627,7 +647,7 @@ export default function ListingDetailPage() {
                       <MessageCircle className="h-4 w-4" />
                       WhatsApp
                     </a>
-                  )}
+                  ) : null}
                 </>
               )}
             </div>
