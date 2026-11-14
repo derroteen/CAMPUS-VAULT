@@ -369,7 +369,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
                           path="M 250 200 Q 170 110 90 70"
                         />
                       </circle>
-                      <circle r="4" fill="#818cf8" filter="url(#story-dot-glow)">
+                      <circle r="4" fill="#93C5FD" filter="url(#story-dot-glow)">
                         <animateMotion
                           dur="2s"
                           repeatCount="indefinite"
@@ -397,7 +397,7 @@ export default function CampusStory({ isLoggedIn }: CampusStoryProps) {
                           path="M 250 200 Q 170 290 90 330"
                         />
                       </circle>
-                      <circle r="4" fill="#c084fc" filter="url(#story-dot-glow)">
+                      <circle r="4" fill="#93C5FD" filter="url(#story-dot-glow)">
                         <animateMotion
                           dur="2s"
                           repeatCount="indefinite"
