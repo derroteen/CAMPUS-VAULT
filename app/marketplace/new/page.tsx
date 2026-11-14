@@ -29,6 +29,7 @@ export default function NewListingPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [isPro, setIsPro] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [activeListingCount, setActiveListingCount] = useState(0);
 
   const [title, setTitle] = useState("");
@@ -38,6 +39,8 @@ export default function NewListingPage() {
   const [categoryId, setCategoryId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [isOfficial, setIsOfficial] = useState(false);
+  const [whatsappUrl, setWhatsappUrl] = useState("");
   const [images, setImages] = useState<ImagePreview[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -45,7 +48,7 @@ export default function NewListingPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const maxImages = isPro ? PRO_MAX_IMAGES : FREE_MAX_IMAGES;
+  const maxImages = isAdmin || isPro ? PRO_MAX_IMAGES : FREE_MAX_IMAGES;
 
   useEffect(() => {
     const init = async () => {
@@ -61,7 +64,7 @@ export default function NewListingPage() {
       const userId = session.user.id;
 
       // Load categories, subscription tier, and active listing count in parallel
-      const [catResult, subResult, countResult] = await Promise.all([
+      const [catResult, subResult, countResult, adminResult] = await Promise.all([
         supabase
           .from("market_categories")
           .select("id, name")
@@ -79,6 +82,11 @@ export default function NewListingPage() {
           .select("id", { count: "exact", head: true })
           .eq("seller_id", userId)
           .eq("status", "active"),
+        supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", userId)
+          .maybeSingle(),
       ]);
 
       if (catResult.data) {
@@ -92,6 +100,7 @@ export default function NewListingPage() {
         setIsPro(true);
       }
 
+      setIsAdmin(adminResult.data?.is_admin ?? false);
       setActiveListingCount(countResult.count ?? 0);
       setLoading(false);
     };
@@ -135,7 +144,8 @@ export default function NewListingPage() {
     });
   };
 
-  const isAtListingCap = !isPro && activeListingCount >= FREE_MAX_ACTIVE_LISTINGS;
+  const isAtListingCap =
+    !isAdmin && !isPro && activeListingCount >= FREE_MAX_ACTIVE_LISTINGS;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -162,10 +172,20 @@ export default function NewListingPage() {
       !title.trim() ||
       !price ||
       !categoryId ||
-      !phoneNumber.trim() ||
+      (!isOfficial && !phoneNumber.trim()) ||
       images.length === 0
     ) {
       setError("Please fill in all required fields and add at least one image.");
+      return;
+    }
+
+    if (
+      isOfficial &&
+      !/^https:\/\/((www\.)?whatsapp\.com\/channel\/|chat\.whatsapp\.com\/|wa\.me\/)[A-Za-z0-9_\/?=&%.-]+$/i.test(
+        whatsappUrl.trim()
+      )
+    ) {
+      setError("Enter a valid WhatsApp channel, group or wa.me link");
       return;
     }
 
@@ -210,20 +230,31 @@ export default function NewListingPage() {
       expiresAt.getDate() + (isPro ? PRO_LISTING_WINDOW_DAYS : FREE_LISTING_WINDOW_DAYS)
     );
 
+    const listingPayload = {
+      seller_id: userId,
+      category_id: categoryId,
+      title: title.trim(),
+      description: description.trim() || null,
+      price: parseFloat(price),
+      original_price: originalPrice ? parseFloat(originalPrice) : null,
+      phone_number: phoneNumber.trim(),
+      ...(isOfficial
+        ? {
+            is_official: true,
+            whatsapp_url: whatsappUrl.trim(),
+            whatsapp_number: null,
+            expires_at: "2100-01-01T00:00:00.000Z",
+          }
+        : {
+            whatsapp_number: whatsappNumber.trim() || null,
+            expires_at: expiresAt.toISOString(),
+          }),
+      status: "active",
+    };
+
     const { data: listing, error: insertError } = await supabase
       .from("listings")
-      .insert({
-        seller_id: userId,
-        category_id: categoryId,
-        title: title.trim(),
-        description: description.trim() || null,
-        price: parseFloat(price),
-        original_price: originalPrice ? parseFloat(originalPrice) : null,
-        phone_number: phoneNumber.trim(),
-        whatsapp_number: whatsappNumber.trim() || null,
-        status: "active",
-        expires_at: expiresAt.toISOString(),
-      })
+      .insert(listingPayload)
       .select("id")
       .single();
 
@@ -260,6 +291,8 @@ export default function NewListingPage() {
     setCategoryId("");
     setPhoneNumber("");
     setWhatsappNumber("");
+    setIsOfficial(false);
+    setWhatsappUrl("");
     setImages([]);
     setActiveListingCount((c) => c + 1);
     setSubmitting(false);
@@ -434,6 +467,41 @@ export default function NewListingPage() {
               />
             </div>
           </div>
+
+          {isAdmin && (
+            <div className="rounded-2xl border border-sunflower/30 bg-slate-900/90 p-4 shadow-sm">
+              <p className="mb-3 text-sm font-semibold text-sunflower">Admin only</p>
+              <label className="flex items-center gap-2 text-sm text-charcoal">
+                <input
+                  type="checkbox"
+                  checked={isOfficial}
+                  onChange={(event) => setIsOfficial(event.target.checked)}
+                  className="h-4 w-4 accent-sunflower"
+                />
+                Official MVCorner product
+              </label>
+              {isOfficial && (
+                <div className="mt-4">
+                  <label
+                    htmlFor="listing-whatsapp-url"
+                    className="mb-2 block text-sm text-charcoal/75"
+                  >
+                    WhatsApp channel or group link
+                  </label>
+                  <input
+                    id="listing-whatsapp-url"
+                    type="text"
+                    value={whatsappUrl}
+                    onChange={(event) => setWhatsappUrl(event.target.value)}
+                    className="w-full rounded-xl border border-forest/15 bg-slate-900 px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40"
+                  />
+                  <p className="mt-2 text-xs text-charcoal/60">
+                    e.g. https://whatsapp.com/channel/... or https://chat.whatsapp.com/...
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Image upload */}
           <div className="rounded-2xl border border-dashed border-forest/15 bg-slate-900/90 p-5 shadow-sm">
