@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Coffee } from "lucide-react";
 import InstallPWAButton from "@/components/InstallPWAButton";
 import CampusStory from "@/components/CampusStory";
 import MarketplaceStory from "@/components/MarketplaceStory";
@@ -686,7 +687,10 @@ export default function Home() {
                 <a href={`mailto:${SUPPORT_EMAIL}`} className="block transition hover:text-coral">
                   {SUPPORT_EMAIL}
                 </a>
-                <Link href="/coffee" className="block transition hover:text-coral">☕ Buy us a coffee</Link>
+                <Link href="/coffee" className="inline-flex items-center gap-1 transition hover:text-coral">
+                  <Coffee className="h-4 w-4 text-orange-400" />
+                  Buy us a coffee
+                </Link>
                 <Link href="/privacy" className="block transition hover:text-coral">Privacy Policy</Link>
                 <Link href="/terms" className="block transition hover:text-coral">Terms</Link>
               </div>

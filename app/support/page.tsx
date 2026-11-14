@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
-import { CheckCircle, Mail, MessageCircle } from "lucide-react";
+import { CheckCircle, Coffee, Mail, MessageCircle } from "lucide-react";
 import { SUPPORT_EMAIL } from "@/lib/site-config";
 import { supabase } from "@/lib/supabase";
 
@@ -432,7 +432,7 @@ function SupportContent() {
           <div className="relative overflow-hidden rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-lg border-l-4 border-sunflower transition hover:border-sunflower/60">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sunflower/20 text-sunflower">
-                <span className="text-lg">☕</span>
+                <Coffee className="h-4 w-4 text-orange-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-charcoal">Buy Us a Coffee</h3>
@@ -446,7 +446,8 @@ function SupportContent() {
               href="/coffee"
               className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-sky-300 hover:text-coral hover:underline transition"
             >
-              ☕ Buy us a coffee &rarr;
+              <Coffee className="h-4 w-4 text-orange-400" />
+              Buy us a coffee &rarr;
             </Link>
           </div>
         </div>

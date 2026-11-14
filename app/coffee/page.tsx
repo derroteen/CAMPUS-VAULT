@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { Coffee } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
 import TipGratitudeModal from "@/components/TipGratitudeModal";
 import { supabase } from "@/lib/supabase";
@@ -215,7 +216,7 @@ export default function BuyMeCoffeePage() {
         <div className="relative z-10">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full border border-sunflower/35 bg-sunflower/15 text-2xl shadow-sm">
-              ☕
+              <Coffee className="h-6 w-6 text-orange-400" />
             </div>
             <div>
               <h1 className="text-2xl font-semibold">Buy us a coffee</h1>
@@ -301,11 +302,14 @@ export default function BuyMeCoffeePage() {
               disabled={isBusy}
               className="w-full rounded-xl bg-forest px-4 py-3 font-medium text-white transition hover:bg-leaf disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {paymentInProgress
-                ? "Processing..."
-                : paymentSucceeded
-                  ? "Coffee received — send another? ☕"
-                  : "Buy a coffee ☕"}
+              {paymentInProgress ? (
+                "Processing..."
+              ) : (
+                <span className="inline-flex items-center justify-center gap-1">
+                  {paymentSucceeded ? "Coffee received — send another?" : "Buy a coffee"}
+                  <Coffee className="h-4 w-4 text-orange-400" />
+                </span>
+              )}
             </button>
           </form>
 

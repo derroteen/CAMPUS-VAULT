@@ -698,7 +698,7 @@ export default function AdminPage() {
       case "past_paper":
         return "bg-amber-500/15 text-amber-200";
       case "assignment":
-        return "bg-violet-500/15 text-violet-200";
+        return "bg-blue-500/15 text-blue-200";
       case "summary":
         return "bg-emerald-500/15 text-emerald-200";
       default:

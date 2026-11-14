@@ -19,7 +19,7 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#050816",
+          background: "linear-gradient(135deg, #3A6BF2 0%, #1D3FBF 100%)",
           fontFamily: "system-ui, -apple-system, sans-serif",
           position: "relative",
         }}
@@ -36,7 +36,7 @@ export default async function Image() {
               "radial-gradient(circle, rgba(37,86,232,0.45) 0%, rgba(37,86,232,0) 70%)",
           }}
         />
-        {/* Violet glow, bottom-right */}
+        {/* Orange glow, bottom-right */}
         <div
           style={{
             position: "absolute",
@@ -45,7 +45,7 @@ export default async function Image() {
             width: "840px",
             height: "840px",
             background:
-              "radial-gradient(circle, rgba(124,58,237,0.42) 0%, rgba(124,58,237,0) 70%)",
+              "radial-gradient(circle, rgba(249,115,22,0.30) 0%, rgba(249,115,22,0) 70%)",
           }}
         />
         {/* Top accent bar */}
@@ -56,7 +56,7 @@ export default async function Image() {
             left: 0,
             right: 0,
             height: "8px",
-            background: "linear-gradient(90deg, #2556E8, #7C3AED, #22D3EE)",
+            background: "linear-gradient(90deg, #3A6BF2, #1D3FBF)",
           }}
         />
         {/* Logo mark: gradient square, square top-right corner, cyan flag */}
@@ -72,7 +72,7 @@ export default async function Image() {
             borderTopRightRadius: "0px",
             borderBottomRightRadius: "26px",
             borderBottomLeftRadius: "26px",
-            background: "linear-gradient(135deg, #2556E8 0%, #7C3AED 100%)",
+            background: "linear-gradient(135deg, #3A6BF2 0%, #1D3FBF 100%)",
             position: "relative",
           }}
         >
@@ -94,7 +94,7 @@ export default async function Image() {
               height: 0,
               borderStyle: "solid",
               borderWidth: "0 33px 33px 0",
-              borderColor: "transparent #22D3EE transparent transparent",
+              borderColor: "transparent #F97316 transparent transparent",
             }}
           />
         </div>
@@ -102,7 +102,7 @@ export default async function Image() {
           style={{
             fontSize: "72px",
             fontWeight: "800",
-            color: "#F4F6FF",
+            color: "#FFFFFF",
             marginBottom: "16px",
             lineHeight: "1.1",
             textAlign: "center",
@@ -114,7 +114,7 @@ export default async function Image() {
           style={{
             fontSize: "30px",
             fontWeight: "400",
-            color: "#93C5FD",
+            color: "#FFFFFF",
             marginBottom: "32px",
             textAlign: "center",
             maxWidth: "900px",
@@ -134,7 +134,7 @@ export default async function Image() {
             alignItems: "center",
           }}
         >
-          <p style={{ fontSize: "20px", color: "#94A3B8" }}>
+          <p style={{ fontSize: "20px", color: "#FFFFFF" }}>
             Download • Upload • Buy • Sell
           </p>
         </div>
