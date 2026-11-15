@@ -17,6 +17,7 @@ import {
 import { MarketplaceListingCard } from "@/components/MarketplaceListingCard";
 import { Skeleton } from "@/components/Skeleton";
 import { hydrateMarketplaceListings, type MarketplaceListing } from "@/lib/marketplace-listings";
+import { SITE_URL } from "@/lib/site-config";
 import { supabase } from "@/lib/supabase";
 
 type ListingDetail = {
@@ -335,17 +336,28 @@ export default function ListingDetailPage() {
     router.push("/marketplace");
   };
 
-  const formatWhatsAppMessage = (title: string, price: number) =>
-    `Hi, is this still available? ${title} (KES ${price.toLocaleString("en-KE")})`;
+  const formatWhatsAppMessage = (
+    title: string,
+    price: number,
+    listingId: string
+  ) =>
+    `Hi, is this still available? ${title} (KES ${price.toLocaleString("en-KE")})\n${SITE_URL}/marketplace/${listingId}`;
 
-  const formatWhatsAppUrl = (phone: string, title: string, price: number) => {
+  const formatWhatsAppUrl = (
+    phone: string,
+    title: string,
+    price: number,
+    listingId: string
+  ) => {
     // Strip everything except digits
     let digits = phone.replace(/\D/g, "");
     // Prefix with Kenya country code if it starts with 0
     if (digits.startsWith("0")) {
       digits = "254" + digits.slice(1);
     }
-    const message = encodeURIComponent(formatWhatsAppMessage(title, price));
+    const message = encodeURIComponent(
+      formatWhatsAppMessage(title, price, listingId)
+    );
     return `https://wa.me/${digits}?text=${message}`;
   };
 
@@ -638,7 +650,11 @@ export default function ListingDetailPage() {
                     <a
                       href={withWhatsAppText(
                         listing.whatsapp_url,
-                        formatWhatsAppMessage(listing.title, listing.price)
+                        formatWhatsAppMessage(
+                          listing.title,
+                          listing.price,
+                          listing.id
+                        )
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -652,7 +668,8 @@ export default function ListingDetailPage() {
                       href={formatWhatsAppUrl(
                         listing.whatsapp_number,
                         listing.title,
-                        listing.price
+                        listing.price,
+                        listing.id
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
