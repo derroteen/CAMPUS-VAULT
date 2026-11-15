@@ -335,17 +335,27 @@ export default function ListingDetailPage() {
     router.push("/marketplace");
   };
 
-  const formatWhatsAppUrl = (phone: string, title: string) => {
+  const formatWhatsAppMessage = (title: string, price: number) =>
+    `Hi, is this still available? ${title} (KES ${price.toLocaleString("en-KE")})`;
+
+  const formatWhatsAppUrl = (phone: string, title: string, price: number) => {
     // Strip everything except digits
     let digits = phone.replace(/\D/g, "");
     // Prefix with Kenya country code if it starts with 0
     if (digits.startsWith("0")) {
       digits = "254" + digits.slice(1);
     }
-    const message = encodeURIComponent(
-      `Hi, I'm interested in your product on MVCorner: ${title}`
-    );
+    const message = encodeURIComponent(formatWhatsAppMessage(title, price));
     return `https://wa.me/${digits}?text=${message}`;
+  };
+
+  const withWhatsAppText = (url: string, message: string) => {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.hostname !== "wa.me") {
+      return url;
+    }
+    parsedUrl.searchParams.set("text", message);
+    return parsedUrl.toString();
   };
 
   const formatDate = (iso: string) =>
@@ -626,7 +636,10 @@ export default function ListingDetailPage() {
                     listing.whatsapp_url
                   ) ? (
                     <a
-                      href={listing.whatsapp_url}
+                      href={withWhatsAppText(
+                        listing.whatsapp_url,
+                        formatWhatsAppMessage(listing.title, listing.price)
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex w-full items-center justify-center gap-2 rounded-xl border border-leaf/25 bg-leaf/10 px-4 py-3 text-sm font-medium text-sky-300 transition hover:bg-sunflower/15"
@@ -638,7 +651,8 @@ export default function ListingDetailPage() {
                     <a
                       href={formatWhatsAppUrl(
                         listing.whatsapp_number,
-                        listing.title
+                        listing.title,
+                        listing.price
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
